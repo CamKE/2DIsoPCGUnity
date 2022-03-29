@@ -6,18 +6,30 @@ using UnityEngine.U2D;
 using UnityEditor;
 
 
-public class LevelManager : MonoBehaviour
+public class LevelGenerator : MonoBehaviour
 {
+    private Tilemap tilemap;
+
     // Start is called before the first frame update
     void Start()
     {
+        generate();
+    }
+
+    public void clearLevel()
+    {
+        tilemap.ClearAllTiles();
+    }
+
+    public void generate()
+    {
         var levelGrid = new GameObject("LevelGrid").AddComponent<Grid>();
 
-        var tilemap = new GameObject("Level").AddComponent<Tilemap>();
+        tilemap = new GameObject("Level").AddComponent<Tilemap>();
 
         tilemap.gameObject.AddComponent<TilemapRenderer>();
         tilemap.transform.SetParent(levelGrid.gameObject.transform);
-        tilemap.tileAnchor = new Vector3(0,0,0);
+        tilemap.tileAnchor = new Vector3(0, 0, 0);
 
         var grid = levelGrid.GetComponent<Grid>();
 
@@ -41,14 +53,6 @@ public class LevelManager : MonoBehaviour
         tilemap.SetTile(new Vector3Int(0, 0, 0), tile);
         tilemap.SetTile(new Vector3Int(0, 0, 3), tile);
         tilemap.SetTile(new Vector3Int(0, 0, 6), tile);
-
-
-
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
