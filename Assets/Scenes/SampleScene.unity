@@ -152,6 +152,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab1575dd75e3bd64dae1952d7c2dddfa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tilemap: {fileID: 0}
+  grid: {fileID: 0}
+  atlas: {fileID: 4343727234628468602, guid: 56d9446267c095048b35f04a22590c7d, type: 2}
 --- !u!4 &233506742
 Transform:
   m_ObjectHideFlags: 0

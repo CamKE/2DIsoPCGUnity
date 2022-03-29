@@ -8,7 +8,14 @@ using UnityEditor;
 
 public class LevelGenerator : MonoBehaviour
 {
+    [SerializeField][HideInInspector]
     private Tilemap tilemap;
+
+    [SerializeField][HideInInspector]
+    private Grid grid;
+
+    [SerializeField][HideInInspector]
+    private SpriteAtlas atlas;
 
     // Start is called before the first frame update
     void Start()
@@ -23,25 +30,14 @@ public class LevelGenerator : MonoBehaviour
 
     public void generate()
     {
-        var levelGrid = new GameObject("LevelGrid").AddComponent<Grid>();
-
-        tilemap = new GameObject("Level").AddComponent<Tilemap>();
-
-        tilemap.gameObject.AddComponent<TilemapRenderer>();
-        tilemap.transform.SetParent(levelGrid.gameObject.transform);
-        tilemap.tileAnchor = new Vector3(0, 0, 0);
-
-        var grid = levelGrid.GetComponent<Grid>();
-
-        grid.cellSize = new Vector3(1, 0.5f, 1);
-        grid.cellLayout = GridLayout.CellLayout.IsometricZAsY;
-
-        var tilemapRenderer = tilemap.GetComponent<TilemapRenderer>();
-
-        tilemapRenderer.mode = TilemapRenderer.Mode.Individual;
-
-        var atlas = (SpriteAtlas)AssetDatabase.LoadAssetAtPath("Assets/GoldenSkullStudios/2D/2D_Iso_Tile_Pack_Starter/Atlas/2D_Iso_Starter_Atlas.spriteatlas", typeof(SpriteAtlas));
-
+        if (tilemap == null)
+        {
+            initialSetup();
+        } else
+        {
+            clearLevel();
+        }
+      
         var tile = ScriptableObject.CreateInstance<Tile>();
         var tile2 = ScriptableObject.CreateInstance<Tile>();
 
@@ -55,4 +51,35 @@ public class LevelGenerator : MonoBehaviour
         tilemap.SetTile(new Vector3Int(0, 0, 6), tile);
     }
 
+    private void initialSetup()
+    {
+        grid = new GameObject("LevelGrid").AddComponent<Grid>();
+
+        tilemap = new GameObject("Level").AddComponent<Tilemap>();
+
+        tilemap.gameObject.AddComponent<TilemapRenderer>();
+        tilemap.transform.SetParent(grid.gameObject.transform);
+        tilemap.tileAnchor = new Vector3(0, 0, 0);
+
+        var gridComponent = grid.GetComponent<Grid>();
+
+        gridComponent.cellSize = new Vector3(1, 0.5f, 1);
+        gridComponent.cellLayout = GridLayout.CellLayout.IsometricZAsY;
+
+        var tilemapRenderer = tilemap.GetComponent<TilemapRenderer>();
+
+        tilemapRenderer.mode = TilemapRenderer.Mode.Individual;
+
+        atlas = (SpriteAtlas)AssetDatabase.LoadAssetAtPath("Assets/GoldenSkullStudios/2D/2D_Iso_Tile_Pack_Starter/Atlas/2D_Iso_Starter_Atlas.spriteatlas", typeof(SpriteAtlas));
+    }
+
+    private void OnApplicationQuit()
+    {
+
+        if (grid != null)
+        {
+            Destroy(grid);
+        }
+
+    }
 }
