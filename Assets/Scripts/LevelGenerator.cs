@@ -17,6 +17,9 @@ public class LevelGenerator : MonoBehaviour
     [SerializeField][HideInInspector]
     private SpriteAtlas atlas;
 
+    [SerializeField]
+    private Vector2Int size;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -36,6 +39,7 @@ public class LevelGenerator : MonoBehaviour
         } else
         {
             clearLevel();
+            size = new Vector2Int(10, 10);
         }
       
         var tile = ScriptableObject.CreateInstance<Tile>();
@@ -44,11 +48,17 @@ public class LevelGenerator : MonoBehaviour
         tile.sprite = atlas.GetSprite("ISO_Tile_Brick_Brick_02");
         tile2.sprite = atlas.GetSprite("ISO_Tile_Dirt_01_Grass_01");
 
-        tilemap.SetTile(new Vector3Int(1, 0, 0), tile2);
+        Vector3Int[] positions = new Vector3Int[size.x * size.y];
+        TileBase[] tileArray = new TileBase[positions.Length];
 
-        tilemap.SetTile(new Vector3Int(0, 0, 0), tile);
-        tilemap.SetTile(new Vector3Int(0, 0, 3), tile);
-        tilemap.SetTile(new Vector3Int(0, 0, 6), tile);
+        for (int index = 0; index < positions.Length; index++)
+        {
+            positions[index] = new Vector3Int(index % size.x, index / size.y, 0);
+            tileArray[index] = index % 2 == 0 ? tile : tile2;
+        }
+
+        tilemap.SetTiles(positions, tileArray);
+
     }
 
     private void initialSetup()
