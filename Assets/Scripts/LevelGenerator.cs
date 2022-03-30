@@ -12,6 +12,9 @@ public class LevelGenerator : MonoBehaviour
     private Tilemap tilemap;
 
     [SerializeField][HideInInspector]
+    private Tilemap tilemap2;
+
+    [SerializeField][HideInInspector]
     private Grid grid;
 
     [SerializeField][HideInInspector]
@@ -48,6 +51,9 @@ public class LevelGenerator : MonoBehaviour
         tile.sprite = atlas.GetSprite("ISO_Tile_Brick_Brick_02");
         tile2.sprite = atlas.GetSprite("ISO_Tile_Dirt_01_Grass_01");
 
+        tile.colliderType = Tile.ColliderType.Grid;
+        tile2.colliderType = Tile.ColliderType.Grid;
+
         Vector3Int[] positions = new Vector3Int[size.x * size.y];
         TileBase[] tileArray = new TileBase[positions.Length];
 
@@ -58,6 +64,9 @@ public class LevelGenerator : MonoBehaviour
         }
 
         tilemap.SetTiles(positions, tileArray);
+
+        tilemap2.SetTile(new Vector3Int(0,0,3), tile);
+        tilemap2.SetTile(new Vector3Int(4, 7, 3), tile);
 
     }
 
@@ -71,6 +80,12 @@ public class LevelGenerator : MonoBehaviour
         tilemap.transform.SetParent(grid.gameObject.transform);
         tilemap.tileAnchor = new Vector3(0, 0, 0);
 
+        tilemap2 = new GameObject("Level1").AddComponent<Tilemap>();
+
+        tilemap2.gameObject.AddComponent<TilemapRenderer>();
+        tilemap2.transform.SetParent(grid.gameObject.transform);
+        tilemap2.tileAnchor = new Vector3(0, 0, 0);
+
         var gridComponent = grid.GetComponent<Grid>();
 
         gridComponent.cellSize = new Vector3(1, 0.5f, 1);
@@ -79,6 +94,10 @@ public class LevelGenerator : MonoBehaviour
         var tilemapRenderer = tilemap.GetComponent<TilemapRenderer>();
 
         tilemapRenderer.mode = TilemapRenderer.Mode.Individual;
+
+        var tilemapRenderer2 = tilemap2.GetComponent<TilemapRenderer>();
+
+        tilemapRenderer2.mode = TilemapRenderer.Mode.Individual;
 
         atlas = (SpriteAtlas)AssetDatabase.LoadAssetAtPath("Assets/GoldenSkullStudios/2D/2D_Iso_Tile_Pack_Starter/Atlas/2D_Iso_Starter_Atlas.spriteatlas", typeof(SpriteAtlas));
     }

@@ -5428,6 +5428,10 @@ PrefabInstance:
       propertyPath: orthographic size
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 8554756283065973568, guid: 3a449432369bfb34091fa0191caa41d2, type: 3}
+      propertyPath: m_SpriteSortPoint
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8554756283065973569, guid: 3a449432369bfb34091fa0191caa41d2, type: 3}
       propertyPath: m_Size.x
       value: 1.66
@@ -6063,6 +6067,30 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 765146023411225449, guid: 820447fb078fb074ab764909a271eff4, type: 3}
+      propertyPath: m_TileSpriteArray.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 765146023411225449, guid: 820447fb078fb074ab764909a271eff4, type: 3}
+      propertyPath: m_TileSpriteArray.Array.data[2].m_Data
+      value: 
+      objectReference: {fileID: 21300000, guid: 651e5968af3eb454292cedc673b76b38, type: 3}
+    - target: {fileID: 765146023411225449, guid: 820447fb078fb074ab764909a271eff4, type: 3}
+      propertyPath: m_TileSpriteArray.Array.data[1].m_RefCount
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 765146023411225449, guid: 820447fb078fb074ab764909a271eff4, type: 3}
+      propertyPath: m_TileSpriteArray.Array.data[2].m_RefCount
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 765146023411225449, guid: 820447fb078fb074ab764909a271eff4, type: 3}
+      propertyPath: m_Tiles.Array.data[6].second.m_TileSpriteIndex
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 765146023411225449, guid: 820447fb078fb074ab764909a271eff4, type: 3}
+      propertyPath: m_Tiles.Array.data[42].second.m_TileSpriteIndex
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 4520366480454724086, guid: 820447fb078fb074ab764909a271eff4, type: 3}
       propertyPath: m_RootOrder
       value: 4
