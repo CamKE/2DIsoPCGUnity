@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-[CustomEditor(typeof(LevelGenerator))]
-public class LevelGeneratorEditor : Editor
+[CustomEditor(typeof(LevelManager))]
+public class LevelEditor : Editor
 {
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
 
-        LevelGenerator levelGenerator = (LevelGenerator)target;
+        LevelManager levelManager = (LevelManager)target;
 
         if (GUILayout.Button("Generate Level"))
         {
-            levelGenerator.generate();
+            levelManager.generate();
         }
     }
 }

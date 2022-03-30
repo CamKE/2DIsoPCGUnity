@@ -6,8 +6,9 @@ using UnityEngine.U2D;
 using UnityEditor;
 
 
-public class LevelGenerator : MonoBehaviour
+public class LevelManager : MonoBehaviour
 {
+
     [SerializeField][HideInInspector]
     private Tilemap tilemap;
 
@@ -23,15 +24,21 @@ public class LevelGenerator : MonoBehaviour
     [SerializeField]
     private Vector2Int size;
 
+    [SerializeField]
+    private GameObject player;
+
+    private PlayerController playerController;
     // Start is called before the first frame update
     void Start()
     {
         generate();
     }
 
-    private void Update()
+    void Update()
     {
-        //tilemap.GetTile(new Vector3Int(0.2, 0.1, 0.0));
+        playerController.MoveCharacter();
+
+
     }
 
     public void clearLevel()
@@ -77,6 +84,9 @@ public class LevelGenerator : MonoBehaviour
 
     private void initialSetup()
     {
+        player = Instantiate(player, new Vector3(2, 2, 3.01f), Quaternion.identity);
+        playerController = player.GetComponent<PlayerController>();
+
         grid = new GameObject("LevelGrid").AddComponent<Grid>();
 
         tilemap = new GameObject("Level").AddComponent<Tilemap>();
@@ -107,12 +117,15 @@ public class LevelGenerator : MonoBehaviour
         atlas = (SpriteAtlas)AssetDatabase.LoadAssetAtPath("Assets/GoldenSkullStudios/2D/2D_Iso_Tile_Pack_Starter/Atlas/2D_Iso_Starter_Atlas.spriteatlas", typeof(SpriteAtlas));
     }
 
+
+
     private void OnApplicationQuit()
     {
 
         if (grid != null)
         {
             Destroy(grid);
+            Destroy(player);
         }
 
     }
