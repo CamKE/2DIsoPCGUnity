@@ -29,6 +29,11 @@ public class LevelGenerator : MonoBehaviour
         generate();
     }
 
+    private void Update()
+    {
+        //tilemap.GetTile(new Vector3Int(0.2, 0.1, 0.0));
+    }
+
     public void clearLevel()
     {
         tilemap.ClearAllTiles();
@@ -59,14 +64,14 @@ public class LevelGenerator : MonoBehaviour
 
         for (int index = 0; index < positions.Length; index++)
         {
-            positions[index] = new Vector3Int(index % size.x, index / size.y, 0);
+            positions[index] = new Vector3Int(index % size.x, index / size.y, Random.Range(0, 2));
             tileArray[index] = index % 2 == 0 ? tile : tile2;
         }
 
         tilemap.SetTiles(positions, tileArray);
 
-        tilemap2.SetTile(new Vector3Int(0,0,3), tile);
-        tilemap2.SetTile(new Vector3Int(4, 7, 3), tile);
+        // tilemap2.SetTile(new Vector3Int(0,0,3), tile);
+        // tilemap2.SetTile(new Vector3Int(4, 7, 3), tile);
 
     }
 
