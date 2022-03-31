@@ -158,6 +158,7 @@ MonoBehaviour:
   atlas: {fileID: 4343727234628468602, guid: 56d9446267c095048b35f04a22590c7d, type: 2}
   size: {x: 10, y: 10}
   player: {fileID: 397201525090935536, guid: 31aac78f9ae5d844e81934a1a6e4c2c6, type: 3}
+  playerController: {fileID: 0}
 --- !u!4 &233506742
 Transform:
   m_ObjectHideFlags: 0

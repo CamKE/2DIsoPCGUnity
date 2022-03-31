@@ -10,10 +10,14 @@ public class PlayerController : MonoBehaviour
 
     private SpriteRenderer characterSprite;
 
-    // Start is called before the first frame update
-    void Start()
+    private Vector3 offset;
+
+    public void setup()
     {
         characterSprite = GetComponent<SpriteRenderer>();
+        // extent y is the distance from the sprite center pivot, to the bottom of the sprite. z set to 3 to keep player infront
+        // playerFeetOffset ensures the offset value moves the player relative to its feet position.-0.15f
+        offset = new Vector3(0, -0.15f, 3);
     }
 
     // Update is called once per frame
@@ -22,7 +26,7 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    public void MoveCharacter()
+    public void MoveCharacter(int height)
     {
         checkCharacterHeight();
         //I am putting these placeholder variables here, to make the logic behind the code easier to understand
@@ -32,15 +36,23 @@ public class PlayerController : MonoBehaviour
         //for some reason, 50% feels too slow, so we will be going with 75%
         float verticalMovement = Input.GetAxisRaw("Vertical") * speed * 0.5f * Time.deltaTime;
 
-
-        this.transform.Translate(horizontalMovement, verticalMovement, 0);
-
+        //make character appear as ontop of or behind terrain
+        int heightDiff = height - ((int)this.transform.position.z);
+        this.transform.Translate(horizontalMovement, verticalMovement, heightDiff);
         FlipSpriteToMovement();
+
     }
 
     void checkCharacterHeight()
     {
 
+    }
+
+    public void setPosition(Vector3 position)
+    {
+        //player pivot in center of sprite, so offset corrects position relative to players feet as pivot
+        this.transform.position = position + offset;
+        Debug.Log("position before offset: " + position + ". offset: " + offset + ". After offset: " + this.transform.position);
     }
 
     //if the player moves left, flip the sprite, if he moves right, flip it back, stay if no input is made
