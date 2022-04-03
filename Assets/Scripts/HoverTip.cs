@@ -1,18 +1,33 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class HoverTip : MonoBehaviour
+public class HoverTip : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    // Start is called before the first frame update
-    void Start()
+    public string tipToShow;
+    private float timeToWait = 0.5f;
+    public void OnPointerEnter(PointerEventData eventData)
     {
-        
+        StopAllCoroutines();
+        StartCoroutine(startTimer());
     }
 
-    // Update is called once per frame
-    void Update()
+    public void OnPointerExit(PointerEventData eventData)
     {
-        
+        StopAllCoroutines();
+        HoverTipManager.onMouseLoseFocus();
+    }
+
+    private void showMessage()
+    {
+        HoverTipManager.onMouseHover(tipToShow, Input.mousePosition);
+    }
+
+    private IEnumerator startTimer()
+    {
+        yield return new WaitForSeconds(timeToWait);
+
+        showMessage();
     }
 }
