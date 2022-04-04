@@ -90,7 +90,6 @@ public class LevelManager : MonoBehaviour
         } else
         {
             clearLevel();
-            size = new Vector2Int(10, 10);
         }
       
         var tile = ScriptableObject.CreateInstance<Tile>();
