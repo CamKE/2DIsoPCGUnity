@@ -27,15 +27,10 @@ public class LevelManager : MonoBehaviour
     [SerializeField]
     private Vector2Int size;
 
-    [SerializeField][HideInInspector]
     private PlayerController playerController;
 
-    // holds the center position of the level
-    private Vector3 levelCenter;
+    private LevelCameraController levelCameraController;
 
-    private float newOrthoSize;
-
-    private Vector3 cameraOffset;
 
     // i use this instead of taking the grid center to world, as the grid center looks off. instead i take the tilemap tile center
     // which uses the pivot as the center. then i add an offset to the y axis to move the tile center to the middle of the tile.
@@ -45,6 +40,7 @@ public class LevelManager : MonoBehaviour
     void Start()
     {
         tileCenterOffset = new Vector3(0,0.7f,0);
+        levelCameraController = levelCamera.GetComponent<LevelCameraController>();
     }
 
     void Update()
@@ -119,18 +115,25 @@ public class LevelManager : MonoBehaviour
 
         tilemap.SetTiles(positions, tileArray);
 
+        updateLevelCamera();
+    }
+
+    private void updateLevelCamera()
+    {
         BoundsInt terrainBounds = tilemap.cellBounds;
-        Vector2 centerGridPosition = new Vector2(terrainBounds.xMax / 2.0f, terrainBounds.yMax / 2.0f);
+
         Vector3 mapLocalDimension = grid.CellToLocal(new Vector3Int(terrainBounds.xMax, terrainBounds.yMax, 0));
-        levelCenter = grid.LocalToWorld(mapLocalDimension / 2.0f);
+
+        Vector3 levelCenter = grid.LocalToWorld(mapLocalDimension / 2.0f);
         // z value to ensure level is always in view
         levelCenter.z = -50.0f;
+
         int maxDimension = terrainBounds.xMax > terrainBounds.yMax ? terrainBounds.xMax : terrainBounds.yMax;
-        newOrthoSize = 0.4f * maxDimension;
-        cameraOffset = new Vector3(newOrthoSize * 0.5f, 0, 0);
+        float newOrthoSize = 0.4f * maxDimension;
 
-        recenterCamera();
+        Vector3 cameraOffset = new Vector3(newOrthoSize * 0.5f, 0, 0);
 
+        levelCameraController.updateCamera(levelCenter, cameraOffset, newOrthoSize);
     }
 
     // check each object exists! if not, then create it
@@ -167,20 +170,10 @@ public class LevelManager : MonoBehaviour
 
     }
 
-    public void recenterCamera()
-    {
-        levelCamera.transform.position = levelCenter + cameraOffset;
-        levelCamera.orthographicSize = newOrthoSize;
-
-    }
-
-
     private void OnApplicationQuit()
     {
-
-        if (grid != null)
+        if (PrefabUtility.GetPrefabInstanceStatus(player) != PrefabInstanceStatus.NotAPrefab)
         {
-            Destroy(grid);
             Destroy(player);
         }
 
