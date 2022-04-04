@@ -9,14 +9,17 @@ using UnityEditor;
 public class LevelManager : MonoBehaviour
 {
 
+    [SerializeField]
+    private Grid grid;
+
+    [SerializeField]
+    private GameObject player;
+
+    [SerializeField]
+    private Camera levelCamera;
+
     [SerializeField][HideInInspector]
     private Tilemap tilemap;
-
-    [SerializeField][HideInInspector]
-    private Tilemap tilemap2;
-
-    [SerializeField][HideInInspector]
-    private Grid grid;
 
     [SerializeField][HideInInspector]
     private SpriteAtlas atlas;
@@ -24,11 +27,15 @@ public class LevelManager : MonoBehaviour
     [SerializeField]
     private Vector2Int size;
 
-    [SerializeField]
-    private GameObject player;
-
     [SerializeField][HideInInspector]
     private PlayerController playerController;
+
+    // holds the center position of the level
+    private Vector3 levelCenter;
+
+    private float newOrthoSize;
+
+    private Vector3 cameraOffset;
 
     // i use this instead of taking the grid center to world, as the grid center looks off. instead i take the tilemap tile center
     // which uses the pivot as the center. then i add an offset to the y axis to move the tile center to the middle of the tile.
@@ -38,13 +45,16 @@ public class LevelManager : MonoBehaviour
     void Start()
     {
         tileCenterOffset = new Vector3(0,0.7f,0);
-        generate();
     }
 
     void Update()
     {
-        int playerHeight = calculatePlayerHeight();
-        playerController.MoveCharacter(playerHeight);
+        if (playerController != null)
+        {
+            int playerHeight = calculatePlayerHeight();
+            playerController.MoveCharacter(playerHeight);
+        }    
+
 
         // calc which tile player is on
         // get the tiles height
@@ -109,39 +119,29 @@ public class LevelManager : MonoBehaviour
 
         tilemap.SetTiles(positions, tileArray);
 
-        // takes tile position in local space, not world
-         //tilemap2.SetTile(new Vector3Int(0,0,3), tile);
-         //tilemap2.SetTile(new Vector3Int(1,0,3), tile);
-         //tilemap2.SetTile(new Vector3Int(0, 0, 3), tile);
+        BoundsInt terrainBounds = tilemap.cellBounds;
+        Vector2 centerGridPosition = new Vector2(terrainBounds.xMax / 2.0f, terrainBounds.yMax / 2.0f);
+        Vector3 mapLocalDimension = grid.CellToLocal(new Vector3Int(terrainBounds.xMax, terrainBounds.yMax, 0));
+        levelCenter = grid.LocalToWorld(mapLocalDimension / 2.0f);
+        // z value to ensure level is always in view
+        levelCenter.z = -50.0f;
+        int maxDimension = terrainBounds.xMax > terrainBounds.yMax ? terrainBounds.xMax : terrainBounds.yMax;
+        newOrthoSize = 0.4f * maxDimension;
+        cameraOffset = new Vector3(newOrthoSize * 0.5f, 0, 0);
 
-        //Debug.Log(tilemap2.GetCellCenterWorld(new Vector3Int(0, 0, 3)));
-
-        
-
-        playerController.setPosition(tilemap.GetCellCenterWorld(Vector3Int.zero) + tileCenterOffset);
-
+        recenterCamera();
 
     }
 
+    // check each object exists! if not, then create it
     private void initialSetup()
     {
-        player = Instantiate(player, new Vector3(2, 2, 3.01f), Quaternion.identity);
-        playerController = player.GetComponent<PlayerController>();
-        playerController.setup();
-
-        grid = new GameObject("Level").AddComponent<Grid>();
 
         tilemap = new GameObject("Terrain").AddComponent<Tilemap>();
 
         tilemap.gameObject.AddComponent<TilemapRenderer>();
         tilemap.transform.SetParent(grid.gameObject.transform);
         tilemap.tileAnchor = new Vector3(0, 0, -2);
-
-        tilemap2 = new GameObject("Level1").AddComponent<Tilemap>();
-
-        tilemap2.gameObject.AddComponent<TilemapRenderer>();
-        tilemap2.transform.SetParent(grid.gameObject.transform);
-        tilemap2.tileAnchor = new Vector3(0, 0, -2);
 
         var gridComponent = grid.GetComponent<Grid>();
 
@@ -152,13 +152,27 @@ public class LevelManager : MonoBehaviour
 
         tilemapRenderer.mode = TilemapRenderer.Mode.Individual;
 
-        var tilemapRenderer2 = tilemap2.GetComponent<TilemapRenderer>();
-
-        tilemapRenderer2.mode = TilemapRenderer.Mode.Individual;
-
         atlas = (SpriteAtlas)AssetDatabase.LoadAssetAtPath("Assets/GoldenSkullStudios/2D/2D_Iso_Tile_Pack_Starter/Atlas/2D_Iso_Starter_Atlas.spriteatlas", typeof(SpriteAtlas));
+
+        //setupPlayer(tilemap.GetCellCenterWorld(Vector3Int.zero) + tileCenterOffset);
     }
 
+    public void setupPlayer(Vector3 position)
+    {
+        player = Instantiate(player, new Vector3(2, 2, 3.01f), Quaternion.identity);
+        playerController = player.GetComponent<PlayerController>();
+        playerController.setup();
+
+        playerController.setPosition(position);
+
+    }
+
+    public void recenterCamera()
+    {
+        levelCamera.transform.position = levelCenter + cameraOffset;
+        levelCamera.orthographicSize = newOrthoSize;
+
+    }
 
 
     private void OnApplicationQuit()
