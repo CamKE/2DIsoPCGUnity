@@ -62,7 +62,7 @@
             }
         ],
         "sitemap": {
-            "baseUrl": "https://normanderwan.github.io/DocFxForUnity",
+            "baseUrl": "https://camke.github.io/2DIsoPCGUnity",
             "changefreq": "weekly",
             "fileOptions": {
                 "api/*": {
