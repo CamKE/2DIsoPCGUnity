@@ -5,6 +5,9 @@ using System;
 using TMPro;
 
 // Credit to Comp-3 Interative for the tutorial
+/// <summary>
+/// success
+/// </summary>
 public class HoverTipManager : MonoBehaviour
 {
     public TextMeshProUGUI tipText;

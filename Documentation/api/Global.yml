@@ -1,0 +1,72 @@
+### YamlMime:ManagedReference
+items:
+- uid: Global
+  id: Global
+  children:
+  - Global.HoverTip
+  - Global.HoverTipManager
+  - Global.LevelCameraController
+  - Global.LevelEditor
+  - Global.LevelManager
+  - Global.PlayerController
+  - Global.Simple_Char_Move
+  - Global.Simple_Door_Interaction
+  - Global.UIManager
+  langs:
+  - csharp
+  - vb
+  name: Global
+  nameWithType: Global
+  fullName: Global
+  type: Namespace
+  assemblies:
+  - cs.temp.dll
+  nameWithType.vb: ''
+  fullName.vb: ''
+  name.vb: ''
+references:
+- uid: Global.Simple_Char_Move
+  commentId: T:Global.Simple_Char_Move
+  name: Simple_Char_Move
+  nameWithType: Simple_Char_Move
+  fullName: Simple_Char_Move
+- uid: Global.Simple_Door_Interaction
+  commentId: T:Global.Simple_Door_Interaction
+  name: Simple_Door_Interaction
+  nameWithType: Simple_Door_Interaction
+  fullName: Simple_Door_Interaction
+- uid: Global.HoverTip
+  commentId: T:Global.HoverTip
+  name: HoverTip
+  nameWithType: HoverTip
+  fullName: HoverTip
+- uid: Global.HoverTipManager
+  commentId: T:Global.HoverTipManager
+  name: HoverTipManager
+  nameWithType: HoverTipManager
+  fullName: HoverTipManager
+- uid: Global.LevelCameraController
+  commentId: T:Global.LevelCameraController
+  name: LevelCameraController
+  nameWithType: LevelCameraController
+  fullName: LevelCameraController
+- uid: Global.LevelManager
+  commentId: T:Global.LevelManager
+  name: LevelManager
+  nameWithType: LevelManager
+  fullName: LevelManager
+- uid: Global.PlayerController
+  commentId: T:Global.PlayerController
+  name: PlayerController
+  nameWithType: PlayerController
+  fullName: PlayerController
+- uid: Global.UIManager
+  commentId: T:Global.UIManager
+  name: UIManager
+  nameWithType: UIManager
+  fullName: UIManager
+- uid: Global.LevelEditor
+  commentId: T:Global.LevelEditor
+  name: LevelEditor
+  nameWithType: LevelEditor
+  fullName: LevelEditor

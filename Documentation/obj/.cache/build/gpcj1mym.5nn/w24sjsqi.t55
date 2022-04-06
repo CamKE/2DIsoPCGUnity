@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>2D Isometric Procedural Content Generation System in Unity | Example Unity documentation </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="2D Isometric Procedural Content Generation System in Unity | Example Unity documentation ">
+    <meta name="generator" content="docfx 2.59.1.0">
+    
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="stylesheet" href="styles/docfx.vendor.css">
+    <link rel="stylesheet" href="styles/docfx.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <meta property="docfx:navrel" content="toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="index.html">
+                <img id="logo" class="svg" src="logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list">Search Results for <span></span></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        <div class="article row grid">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+<h1 id="2d-isometric-procedural-content-generation-system-in-unity" sourcefile="index.md" sourcestartlinenumber="1" sourceendlinenumber="1">2D Isometric Procedural Content Generation System in Unity</h1>
+
+<h1 id="docfx-for-unity" sourcefile="index.md" sourcestartlinenumber="3" sourceendlinenumber="3">DocFX for Unity</h1>
+<blockquote sourcefile="index.md" sourcestartlinenumber="5" sourceendlinenumber="5"><p sourcefile="index.md" sourcestartlinenumber="5" sourceendlinenumber="5"><a href="https://dotnet.github.io/docfx/index.html" data-raw-source="[DocFX](https://dotnet.github.io/docfx/index.html)" sourcefile="index.md" sourcestartlinenumber="5" sourceendlinenumber="5">DocFX</a> usage example for Unity projects</p>
+</blockquote>
+<p sourcefile="index.md" sourcestartlinenumber="7" sourceendlinenumber="9"><a href="https://dotnet.github.io/docfx/" data-raw-source="[DocFX](https://dotnet.github.io/docfx/)" sourcefile="index.md" sourcestartlinenumber="7" sourceendlinenumber="7">DocFX</a> tool generates a clean documentation that looks like the
+<a href="https://docs.unity3d.com/Manual/index.html" data-raw-source="[Unity documentation](https://docs.unity3d.com/Manual/index.html)" sourcefile="index.md" sourcestartlinenumber="8" sourceendlinenumber="8">Unity documentation</a> with a manual (written in Markdown) and a scripting
+API (from the C# scripts of the project).</p>
+<p sourcefile="index.md" sourcestartlinenumber="11" sourceendlinenumber="12">This repository contains a simple Unity example project which documentation is automatically generated and deployed
+online: <a href="https://normanderwan.github.io/DocFxForUnity/" data-raw-source="&lt;https://normanderwan.github.io/DocFxForUnity/&gt;" sourcefile="index.md" sourcestartlinenumber="12" sourceendlinenumber="12">https://normanderwan.github.io/DocFxForUnity/</a>. It references both C# API and Unity API.</p>
+<table sourcefile="index.md" sourcestartlinenumber="14" sourceendlinenumber="16">
+<thead>
+<tr>
+<th style="text-align:center">DocFxForUnity documentation manual</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><a href="https://normanderwan.github.io/DocFxForUnity/manual/coniunctis.html" data-raw-source="[![DocFxForUnity documentation manual](https://normanderwan.github.io/DocFxForUnity/resources/ExampleManual.png)](https://normanderwan.github.io/DocFxForUnity/manual/coniunctis.html)" sourcefile="index.md" sourcestartlinenumber="16" sourceendlinenumber="16"><img src="https://normanderwan.github.io/DocFxForUnity/resources/ExampleManual.png" alt="DocFxForUnity documentation manual" sourcefile="index.md" sourcestartlinenumber="16" sourceendlinenumber="16"></a></td>
+</tr>
+</tbody>
+</table>
+<table sourcefile="index.md" sourcestartlinenumber="18" sourceendlinenumber="20">
+<thead>
+<tr>
+<th style="text-align:center">DocFxForUnity documentation scripting API</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><a href="https://normanderwan.github.io/DocFxForUnity/api/DocFxForUnity.Player.html" data-raw-source="[![DocFxForUnity documentation scripting API](https://normanderwan.github.io/DocFxForUnity/resources/ExampleScriptingApi.png)](https://normanderwan.github.io/DocFxForUnity/api/DocFxForUnity.Player.html)" sourcefile="index.md" sourcestartlinenumber="20" sourceendlinenumber="20"><img src="https://normanderwan.github.io/DocFxForUnity/resources/ExampleScriptingApi.png" alt="DocFxForUnity documentation scripting API" sourcefile="index.md" sourcestartlinenumber="20" sourceendlinenumber="20"></a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="setup-your-documentation" sourcefile="index.md" sourcestartlinenumber="22" sourceendlinenumber="22">Setup your documentation</h2>
+<ol sourcefile="index.md" sourcestartlinenumber="24" sourceendlinenumber="105">
+<li sourcefile="index.md" sourcestartlinenumber="24" sourceendlinenumber="24"><a href="https://dotnet.github.io/docfx/tutorial/docfx_getting_started.html#2-use-docfx-as-a-command-line-tool" data-raw-source="[Install DocFX](https://dotnet.github.io/docfx/tutorial/docfx_getting_started.html#2-use-docfx-as-a-command-line-tool)" sourcefile="index.md" sourcestartlinenumber="24" sourceendlinenumber="24">Install DocFX</a>.</li>
+<li sourcefile="index.md" sourcestartlinenumber="25" sourceendlinenumber="34"><p sourcefile="index.md" sourcestartlinenumber="25" sourceendlinenumber="25">Copy the <code>Documentation/</code> folder to your Unity project:</p>
+<pre sourcefile="index.md" sourcestartlinenumber="27" sourceendlinenumber="34"><code class="lang-diff">  .
+  ├── Assets
++ ├── Documentation
+  ├── Package
+  ├── ProjectSettings
+  └── README.md
+</code></pre></li>
+<li sourcefile="index.md" sourcestartlinenumber="36" sourceendlinenumber="55"><p sourcefile="index.md" sourcestartlinenumber="36" sourceendlinenumber="36">Edit the following properties in <code>Documentation/docfx.json</code>, keep the others as it is:</p>
+<pre sourcefile="index.md" sourcestartlinenumber="38" sourceendlinenumber="52"><code class="lang-javascript">  {
+    &quot;build&quot;: {
+      &quot;globalMetadata&quot;: // Edit your documentation website info, see: https://dotnet.github.io/docfx/tutorial/docfx.exe_user_manual.html#322-reserved-metadata
+      {
+        &quot;_appTitle&quot;: &quot;Example Unity documentation&quot;,
+        &quot;_appFooter&quot;: &quot;Example Unity documentation&quot;,
+        &quot;_enableSearch&quot;: true
+      },
+      &quot;sitemap&quot;:
+      {
+        &quot;baseUrl&quot;: &quot;https://normanderwan.github.io/DocFxForUnity&quot; // The URL of your documentation website
+      }
+  }
+</code></pre><p sourcefile="index.md" sourcestartlinenumber="54" sourceendlinenumber="55"> It&#39;s the configuration file of your documentation.
+ See <a href="https://dotnet.github.io/docfx/tutorial/docfx.exe_user_manual.html#3-docfxjson-format" data-raw-source="&lt;https://dotnet.github.io/docfx/tutorial/docfx.exe_user_manual.html#3-docfxjson-format&gt;" sourcefile="index.md" sourcestartlinenumber="55" sourceendlinenumber="55">https://dotnet.github.io/docfx/tutorial/docfx.exe_user_manual.html#3-docfxjson-format</a> for more details.</p>
+</li>
+<li sourcefile="index.md" sourcestartlinenumber="57" sourceendlinenumber="73"><p sourcefile="index.md" sourcestartlinenumber="57" sourceendlinenumber="57">Edit <code>Documentation/filterConfig.yml</code>:</p>
+<pre sourcefile="index.md" sourcestartlinenumber="59" sourceendlinenumber="70"><code class="lang-yaml">apiRules:
+- include: # The namespaces to generate
+    uidRegex: ^Your\.Namespace1
+    type: Namespace
+- include:
+    uidRegex: ^Your\.Namespace2
+    type: Namespace
+- exclude:
+    uidRegex: .* # Every other namespaces are ignored
+    type: Namespace
+</code></pre><p sourcefile="index.md" sourcestartlinenumber="72" sourceendlinenumber="73"> It tells DocFX which namespaces you want to generate the documentation.
+ See <a href="https://dotnet.github.io/docfx/tutorial/howto_filter_out_unwanted_apis_attributes.html" data-raw-source="&lt;https://dotnet.github.io/docfx/tutorial/howto_filter_out_unwanted_apis_attributes.html&gt;" sourcefile="index.md" sourcestartlinenumber="73" sourceendlinenumber="73">https://dotnet.github.io/docfx/tutorial/howto_filter_out_unwanted_apis_attributes.html</a> for more details.</p>
+</li>
+<li sourcefile="index.md" sourcestartlinenumber="75" sourceendlinenumber="75"><p sourcefile="index.md" sourcestartlinenumber="75" sourceendlinenumber="75">Document your classes and methods. See <a href="https://docs.microsoft.com/en-us/dotnet/csharp/codedoc" data-raw-source="&lt;https://docs.microsoft.com/en-us/dotnet/csharp/codedoc&gt;" sourcefile="index.md" sourcestartlinenumber="75" sourceendlinenumber="75">https://docs.microsoft.com/en-us/dotnet/csharp/codedoc</a> for more details.</p>
+</li>
+<li sourcefile="index.md" sourcestartlinenumber="77" sourceendlinenumber="79"><p sourcefile="index.md" sourcestartlinenumber="77" sourceendlinenumber="77">(Optional) Add your manual pages:</p>
+<ul sourcefile="index.md" sourcestartlinenumber="78" sourceendlinenumber="79">
+<li sourcefile="index.md" sourcestartlinenumber="78" sourceendlinenumber="78">Write a Markdown file for each page in <code>Documentation/manual/</code>.</li>
+<li sourcefile="index.md" sourcestartlinenumber="79" sourceendlinenumber="79">Keep a list of these pages on <code>Documentation/manual/toc.yml</code>.</li>
+</ul>
+</li>
+<li sourcefile="index.md" sourcestartlinenumber="81" sourceendlinenumber="84"><p sourcefile="index.md" sourcestartlinenumber="81" sourceendlinenumber="81">(Optional) Add resources such as images:</p>
+<ul sourcefile="index.md" sourcestartlinenumber="82" sourceendlinenumber="84">
+<li sourcefile="index.md" sourcestartlinenumber="82" sourceendlinenumber="82">Copy them to <code>Documentation/resources/</code>.</li>
+<li sourcefile="index.md" sourcestartlinenumber="83" sourceendlinenumber="83">Reference them on your docs or manual pages.</li>
+<li sourcefile="index.md" sourcestartlinenumber="84" sourceendlinenumber="84">See <a href="https://dotnet.github.io/docfx/tutorial/links_and_cross_references.html#link-to-a-file-using-relative-path" data-raw-source="&lt;https://dotnet.github.io/docfx/tutorial/links_and_cross_references.html#link-to-a-file-using-relative-path&gt;" sourcefile="index.md" sourcestartlinenumber="84" sourceendlinenumber="84">https://dotnet.github.io/docfx/tutorial/links_and_cross_references.html#link-to-a-file-using-relative-path</a> for more details.</li>
+</ul>
+</li>
+<li sourcefile="index.md" sourcestartlinenumber="86" sourceendlinenumber="95"><p sourcefile="index.md" sourcestartlinenumber="86" sourceendlinenumber="86">(Optional) Document your namespaces:</p>
+<ul sourcefile="index.md" sourcestartlinenumber="87" sourceendlinenumber="95">
+<li sourcefile="index.md" sourcestartlinenumber="87" sourceendlinenumber="94"><p sourcefile="index.md" sourcestartlinenumber="87" sourceendlinenumber="87">For each namespace, add a <code>Assets/Scripts/Your/Namespace1/Your.Namespace1.md</code> file:</p>
+<pre sourcefile="index.md" sourcestartlinenumber="89" sourceendlinenumber="94"><code class="lang-yaml">---
+uid: Your.Namespace1
+summary: Description of the Your.Namespace1 namespace.
+---
+</code></pre></li>
+<li sourcefile="index.md" sourcestartlinenumber="95" sourceendlinenumber="95">See <a href="https://dotnet.github.io/docfx/tutorial/intro_overwrite_files.html" data-raw-source="&lt;https://dotnet.github.io/docfx/tutorial/intro_overwrite_files.html&gt;" sourcefile="index.md" sourcestartlinenumber="95" sourceendlinenumber="95">https://dotnet.github.io/docfx/tutorial/intro_overwrite_files.html</a> to know how it works.</li>
+</ul>
+</li>
+<li sourcefile="index.md" sourcestartlinenumber="97" sourceendlinenumber="105"><p sourcefile="index.md" sourcestartlinenumber="97" sourceendlinenumber="97">Generate your documentation:</p>
+<ul sourcefile="index.md" sourcestartlinenumber="98" sourceendlinenumber="105">
+<li sourcefile="index.md" sourcestartlinenumber="98" sourceendlinenumber="103"><p sourcefile="index.md" sourcestartlinenumber="98" sourceendlinenumber="98">On a command line opened on your project, run:</p>
+<pre sourcefile="index.md" sourcestartlinenumber="100" sourceendlinenumber="103"><code class="lang-bash">cp README.md Documentation/index.md
+docfx Documentation/docfx.json --serve
+</code></pre></li>
+<li sourcefile="index.md" sourcestartlinenumber="105" sourceendlinenumber="105"><p sourcefile="index.md" sourcestartlinenumber="105" sourceendlinenumber="105">The generated website will be visible at <a href="http://localhost:8080" data-raw-source="&lt;http://localhost:8080&gt;" sourcefile="index.md" sourcestartlinenumber="105" sourceendlinenumber="105">http://localhost:8080</a>.</p>
+</li>
+</ul>
+</li>
+</ol>
+<p sourcefile="index.md" sourcestartlinenumber="107" sourceendlinenumber="108">If you want to have a more similar look to the Unity documentation, see this UnityFX template for DocFX:
+<a href="https://github.com/code-beans/UnityFX" data-raw-source="&lt;https://github.com/code-beans/UnityFX&gt;" sourcefile="index.md" sourcestartlinenumber="108" sourceendlinenumber="108">https://github.com/code-beans/UnityFX</a>.</p>
+<h2 id="generate-automatically-your-documentation" sourcefile="index.md" sourcestartlinenumber="110" sourceendlinenumber="110">Generate automatically your documentation</h2>
+<p sourcefile="index.md" sourcestartlinenumber="112" sourceendlinenumber="112">If you&#39;re using GitHub:</p>
+<ol sourcefile="index.md" sourcestartlinenumber="114" sourceendlinenumber="128">
+<li sourcefile="index.md" sourcestartlinenumber="114" sourceendlinenumber="126"><p sourcefile="index.md" sourcestartlinenumber="114" sourceendlinenumber="114">Copy the <code>.github/workflows/documentation.yml</code> workflow to your Unity project:</p>
+<pre sourcefile="index.md" sourcestartlinenumber="116" sourceendlinenumber="126"><code class="lang-diff">  .
++ ├── .github
++ |   └── workflows
++ |       └── documentation.yml
+  ├── Assets
+  ├── Documentation
+  ├── Package
+  ├── ProjectSettings
+  └── README.md
+</code></pre></li>
+<li sourcefile="index.md" sourcestartlinenumber="128" sourceendlinenumber="128"><p sourcefile="index.md" sourcestartlinenumber="128" sourceendlinenumber="128">Next push on <code>main</code> branch will build and deploy your documentation to <code>https://&lt;USERNAME&gt;.github.io/&lt;REPOSITORY&gt;/</code>!</p>
+</li>
+</ol>
+<p sourcefile="index.md" sourcestartlinenumber="130" sourceendlinenumber="134">If you&#39;re using GitLab, use the provided
+<a href="https://github.com/NormandErwan/DocFxForUnity/blob/main/.gitlab-ci.yml" data-raw-source="[`.gitlab-ci.yml`](https://github.com/NormandErwan/DocFxForUnity/blob/main/.gitlab-ci.yml)" sourcefile="index.md" sourcestartlinenumber="131" sourceendlinenumber="131"><code>.gitlab-ci.yml</code></a>.
+Generated website is pushed to a <code>public/</code> directory. See the
+<a href="https://docs.gitlab.com/ee/user/project/pages/getting_started_part_four.html" data-raw-source="[GitLab Pages documentation](https://docs.gitlab.com/ee/user/project/pages/getting_started_part_four.html)" sourcefile="index.md" sourcestartlinenumber="133" sourceendlinenumber="133">GitLab Pages documentation</a> for more
+details.</p>
+<h2 id="troubleshooting--faq" sourcefile="index.md" sourcestartlinenumber="136" sourceendlinenumber="136">Troubleshooting / FAQ</h2>
+<ul sourcefile="index.md" sourcestartlinenumber="138" sourceendlinenumber="158">
+<li sourcefile="index.md" sourcestartlinenumber="138" sourceendlinenumber="140"><p sourcefile="index.md" sourcestartlinenumber="138" sourceendlinenumber="138">DocFX outputs: <code>Warning:[ExtractMetadata]No project detected for extracting metadata.</code></p>
+<p sourcefile="index.md" sourcestartlinenumber="140" sourceendlinenumber="140">  Solution: On Unity, click <a href="https://docs.microsoft.com/fr-fr/visualstudio/cross-platform/media/vstu_open-csharp-project.png?view=vs-2019" data-raw-source="[Asset &gt; Open C# Project](https://docs.microsoft.com/fr-fr/visualstudio/cross-platform/media/vstu_open-csharp-project.png?view=vs-2019)" sourcefile="index.md" sourcestartlinenumber="140" sourceendlinenumber="140">Asset &gt; Open C# Project</a> to generate the required <code>.csproj</code>.</p>
+</li>
+<li sourcefile="index.md" sourcestartlinenumber="142" sourceendlinenumber="150"><p sourcefile="index.md" sourcestartlinenumber="142" sourceendlinenumber="142">DocFX outputs: <code>Warning:[ExtractMetadata]No metadata is generated for Assembly-CSharp,Assembly-CSharp-Editor.</code></p>
+<p sourcefile="index.md" sourcestartlinenumber="144" sourceendlinenumber="144">  Solution: Make sure your included your namespace in <code>Documentation/filterConfig.yml</code>:</p>
+<pre sourcefile="index.md" sourcestartlinenumber="146" sourceendlinenumber="150"><code class="lang-yaml">- include:
+  uidRegex: ^Your\.Namespace1
+  type: Namespace
+</code></pre></li>
+<li sourcefile="index.md" sourcestartlinenumber="152" sourceendlinenumber="158"><p sourcefile="index.md" sourcestartlinenumber="152" sourceendlinenumber="152">If you want to reference a specific version of Unity, change this line on your <code>docfx.json</code>:</p>
+<pre sourcefile="index.md" sourcestartlinenumber="154" sourceendlinenumber="156"><code class="lang-json">&quot;xref&quot;: [ &quot;https://normanderwan.github.io/UnityXrefMaps/&lt;version&gt;/xrefmap.yml&quot; ],
+</code></pre><p sourcefile="index.md" sourcestartlinenumber="158" sourceendlinenumber="158">where <code>&lt;version&gt;</code> is a Unity version in the form of <code>YYYY.x</code> (<em>e.g.</em> 2017.4, 2018.4, 2019.3).</p>
+</li>
+</ul>
+<h2 id="disclaimer" sourcefile="index.md" sourcestartlinenumber="160" sourceendlinenumber="160">Disclaimer</h2>
+<p sourcefile="index.md" sourcestartlinenumber="162" sourceendlinenumber="163">This repository is not sponsored by or affiliated with Unity Technologies or its affiliates.
+“Unity” is a trademark or registered trademark of Unity Technologies or its affiliates in the U.S. and elsewhere.</p>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            Example Unity documentation
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="styles/docfx.js"></script>
+    <script type="text/javascript" src="styles/main.js"></script>
+  </body>
+</html>

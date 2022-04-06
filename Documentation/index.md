@@ -1,7 +1,5 @@
 # 2D Isometric Procedural Content Generation System in Unity
 
-Explain what the project is here. Use the example below to apply correct formatting.
-
 # DocFX for Unity
 
 > [DocFX](https://dotnet.github.io/docfx/index.html) usage example for Unity projects

@@ -1,0 +1,288 @@
+### YamlMime:ManagedReference
+items:
+- uid: Global.HoverTipManager
+  commentId: T:Global.HoverTipManager
+  id: HoverTipManager
+  parent: Global
+  children:
+  - Global.HoverTipManager.onMouseHover
+  - Global.HoverTipManager.onMouseLoseFocus
+  - Global.HoverTipManager.tipText
+  - Global.HoverTipManager.tipWindow
+  langs:
+  - csharp
+  - vb
+  name: HoverTipManager
+  nameWithType: HoverTipManager
+  fullName: HoverTipManager
+  type: Class
+  source:
+    id: HoverTipManager
+    path: ''
+    startLine: 145
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  summary: "\nsuccess\n"
+  example: []
+  syntax:
+    content: 'public class HoverTipManager : MonoBehaviour'
+    content.vb: >-
+      Public Class HoverTipManager
+          Inherits MonoBehaviour
+  inheritance:
+  - System.Object
+  modifiers.csharp:
+  - public
+  - class
+  modifiers.vb:
+  - Public
+  - Class
+- uid: Global.HoverTipManager.tipText
+  commentId: F:Global.HoverTipManager.tipText
+  id: tipText
+  parent: Global.HoverTipManager
+  langs:
+  - csharp
+  - vb
+  name: tipText
+  nameWithType: HoverTipManager.tipText
+  fullName: HoverTipManager.tipText
+  type: Field
+  source:
+    id: tipText
+    path: ''
+    startLine: 147
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public TextMeshProUGUI tipText
+    return:
+      type: Global.TextMeshProUGUI
+    content.vb: Public tipText As TextMeshProUGUI
+  modifiers.csharp:
+  - public
+  modifiers.vb:
+  - Public
+- uid: Global.HoverTipManager.tipWindow
+  commentId: F:Global.HoverTipManager.tipWindow
+  id: tipWindow
+  parent: Global.HoverTipManager
+  langs:
+  - csharp
+  - vb
+  name: tipWindow
+  nameWithType: HoverTipManager.tipWindow
+  fullName: HoverTipManager.tipWindow
+  type: Field
+  source:
+    id: tipWindow
+    path: ''
+    startLine: 148
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public RectTransform tipWindow
+    return:
+      type: Global.RectTransform
+    content.vb: Public tipWindow As RectTransform
+  modifiers.csharp:
+  - public
+  modifiers.vb:
+  - Public
+- uid: Global.HoverTipManager.onMouseHover
+  commentId: F:Global.HoverTipManager.onMouseHover
+  id: onMouseHover
+  parent: Global.HoverTipManager
+  langs:
+  - csharp
+  - vb
+  name: onMouseHover
+  nameWithType: HoverTipManager.onMouseHover
+  fullName: HoverTipManager.onMouseHover
+  type: Field
+  source:
+    id: onMouseHover
+    path: ''
+    startLine: 150
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public static Action<string, Vector2> onMouseHover
+    return:
+      type: Global.Action{System.String,Vector2}
+    content.vb: Public Shared onMouseHover As Action(Of String, Vector2)
+  modifiers.csharp:
+  - public
+  - static
+  modifiers.vb:
+  - Public
+  - Shared
+- uid: Global.HoverTipManager.onMouseLoseFocus
+  commentId: F:Global.HoverTipManager.onMouseLoseFocus
+  id: onMouseLoseFocus
+  parent: Global.HoverTipManager
+  langs:
+  - csharp
+  - vb
+  name: onMouseLoseFocus
+  nameWithType: HoverTipManager.onMouseLoseFocus
+  fullName: HoverTipManager.onMouseLoseFocus
+  type: Field
+  source:
+    id: onMouseLoseFocus
+    path: ''
+    startLine: 151
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public static Action onMouseLoseFocus
+    return:
+      type: Global.Action
+    content.vb: Public Shared onMouseLoseFocus As Action
+  modifiers.csharp:
+  - public
+  - static
+  modifiers.vb:
+  - Public
+  - Shared
+references:
+- uid: Global
+  name: Global
+  nameWithType: Global
+  fullName: Global
+  nameWithType.vb: ''
+  fullName.vb: ''
+  name.vb: ''
+- uid: Global.TextMeshProUGUI
+  commentId: '!:Global.TextMeshProUGUI'
+  isExternal: true
+  name: TextMeshProUGUI
+  nameWithType: TextMeshProUGUI
+  fullName: TextMeshProUGUI
+- uid: Global.RectTransform
+  commentId: '!:Global.RectTransform'
+  isExternal: true
+  name: RectTransform
+  nameWithType: RectTransform
+  fullName: RectTransform
+- uid: Global.Action{System.String,Vector2}
+  commentId: '!:Global.Action{System.String,Vector2}'
+  definition: Global.Action`2
+  name: Action<String, Vector2>
+  nameWithType: Action<String, Vector2>
+  fullName: Action<System.String, Vector2>
+  nameWithType.vb: Action(Of String, Vector2)
+  fullName.vb: Action(Of System.String, Vector2)
+  name.vb: Action(Of String, Vector2)
+  spec.csharp:
+  - uid: Global.Action`2
+    name: Action
+    nameWithType: Action
+    fullName: Action
+    isExternal: true
+  - name: <
+    nameWithType: <
+    fullName: <
+  - uid: System.String
+    name: String
+    nameWithType: String
+    fullName: System.String
+    isExternal: true
+  - name: ', '
+    nameWithType: ', '
+    fullName: ', '
+  - uid: Global.Vector2
+    name: Vector2
+    nameWithType: Vector2
+    fullName: Vector2
+    isExternal: true
+  - name: '>'
+    nameWithType: '>'
+    fullName: '>'
+  spec.vb:
+  - uid: Global.Action`2
+    name: Action
+    nameWithType: Action
+    fullName: Action
+    isExternal: true
+  - name: '(Of '
+    nameWithType: '(Of '
+    fullName: '(Of '
+  - uid: System.String
+    name: String
+    nameWithType: String
+    fullName: System.String
+    isExternal: true
+  - name: ', '
+    nameWithType: ', '
+    fullName: ', '
+  - uid: Global.Vector2
+    name: Vector2
+    nameWithType: Vector2
+    fullName: Vector2
+    isExternal: true
+  - name: )
+    nameWithType: )
+    fullName: )
+- uid: Global.Action`2
+  commentId: '!:Global.Action`2'
+  isExternal: true
+  name: Action<, >
+  nameWithType: Action<, >
+  fullName: Action<, >
+  nameWithType.vb: Action(Of , )
+  fullName.vb: Action(Of , )
+  name.vb: Action(Of , )
+  spec.csharp:
+  - uid: Global.Action`2
+    name: Action
+    nameWithType: Action
+    fullName: Action
+    isExternal: true
+  - name: <
+    nameWithType: <
+    fullName: <
+  - name: ''
+    nameWithType: ''
+    fullName: ''
+  - name: ', '
+    nameWithType: ', '
+    fullName: ', '
+  - name: ''
+    nameWithType: ''
+    fullName: ''
+  - name: '>'
+    nameWithType: '>'
+    fullName: '>'
+  spec.vb:
+  - uid: Global.Action`2
+    name: Action
+    nameWithType: Action
+    fullName: Action
+    isExternal: true
+  - name: '(Of '
+    nameWithType: '(Of '
+    fullName: '(Of '
+  - name: ''
+    nameWithType: ''
+    fullName: ''
+  - name: ', '
+    nameWithType: ', '
+    fullName: ', '
+  - name: ''
+    nameWithType: ''
+    fullName: ''
+  - name: )
+    nameWithType: )
+    fullName: )
+- uid: Global.Action
+  commentId: '!:Global.Action'
+  isExternal: true
+  name: Action
+  nameWithType: Action
+  fullName: Action

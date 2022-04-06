@@ -1,0 +1,234 @@
+### YamlMime:ManagedReference
+items:
+- uid: Global.UIManager
+  commentId: T:Global.UIManager
+  id: UIManager
+  parent: Global
+  children:
+  - Global.UIManager.demoLevel
+  - Global.UIManager.generateLevel
+  - Global.UIManager.randomlyGenerateLevel
+  - Global.UIManager.recenterCamera
+  - Global.UIManager.zoomIn
+  - Global.UIManager.zoomOut
+  langs:
+  - csharp
+  - vb
+  name: UIManager
+  nameWithType: UIManager
+  fullName: UIManager
+  type: Class
+  source:
+    id: UIManager
+    path: ''
+    startLine: 604
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: 'public class UIManager : MonoBehaviour'
+    content.vb: >-
+      Public Class UIManager
+          Inherits MonoBehaviour
+  inheritance:
+  - System.Object
+  modifiers.csharp:
+  - public
+  - class
+  modifiers.vb:
+  - Public
+  - Class
+- uid: Global.UIManager.recenterCamera
+  commentId: M:Global.UIManager.recenterCamera
+  id: recenterCamera
+  parent: Global.UIManager
+  langs:
+  - csharp
+  - vb
+  name: recenterCamera()
+  nameWithType: UIManager.recenterCamera()
+  fullName: UIManager.recenterCamera()
+  type: Method
+  source:
+    id: recenterCamera
+    path: ''
+    startLine: 623
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public void recenterCamera()
+    content.vb: Public Sub recenterCamera
+  overload: Global.UIManager.recenterCamera*
+  modifiers.csharp:
+  - public
+  modifiers.vb:
+  - Public
+- uid: Global.UIManager.zoomIn
+  commentId: M:Global.UIManager.zoomIn
+  id: zoomIn
+  parent: Global.UIManager
+  langs:
+  - csharp
+  - vb
+  name: zoomIn()
+  nameWithType: UIManager.zoomIn()
+  fullName: UIManager.zoomIn()
+  type: Method
+  source:
+    id: zoomIn
+    path: ''
+    startLine: 628
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public void zoomIn()
+    content.vb: Public Sub zoomIn
+  overload: Global.UIManager.zoomIn*
+  modifiers.csharp:
+  - public
+  modifiers.vb:
+  - Public
+- uid: Global.UIManager.zoomOut
+  commentId: M:Global.UIManager.zoomOut
+  id: zoomOut
+  parent: Global.UIManager
+  langs:
+  - csharp
+  - vb
+  name: zoomOut()
+  nameWithType: UIManager.zoomOut()
+  fullName: UIManager.zoomOut()
+  type: Method
+  source:
+    id: zoomOut
+    path: ''
+    startLine: 633
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public void zoomOut()
+    content.vb: Public Sub zoomOut
+  overload: Global.UIManager.zoomOut*
+  modifiers.csharp:
+  - public
+  modifiers.vb:
+  - Public
+- uid: Global.UIManager.generateLevel
+  commentId: M:Global.UIManager.generateLevel
+  id: generateLevel
+  parent: Global.UIManager
+  langs:
+  - csharp
+  - vb
+  name: generateLevel()
+  nameWithType: UIManager.generateLevel()
+  fullName: UIManager.generateLevel()
+  type: Method
+  source:
+    id: generateLevel
+    path: ''
+    startLine: 638
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public void generateLevel()
+    content.vb: Public Sub generateLevel
+  overload: Global.UIManager.generateLevel*
+  modifiers.csharp:
+  - public
+  modifiers.vb:
+  - Public
+- uid: Global.UIManager.randomlyGenerateLevel
+  commentId: M:Global.UIManager.randomlyGenerateLevel
+  id: randomlyGenerateLevel
+  parent: Global.UIManager
+  langs:
+  - csharp
+  - vb
+  name: randomlyGenerateLevel()
+  nameWithType: UIManager.randomlyGenerateLevel()
+  fullName: UIManager.randomlyGenerateLevel()
+  type: Method
+  source:
+    id: randomlyGenerateLevel
+    path: ''
+    startLine: 643
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public void randomlyGenerateLevel()
+    content.vb: Public Sub randomlyGenerateLevel
+  overload: Global.UIManager.randomlyGenerateLevel*
+  modifiers.csharp:
+  - public
+  modifiers.vb:
+  - Public
+- uid: Global.UIManager.demoLevel
+  commentId: M:Global.UIManager.demoLevel
+  id: demoLevel
+  parent: Global.UIManager
+  langs:
+  - csharp
+  - vb
+  name: demoLevel()
+  nameWithType: UIManager.demoLevel()
+  fullName: UIManager.demoLevel()
+  type: Method
+  source:
+    id: demoLevel
+    path: ''
+    startLine: 648
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public void demoLevel()
+    content.vb: Public Sub demoLevel
+  overload: Global.UIManager.demoLevel*
+  modifiers.csharp:
+  - public
+  modifiers.vb:
+  - Public
+references:
+- uid: Global
+  name: Global
+  nameWithType: Global
+  fullName: Global
+  nameWithType.vb: ''
+  fullName.vb: ''
+  name.vb: ''
+- uid: Global.UIManager.recenterCamera*
+  commentId: Overload:Global.UIManager.recenterCamera
+  name: recenterCamera
+  nameWithType: UIManager.recenterCamera
+  fullName: UIManager.recenterCamera
+- uid: Global.UIManager.zoomIn*
+  commentId: Overload:Global.UIManager.zoomIn
+  name: zoomIn
+  nameWithType: UIManager.zoomIn
+  fullName: UIManager.zoomIn
+- uid: Global.UIManager.zoomOut*
+  commentId: Overload:Global.UIManager.zoomOut
+  name: zoomOut
+  nameWithType: UIManager.zoomOut
+  fullName: UIManager.zoomOut
+- uid: Global.UIManager.generateLevel*
+  commentId: Overload:Global.UIManager.generateLevel
+  name: generateLevel
+  nameWithType: UIManager.generateLevel
+  fullName: UIManager.generateLevel
+- uid: Global.UIManager.randomlyGenerateLevel*
+  commentId: Overload:Global.UIManager.randomlyGenerateLevel
+  name: randomlyGenerateLevel
+  nameWithType: UIManager.randomlyGenerateLevel
+  fullName: UIManager.randomlyGenerateLevel
+- uid: Global.UIManager.demoLevel*
+  commentId: Overload:Global.UIManager.demoLevel
+  name: demoLevel
+  nameWithType: UIManager.demoLevel
+  fullName: UIManager.demoLevel

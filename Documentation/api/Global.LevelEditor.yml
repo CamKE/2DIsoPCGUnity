@@ -1,0 +1,76 @@
+### YamlMime:ManagedReference
+items:
+- uid: Global.LevelEditor
+  commentId: T:Global.LevelEditor
+  id: LevelEditor
+  parent: Global
+  children:
+  - Global.LevelEditor.OnInspectorGUI
+  langs:
+  - csharp
+  - vb
+  name: LevelEditor
+  nameWithType: LevelEditor
+  fullName: LevelEditor
+  type: Class
+  source:
+    id: LevelEditor
+    path: ''
+    startLine: 659
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: 'public class LevelEditor : Editor'
+    content.vb: >-
+      Public Class LevelEditor
+          Inherits Editor
+  inheritance:
+  - System.Object
+  modifiers.csharp:
+  - public
+  - class
+  modifiers.vb:
+  - Public
+  - Class
+- uid: Global.LevelEditor.OnInspectorGUI
+  commentId: M:Global.LevelEditor.OnInspectorGUI
+  id: OnInspectorGUI
+  parent: Global.LevelEditor
+  langs:
+  - csharp
+  - vb
+  name: OnInspectorGUI()
+  nameWithType: LevelEditor.OnInspectorGUI()
+  fullName: LevelEditor.OnInspectorGUI()
+  type: Method
+  source:
+    id: OnInspectorGUI
+    path: ''
+    startLine: 663
+  assemblies:
+  - cs.temp.dll
+  namespace: Global
+  syntax:
+    content: public override void OnInspectorGUI()
+    content.vb: Public Overrides Sub OnInspectorGUI
+  overload: Global.LevelEditor.OnInspectorGUI*
+  modifiers.csharp:
+  - public
+  - override
+  modifiers.vb:
+  - Public
+  - Overrides
+references:
+- uid: Global
+  name: Global
+  nameWithType: Global
+  fullName: Global
+  nameWithType.vb: ''
+  fullName.vb: ''
+  name.vb: ''
+- uid: Global.LevelEditor.OnInspectorGUI*
+  commentId: Overload:Global.LevelEditor.OnInspectorGUI
+  name: OnInspectorGUI
+  nameWithType: LevelEditor.OnInspectorGUI
+  fullName: LevelEditor.OnInspectorGUI

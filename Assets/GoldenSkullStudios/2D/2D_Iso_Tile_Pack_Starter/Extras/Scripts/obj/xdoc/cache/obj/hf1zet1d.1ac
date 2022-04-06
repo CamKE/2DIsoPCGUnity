@@ -1,0 +1,1858 @@
+id: cs.temp.dll
+language: CSharp
+name:
+  Default: cs.temp.dll
+qualifiedName:
+  Default: cs.temp.dll
+type: Assembly
+modifiers: {}
+items:
+- id: Global
+  language: CSharp
+  name:
+    CSharp: Global
+    VB: ''
+  nameWithType:
+    CSharp: Global
+    VB: ''
+  qualifiedName:
+    CSharp: Global
+    VB: ''
+  type: Namespace
+  assemblies:
+  - cs.temp.dll
+  modifiers: {}
+  items:
+  - id: Global.Simple_Char_Move
+    commentId: T:Global.Simple_Char_Move
+    language: CSharp
+    name:
+      CSharp: Simple_Char_Move
+      VB: Simple_Char_Move
+    nameWithType:
+      CSharp: Simple_Char_Move
+      VB: Simple_Char_Move
+    qualifiedName:
+      CSharp: Simple_Char_Move
+      VB: Simple_Char_Move
+    type: Class
+    assemblies:
+    - cs.temp.dll
+    namespace: Global
+    source:
+      id: Simple_Char_Move
+      path: ''
+      startLine: 4
+    syntax:
+      content:
+        CSharp: 'public class Simple_Char_Move : MonoBehaviour'
+        VB: >-
+          Public Class Simple_Char_Move
+
+              Inherits MonoBehaviour
+    inheritance:
+    - System.Object
+    modifiers:
+      CSharp:
+      - public
+      - class
+      VB:
+      - Public
+      - Class
+    items: []
+  - id: Global.Simple_Door_Interaction
+    commentId: T:Global.Simple_Door_Interaction
+    language: CSharp
+    name:
+      CSharp: Simple_Door_Interaction
+      VB: Simple_Door_Interaction
+    nameWithType:
+      CSharp: Simple_Door_Interaction
+      VB: Simple_Door_Interaction
+    qualifiedName:
+      CSharp: Simple_Door_Interaction
+      VB: Simple_Door_Interaction
+    type: Class
+    assemblies:
+    - cs.temp.dll
+    namespace: Global
+    source:
+      id: Simple_Door_Interaction
+      path: ''
+      startLine: 56
+    syntax:
+      content:
+        CSharp: 'public class Simple_Door_Interaction : MonoBehaviour'
+        VB: >-
+          Public Class Simple_Door_Interaction
+
+              Inherits MonoBehaviour
+    inheritance:
+    - System.Object
+    modifiers:
+      CSharp:
+      - public
+      - class
+      VB:
+      - Public
+      - Class
+    items: []
+  - id: Global.HoverTip
+    commentId: T:Global.HoverTip
+    language: CSharp
+    name:
+      CSharp: HoverTip
+      VB: HoverTip
+    nameWithType:
+      CSharp: HoverTip
+      VB: HoverTip
+    qualifiedName:
+      CSharp: HoverTip
+      VB: HoverTip
+    type: Class
+    assemblies:
+    - cs.temp.dll
+    namespace: Global
+    source:
+      id: HoverTip
+      path: ''
+      startLine: 106
+    syntax:
+      content:
+        CSharp: 'public class HoverTip : MonoBehaviour'
+        VB: >-
+          Public Class HoverTip
+
+              Inherits MonoBehaviour
+    inheritance:
+    - System.Object
+    implements:
+    - Global.IPointerEnterHandler
+    - Global.IPointerExitHandler
+    modifiers:
+      CSharp:
+      - public
+      - class
+      VB:
+      - Public
+      - Class
+    items:
+    - id: Global.HoverTip.tipToShow
+      commentId: F:Global.HoverTip.tipToShow
+      language: CSharp
+      name:
+        CSharp: tipToShow
+        VB: tipToShow
+      nameWithType:
+        CSharp: HoverTip.tipToShow
+        VB: HoverTip.tipToShow
+      qualifiedName:
+        CSharp: HoverTip.tipToShow
+        VB: HoverTip.tipToShow
+      type: Field
+      assemblies:
+      - cs.temp.dll
+      namespace: Global
+      source:
+        id: tipToShow
+        path: ''
+        startLine: 108
+      syntax:
+        content:
+          CSharp: public string tipToShow
+          VB: Public tipToShow As String
+        return:
+          type: System.String
+      modifiers:
+        CSharp:
+        - public
+        VB:
+        - Public
+    - id: Global.HoverTip.OnPointerEnter(PointerEventData)
+      commentId: M:Global.HoverTip.OnPointerEnter(PointerEventData)
+      language: CSharp
+      name:
+        CSharp: OnPointerEnter(PointerEventData)
+        VB: OnPointerEnter(PointerEventData)
+      nameWithType:
+        CSharp: HoverTip.OnPointerEnter(PointerEventData)
+        VB: HoverTip.OnPointerEnter(PointerEventData)
+      qualifiedName:
+        CSharp: HoverTip.OnPointerEnter(PointerEventData)
+        VB: HoverTip.OnPointerEnter(PointerEventData)
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: Global
+      source:
+        id: OnPointerEnter
+        path: ''
+        startLine: 110
+      syntax:
+        content:
+          CSharp: public void OnPointerEnter(PointerEventData eventData)
+          VB: Public Sub OnPointerEnter(eventData As PointerEventData)
+        parameters:
+        - id: eventData
+          type: Global.PointerEventData
+      overload: Global.HoverTip.OnPointerEnter*
+      modifiers:
+        CSharp:
+        - public
+        VB:
+        - Public
+    - id: Global.HoverTip.OnPointerExit(PointerEventData)
+      commentId: M:Global.HoverTip.OnPointerExit(PointerEventData)
+      language: CSharp
+      name:
+        CSharp: OnPointerExit(PointerEventData)
+        VB: OnPointerExit(PointerEventData)
+      nameWithType:
+        CSharp: HoverTip.OnPointerExit(PointerEventData)
+        VB: HoverTip.OnPointerExit(PointerEventData)
+      qualifiedName:
+        CSharp: HoverTip.OnPointerExit(PointerEventData)
+        VB: HoverTip.OnPointerExit(PointerEventData)
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: Global
+      source:
+        id: OnPointerExit
+        path: ''
+        startLine: 116
+      syntax:
+        content:
+          CSharp: public void OnPointerExit(PointerEventData eventData)
+          VB: Public Sub OnPointerExit(eventData As PointerEventData)
+        parameters:
+        - id: eventData
+          type: Global.PointerEventData
+      overload: Global.HoverTip.OnPointerExit*
+      modifiers:
+        CSharp:
+        - public
+        VB:
+        - Public
+  - id: Global.HoverTipManager
+    commentId: T:Global.HoverTipManager
+    language: CSharp
+    name:
+      CSharp: HoverTipManager
+      VB: HoverTipManager
+    nameWithType:
+      CSharp: HoverTipManager
+      VB: HoverTipManager
+    qualifiedName:
+      CSharp: HoverTipManager
+      VB: HoverTipManager
+    type: Class
+    assemblies:
+    - cs.temp.dll
+    namespace: Global
+    source:
+      id: HoverTipManager
+      path: ''
+      startLine: 145
+    summary: "\nsuccess\n"
+    example: []
+    syntax:
+      content:
+        CSharp: 'public class HoverTipManager : MonoBehaviour'
+        VB: >-
+          Public Class HoverTipManager
+
+              Inherits MonoBehaviour
+    inheritance:
+    - System.Object
+    modifiers:
+      CSharp:
+      - public
+      - class
+      VB:
+      - Public
+      - Class
+    items:
+    - id: Global.HoverTipManager.tipText
+      commentId: F:Global.HoverTipManager.tipText
+      language: CSharp
+      name:
+        CSharp: tipText
+        VB: tipText
+      nameWithType:
+        CSharp: HoverTipManager.tipText
+        VB: HoverTipManager.tipText
+      qualifiedName:
+        CSharp: HoverTipManager.tipText
+        VB: HoverTipManager.tipText
+      type: Field
+      assemblies:
+      - cs.temp.dll
+      namespace: Global
+      source:
+        id: tipText
+        path: ''
+        startLine: 147
+      syntax:
+        content:
+          CSharp: public TextMeshProUGUI tipText
+          VB: Public tipText As TextMeshProUGUI
+        return:
+          type: Global.TextMeshProUGUI
+      modifiers:
+        CSharp:
+        - public
+        VB:
+        - Public
+    - id: Global.HoverTipManager.tipWindow
+      commentId: F:Global.HoverTipManager.tipWindow
+      language: CSharp
+      name:
+        CSharp: tipWindow
+        VB: tipWindow
+      nameWithType:
+        CSharp: HoverTipManager.tipWindow
+        VB: HoverTipManager.tipWindow
+      qualifiedName:
+        CSharp: HoverTipManager.tipWindow
+        VB: HoverTipManager.tipWindow
+      type: Field
+      assemblies:
+      - cs.temp.dll
+      namespace: Global
+      source:
+        id: tipWindow
+        path: ''
+        startLine: 148
+      syntax:
+        content:
+          CSharp: public RectTransform tipWindow
+          VB: Public tipWindow As RectTransform
+        return:
+          type: Global.RectTransform
+      modifiers:
+        CSharp:
+        - public
+        VB:
+        - Public
+    - id: Global.HoverTipManager.onMouseHover
+      commentId: F:Global.HoverTipManager.onMouseHover
+      language: CSharp
+      name:
+        CSharp: onMouseHover
+        VB: onMouseHover
+      nameWithType:
+        CSharp: HoverTipManager.onMouseHover
+        VB: HoverTipManager.onMouseHover
+      qualifiedName:
+        CSharp: HoverTipManager.onMouseHover
+        VB: HoverTipManager.onMouseHover
+      type: Field
+      assemblies:
+      - cs.temp.dll
+      namespace: Global
+      source:
+        id: onMouseHover
+        path: ''
+        startLine: 150
+      syntax:
+        content:
+          CSharp: public static Action<string, Vector2> onMouseHover
+          VB: Public Shared onMouseHover As Action(Of String, Vector2)
+        return:
+          type: Global.Action{System.String,Vector2}
+      modifiers:
+        CSharp:
+        - public
+        - static
+        VB:
+        - Public
+        - Shared
+    - id: Global.HoverTipManager.onMouseLoseFocus
+      commentId: F:Global.HoverTipManager.onMouseLoseFocus
+      language: CSharp
+      name:
+        CSharp: onMouseLoseFocus
+        VB: onMouseLoseFocus
+      nameWithType:
+        CSharp: HoverTipManager.onMouseLoseFocus
+        VB: HoverTipManager.onMouseLoseFocus
+      qualifiedName:
+        CSharp: HoverTipManager.onMouseLoseFocus
+        VB: HoverTipManager.onMouseLoseFocus
+      type: Field
+      assemblies:
+      - cs.temp.dll
+      namespace: Global
+      source:
+        id: onMouseLoseFocus
+        path: ''
+        startLine: 151
+      syntax:
+        content:
+          CSharp: public static Action onMouseLoseFocus
+          VB: Public Shared onMouseLoseFocus As Action
+        return:
+          type: Global.Action
+      modifiers:
+        CSharp:
+        - public
+        - static
+        VB:
+        - Public
+        - Shared
+  - id: Global.LevelCameraController
+    commentId: T:Global.LevelCameraController
+    language: CSharp
+    name:
+      CSharp: LevelCameraController
+      VB: LevelCameraController
+    nameWithType:
+      CSharp: LevelCameraController
+      VB: LevelCameraController
+    qualifiedName:
+      CSharp: LevelCameraController
+      VB: LevelCameraController
+    type: Class
+    assemblies:
+    - cs.temp.dll
+    namespace: Global
+    source:
+      id: LevelCameraController
+      path: ''
+      startLine: 191
+    syntax:
+      content:
+        CSharp: 'public class LevelCameraController : MonoBehaviour'
+        VB: >-
+          Public Class LevelCameraController
+
+              Inherits MonoBehaviour
+    inheritance:
+    - System.Object
+    modifiers:
+      CSharp:
+      - public
+      - class
+      VB:
+      - Public
+      - Class
+    items:
+    - id: Global.LevelCameraController.updateCamera(Vector3,Vector3,System.Single)
+      commentId: M:Global.LevelCameraController.updateCamera(Vector3,Vector3,System.Single)
+      language: CSharp
+      name:
+        CSharp: updateCamera(Vector3, Vector3, Single)
+        VB: updateCamera(Vector3, Vector3, Single)
+      nameWithType:
+        CSharp: LevelCameraController.updateCamera(Vector3, Vector3, Single)
+        VB: LevelCameraController.updateCamera(Vector3, Vector3, Single)
+      qualifiedName:
+        CSharp: LevelCameraController.updateCamera(Vector3, Vector3, System.Single)
+        VB: LevelCameraController.updateCamera(Vector3, Vector3, System.Single)
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: Global
+      source:
+        id: updateCamera
+        path: ''
+        startLine: 243
+      syntax:
+        content:
+          CSharp: public void updateCamera(Vector3 levelCenter, Vector3 cameraOffset, float newOrthoSize)
+          VB: Public Sub updateCamera(levelCenter As Vector3, cameraOffset As Vector3, newOrthoSize As Single)
+        parameters:
+        - id: levelCenter
+          type: Global.Vector3
+        - id: cameraOffset
+          type: Global.Vector3
+        - id: newOrthoSize
+          type: System.Single
+      overload: Global.LevelCameraController.updateCamera*
+      modifiers:
+        CSharp:
+        - public
+        VB:
+        - Public
+    - id: Global.LevelCameraController.recenterCamera
+      commentId: M:Global.LevelCameraController.recenterCamera
+      language: CSharp
+      name:
+        CSharp: recenterCamera()
+        VB: recenterCamera()
+      nameWithType:
+        CSharp: LevelCameraController.recenterCamera()
+        VB: LevelCameraController.recenterCamera()
+      qualifiedName:
+        CSharp: LevelCameraController.recenterCamera()
+        VB: LevelCameraController.recenterCamera()
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: Global
+      source:
+        id: recenterCamera
+        path: ''
+        startLine: 253
+      syntax:
+        content:
+          CSharp: public void recenterCamera()
+          VB: Public Sub recenterCamera
+      overload: Global.LevelCameraController.recenterCamera*
+      modifiers:
+        CSharp:
+        - public
+        VB:
+        - Public
+    - id: Global.LevelCameraController.zoomIn
+      commentId: M:Global.LevelCameraController.zoomIn
+      language: CSharp
+      name:
+        CSharp: zoomIn()
+        VB: zoomIn()
+      nameWithType:
+        CSharp: LevelCameraController.zoomIn()
+        VB: LevelCameraController.zoomIn()
+      qualifiedName:
+        CSharp: LevelCameraController.zoomIn()
+        VB: LevelCameraController.zoomIn()
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: Global
+      source:
+        id: zoomIn
+        path: ''
+        startLine: 259
+      syntax:
+        content:
+          CSharp: public void zoomIn()
+          VB: Public Sub zoomIn
+      overload: Global.LevelCameraController.zoomIn*
+      modifiers:
+        CSharp:
+        - public
+        VB:
+        - Public
+    - id: Global.LevelCameraController.zoomOut
+      commentId: M:Global.LevelCameraController.zoomOut
+      language: CSharp
+      name:
+        CSharp: zoomOut()
+        VB: zoomOut()
+      nameWithType:
+        CSharp: LevelCameraController.zoomOut()
+        VB: LevelCameraController.zoomOut()
+      qualifiedName:
+        CSharp: LevelCameraController.zoomOut()
+        VB: LevelCameraController.zoomOut()
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: Global
+      source:
+        id: zoomOut
+        path: ''
+        startLine: 267
+      syntax:
+        content:
+          CSharp: public void zoomOut()
+          VB: Public Sub zoomOut
+      overload: Global.LevelCameraController.zoomOut*
+      modifiers:
+        CSharp:
+        - public
+        VB:
+        - Public
+    - id: Global.LevelCameraController.IsPointerOverUIElement
+      commentId: M:Global.LevelCameraController.IsPointerOverUIElement
+      language: CSharp
+      name:
+        CSharp: IsPointerOverUIElement()
+        VB: IsPointerOverUIElement()
+      nameWithType:
+        CSharp: LevelCameraController.IsPointerOverUIElement()
+        VB: LevelCameraController.IsPointerOverUIElement()
+      qualifiedName:
+        CSharp: LevelCameraController.IsPointerOverUIElement()
+        VB: LevelCameraController.IsPointerOverUIElement()
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: Global
+      source:
+        id: IsPointerOverUIElement
+        path: ''
+        startLine: 316
+      syntax:
+        content:
+          CSharp: public bool IsPointerOverUIElement()
+          VB: Public Function IsPointerOverUIElement As Boolean
+        return:
+          type: System.Boolean
+      overload: Global.LevelCameraController.IsPointerOverUIElement*
+      modifiers:
+        CSharp:
+        - public
+        VB:
+        - Public
+  - id: Global.LevelManager
+    commentId: T:Global.LevelManager
+    language: CSharp
+    name:
+      CSharp: LevelManager
+      VB: LevelManager
+    nameWithType:
+      CSharp: LevelManager
+      VB: LevelManager
+    qualifiedName:
+      CSharp: LevelManager
+      VB: LevelManager
+    type: Class
+    assemblies:
+    - cs.temp.dll
+    namespace: Global
+    source:
+      id: LevelManager
+      path: ''
+      startLine: 354
+    syntax:
+      content:
+        CSharp: 'public class LevelManager : MonoBehaviour'
+        VB: >-
+          Public Class LevelManager
+
+              Inherits MonoBehaviour
+    inheritance:
+    - System.Object
+    modifiers:
+      CSharp:
+      - public
+      - class
+      VB:
+      - Public
+      - Class
+    items:
+    - id: Global.LevelManager.clearLevel
+      commentId: M:Global.LevelManager.clearLevel
+      language: CSharp
+      name:
+        CSharp: clearLevel()
+        VB: clearLevel()
+      nameWithType:
+        CSharp: LevelManager.clearLevel()
+        VB: LevelManager.clearLevel()
+      qualifiedName:
+        CSharp: LevelManager.clearLevel()
+        VB: LevelManager.clearLevel()
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: Global
+      source:
+        id: clearLevel
+        path: ''
+        startLine: 428
+      syntax:
+        content:
+          CSharp: public void clearLevel()
+          VB: Public Sub clearLevel
+      overload: Global.LevelManager.clearLevel*
+      modifiers:
+        CSharp:
+        - public
+        VB:
+        - Public
+    - id: Global.LevelManager.generate
+      commentId: M:Global.LevelManager.generate
+      language: CSharp
+      name:
+        CSharp: generate()
+        VB: generate()
+      nameWithType:
+        CSharp: LevelManager.generate()
+        VB: LevelManager.generate()
+      qualifiedName:
+        CSharp: LevelManager.generate()
+        VB: LevelManager.generate()
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: Global
+      source:
+        id: generate
+        path: ''
+        startLine: 433
+      syntax:
+        content:
+          CSharp: public void generate()
+          VB: Public Sub generate
+      overload: Global.LevelManager.generate*
+      modifiers:
+        CSharp:
+        - public
+        VB:
+        - Public
+    - id: Global.LevelManager.setupPlayer(Vector3)
+      commentId: M:Global.LevelManager.setupPlayer(Vector3)
+      language: CSharp
+      name:
+        CSharp: setupPlayer(Vector3)
+        VB: setupPlayer(Vector3)
+      nameWithType:
+        CSharp: LevelManager.setupPlayer(Vector3)
+        VB: LevelManager.setupPlayer(Vector3)
+      qualifiedName:
+        CSharp: LevelManager.setupPlayer(Vector3)
+        VB: LevelManager.setupPlayer(Vector3)
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: Global
+      source:
+        id: setupPlayer
+        path: ''
+        startLine: 508
+      syntax:
+        content:
+          CSharp: public void setupPlayer(Vector3 position)
+          VB: Public Sub setupPlayer(position As Vector3)
+        parameters:
+        - id: position
+          type: Global.Vector3
+      overload: Global.LevelManager.setupPlayer*
+      modifiers:
+        CSharp:
+        - public
+        VB:
+        - Public
+  - id: Global.PlayerController
+    commentId: T:Global.PlayerController
+    language: CSharp
+    name:
+      CSharp: PlayerController
+      VB: PlayerController
+    nameWithType:
+      CSharp: PlayerController
+      VB: PlayerController
+    qualifiedName:
+      CSharp: PlayerController
+      VB: PlayerController
+    type: Class
+    assemblies:
+    - cs.temp.dll
+    namespace: Global
+    source:
+      id: PlayerController
+      path: ''
+      startLine: 534
+    syntax:
+      content:
+        CSharp: 'public class PlayerController : MonoBehaviour'
+        VB: >-
+          Public Class PlayerController
+
+              Inherits MonoBehaviour
+    inheritance:
+    - System.Object
+    modifiers:
+      CSharp:
+      - public
+      - class
+      VB:
+      - Public
+      - Class
+    items:
+    - id: Global.PlayerController.setup
+      commentId: M:Global.PlayerController.setup
+      language: CSharp
+      name:
+        CSharp: setup()
+        VB: setup()
+      nameWithType:
+        CSharp: PlayerController.setup()
+        VB: PlayerController.setup()
+      qualifiedName:
+        CSharp: PlayerController.setup()
+        VB: PlayerController.setup()
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: Global
+      source:
+        id: setup
+        path: ''
+        startLine: 544
+      syntax:
+        content:
+          CSharp: public void setup()
+          VB: Public Sub setup
+      overload: Global.PlayerController.setup*
+      modifiers:
+        CSharp:
+        - public
+        VB:
+        - Public
+    - id: Global.PlayerController.MoveCharacter(System.Int32)
+      commentId: M:Global.PlayerController.MoveCharacter(System.Int32)
+      language: CSharp
+      name:
+        CSharp: MoveCharacter(Int32)
+        VB: MoveCharacter(Int32)
+      nameWithType:
+        CSharp: PlayerController.MoveCharacter(Int32)
+        VB: PlayerController.MoveCharacter(Int32)
+      qualifiedName:
+        CSharp: PlayerController.MoveCharacter(System.Int32)
+        VB: PlayerController.MoveCharacter(System.Int32)
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: Global
+      source:
+        id: MoveCharacter
+        path: ''
+        startLine: 558
+      syntax:
+        content:
+          CSharp: public void MoveCharacter(int height)
+          VB: Public Sub MoveCharacter(height As Integer)
+        parameters:
+        - id: height
+          type: System.Int32
+      overload: Global.PlayerController.MoveCharacter*
+      modifiers:
+        CSharp:
+        - public
+        VB:
+        - Public
+    - id: Global.PlayerController.setPosition(Vector3)
+      commentId: M:Global.PlayerController.setPosition(Vector3)
+      language: CSharp
+      name:
+        CSharp: setPosition(Vector3)
+        VB: setPosition(Vector3)
+      nameWithType:
+        CSharp: PlayerController.setPosition(Vector3)
+        VB: PlayerController.setPosition(Vector3)
+      qualifiedName:
+        CSharp: PlayerController.setPosition(Vector3)
+        VB: PlayerController.setPosition(Vector3)
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: Global
+      source:
+        id: setPosition
+        path: ''
+        startLine: 580
+      syntax:
+        content:
+          CSharp: public void setPosition(Vector3 position)
+          VB: Public Sub setPosition(position As Vector3)
+        parameters:
+        - id: position
+          type: Global.Vector3
+      overload: Global.PlayerController.setPosition*
+      modifiers:
+        CSharp:
+        - public
+        VB:
+        - Public
+  - id: Global.UIManager
+    commentId: T:Global.UIManager
+    language: CSharp
+    name:
+      CSharp: UIManager
+      VB: UIManager
+    nameWithType:
+      CSharp: UIManager
+      VB: UIManager
+    qualifiedName:
+      CSharp: UIManager
+      VB: UIManager
+    type: Class
+    assemblies:
+    - cs.temp.dll
+    namespace: Global
+    source:
+      id: UIManager
+      path: ''
+      startLine: 604
+    syntax:
+      content:
+        CSharp: 'public class UIManager : MonoBehaviour'
+        VB: >-
+          Public Class UIManager
+
+              Inherits MonoBehaviour
+    inheritance:
+    - System.Object
+    modifiers:
+      CSharp:
+      - public
+      - class
+      VB:
+      - Public
+      - Class
+    items:
+    - id: Global.UIManager.recenterCamera
+      commentId: M:Global.UIManager.recenterCamera
+      language: CSharp
+      name:
+        CSharp: recenterCamera()
+        VB: recenterCamera()
+      nameWithType:
+        CSharp: UIManager.recenterCamera()
+        VB: UIManager.recenterCamera()
+      qualifiedName:
+        CSharp: UIManager.recenterCamera()
+        VB: UIManager.recenterCamera()
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: Global
+      source:
+        id: recenterCamera
+        path: ''
+        startLine: 623
+      syntax:
+        content:
+          CSharp: public void recenterCamera()
+          VB: Public Sub recenterCamera
+      overload: Global.UIManager.recenterCamera*
+      modifiers:
+        CSharp:
+        - public
+        VB:
+        - Public
+    - id: Global.UIManager.zoomIn
+      commentId: M:Global.UIManager.zoomIn
+      language: CSharp
+      name:
+        CSharp: zoomIn()
+        VB: zoomIn()
+      nameWithType:
+        CSharp: UIManager.zoomIn()
+        VB: UIManager.zoomIn()
+      qualifiedName:
+        CSharp: UIManager.zoomIn()
+        VB: UIManager.zoomIn()
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: Global
+      source:
+        id: zoomIn
+        path: ''
+        startLine: 628
+      syntax:
+        content:
+          CSharp: public void zoomIn()
+          VB: Public Sub zoomIn
+      overload: Global.UIManager.zoomIn*
+      modifiers:
+        CSharp:
+        - public
+        VB:
+        - Public
+    - id: Global.UIManager.zoomOut
+      commentId: M:Global.UIManager.zoomOut
+      language: CSharp
+      name:
+        CSharp: zoomOut()
+        VB: zoomOut()
+      nameWithType:
+        CSharp: UIManager.zoomOut()
+        VB: UIManager.zoomOut()
+      qualifiedName:
+        CSharp: UIManager.zoomOut()
+        VB: UIManager.zoomOut()
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: Global
+      source:
+        id: zoomOut
+        path: ''
+        startLine: 633
+      syntax:
+        content:
+          CSharp: public void zoomOut()
+          VB: Public Sub zoomOut
+      overload: Global.UIManager.zoomOut*
+      modifiers:
+        CSharp:
+        - public
+        VB:
+        - Public
+    - id: Global.UIManager.generateLevel
+      commentId: M:Global.UIManager.generateLevel
+      language: CSharp
+      name:
+        CSharp: generateLevel()
+        VB: generateLevel()
+      nameWithType:
+        CSharp: UIManager.generateLevel()
+        VB: UIManager.generateLevel()
+      qualifiedName:
+        CSharp: UIManager.generateLevel()
+        VB: UIManager.generateLevel()
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: Global
+      source:
+        id: generateLevel
+        path: ''
+        startLine: 638
+      syntax:
+        content:
+          CSharp: public void generateLevel()
+          VB: Public Sub generateLevel
+      overload: Global.UIManager.generateLevel*
+      modifiers:
+        CSharp:
+        - public
+        VB:
+        - Public
+    - id: Global.UIManager.randomlyGenerateLevel
+      commentId: M:Global.UIManager.randomlyGenerateLevel
+      language: CSharp
+      name:
+        CSharp: randomlyGenerateLevel()
+        VB: randomlyGenerateLevel()
+      nameWithType:
+        CSharp: UIManager.randomlyGenerateLevel()
+        VB: UIManager.randomlyGenerateLevel()
+      qualifiedName:
+        CSharp: UIManager.randomlyGenerateLevel()
+        VB: UIManager.randomlyGenerateLevel()
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: Global
+      source:
+        id: randomlyGenerateLevel
+        path: ''
+        startLine: 643
+      syntax:
+        content:
+          CSharp: public void randomlyGenerateLevel()
+          VB: Public Sub randomlyGenerateLevel
+      overload: Global.UIManager.randomlyGenerateLevel*
+      modifiers:
+        CSharp:
+        - public
+        VB:
+        - Public
+    - id: Global.UIManager.demoLevel
+      commentId: M:Global.UIManager.demoLevel
+      language: CSharp
+      name:
+        CSharp: demoLevel()
+        VB: demoLevel()
+      nameWithType:
+        CSharp: UIManager.demoLevel()
+        VB: UIManager.demoLevel()
+      qualifiedName:
+        CSharp: UIManager.demoLevel()
+        VB: UIManager.demoLevel()
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: Global
+      source:
+        id: demoLevel
+        path: ''
+        startLine: 648
+      syntax:
+        content:
+          CSharp: public void demoLevel()
+          VB: Public Sub demoLevel
+      overload: Global.UIManager.demoLevel*
+      modifiers:
+        CSharp:
+        - public
+        VB:
+        - Public
+  - id: Global.LevelEditor
+    commentId: T:Global.LevelEditor
+    language: CSharp
+    name:
+      CSharp: LevelEditor
+      VB: LevelEditor
+    nameWithType:
+      CSharp: LevelEditor
+      VB: LevelEditor
+    qualifiedName:
+      CSharp: LevelEditor
+      VB: LevelEditor
+    type: Class
+    assemblies:
+    - cs.temp.dll
+    namespace: Global
+    source:
+      id: LevelEditor
+      path: ''
+      startLine: 659
+    syntax:
+      content:
+        CSharp: 'public class LevelEditor : Editor'
+        VB: >-
+          Public Class LevelEditor
+
+              Inherits Editor
+    inheritance:
+    - System.Object
+    modifiers:
+      CSharp:
+      - public
+      - class
+      VB:
+      - Public
+      - Class
+    items:
+    - id: Global.LevelEditor.OnInspectorGUI
+      commentId: M:Global.LevelEditor.OnInspectorGUI
+      language: CSharp
+      name:
+        CSharp: OnInspectorGUI()
+        VB: OnInspectorGUI()
+      nameWithType:
+        CSharp: LevelEditor.OnInspectorGUI()
+        VB: LevelEditor.OnInspectorGUI()
+      qualifiedName:
+        CSharp: LevelEditor.OnInspectorGUI()
+        VB: LevelEditor.OnInspectorGUI()
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: Global
+      source:
+        id: OnInspectorGUI
+        path: ''
+        startLine: 663
+      syntax:
+        content:
+          CSharp: public override void OnInspectorGUI()
+          VB: Public Overrides Sub OnInspectorGUI
+      overload: Global.LevelEditor.OnInspectorGUI*
+      modifiers:
+        CSharp:
+        - public
+        - override
+        VB:
+        - Public
+        - Overrides
+references:
+  Global.Simple_Char_Move:
+    name:
+      CSharp:
+      - id: Global.Simple_Char_Move
+        name: Simple_Char_Move
+        nameWithType: Simple_Char_Move
+        qualifiedName: Simple_Char_Move
+      VB:
+      - id: Global.Simple_Char_Move
+        name: Simple_Char_Move
+        nameWithType: Simple_Char_Move
+        qualifiedName: Simple_Char_Move
+    isDefinition: true
+    commentId: T:Global.Simple_Char_Move
+  Global.Simple_Door_Interaction:
+    name:
+      CSharp:
+      - id: Global.Simple_Door_Interaction
+        name: Simple_Door_Interaction
+        nameWithType: Simple_Door_Interaction
+        qualifiedName: Simple_Door_Interaction
+      VB:
+      - id: Global.Simple_Door_Interaction
+        name: Simple_Door_Interaction
+        nameWithType: Simple_Door_Interaction
+        qualifiedName: Simple_Door_Interaction
+    isDefinition: true
+    commentId: T:Global.Simple_Door_Interaction
+  Global.IPointerEnterHandler:
+    name:
+      CSharp:
+      - id: Global.IPointerEnterHandler
+        name: IPointerEnterHandler
+        nameWithType: IPointerEnterHandler
+        qualifiedName: IPointerEnterHandler
+        isExternal: true
+      VB:
+      - id: Global.IPointerEnterHandler
+        name: IPointerEnterHandler
+        nameWithType: IPointerEnterHandler
+        qualifiedName: IPointerEnterHandler
+        isExternal: true
+    isDefinition: true
+    commentId: '!:Global.IPointerEnterHandler'
+  Global.IPointerExitHandler:
+    name:
+      CSharp:
+      - id: Global.IPointerExitHandler
+        name: IPointerExitHandler
+        nameWithType: IPointerExitHandler
+        qualifiedName: IPointerExitHandler
+        isExternal: true
+      VB:
+      - id: Global.IPointerExitHandler
+        name: IPointerExitHandler
+        nameWithType: IPointerExitHandler
+        qualifiedName: IPointerExitHandler
+        isExternal: true
+    isDefinition: true
+    commentId: '!:Global.IPointerExitHandler'
+  System:
+    name:
+      CSharp:
+      - name: System
+        nameWithType: System
+        qualifiedName: System
+        isExternal: true
+      VB:
+      - name: System
+        nameWithType: System
+        qualifiedName: System
+    isDefinition: true
+    commentId: N:System
+  System.String:
+    name:
+      CSharp:
+      - id: System.String
+        name: String
+        nameWithType: String
+        qualifiedName: System.String
+        isExternal: true
+      VB:
+      - id: System.String
+        name: String
+        nameWithType: String
+        qualifiedName: System.String
+        isExternal: true
+    isDefinition: true
+    parent: System
+    commentId: T:System.String
+  Global.PointerEventData:
+    name:
+      CSharp:
+      - id: Global.PointerEventData
+        name: PointerEventData
+        nameWithType: PointerEventData
+        qualifiedName: PointerEventData
+        isExternal: true
+      VB:
+      - id: Global.PointerEventData
+        name: PointerEventData
+        nameWithType: PointerEventData
+        qualifiedName: PointerEventData
+        isExternal: true
+    isDefinition: true
+  Global.HoverTip.OnPointerEnter*:
+    name:
+      CSharp:
+      - id: Global.HoverTip.OnPointerEnter*
+        name: OnPointerEnter
+        nameWithType: HoverTip.OnPointerEnter
+        qualifiedName: HoverTip.OnPointerEnter
+      VB:
+      - id: Global.HoverTip.OnPointerEnter*
+        name: OnPointerEnter
+        nameWithType: HoverTip.OnPointerEnter
+        qualifiedName: HoverTip.OnPointerEnter
+    isDefinition: true
+    commentId: Overload:Global.HoverTip.OnPointerEnter
+  Global.HoverTip.OnPointerExit*:
+    name:
+      CSharp:
+      - id: Global.HoverTip.OnPointerExit*
+        name: OnPointerExit
+        nameWithType: HoverTip.OnPointerExit
+        qualifiedName: HoverTip.OnPointerExit
+      VB:
+      - id: Global.HoverTip.OnPointerExit*
+        name: OnPointerExit
+        nameWithType: HoverTip.OnPointerExit
+        qualifiedName: HoverTip.OnPointerExit
+    isDefinition: true
+    commentId: Overload:Global.HoverTip.OnPointerExit
+  Global.HoverTip:
+    name:
+      CSharp:
+      - id: Global.HoverTip
+        name: HoverTip
+        nameWithType: HoverTip
+        qualifiedName: HoverTip
+      VB:
+      - id: Global.HoverTip
+        name: HoverTip
+        nameWithType: HoverTip
+        qualifiedName: HoverTip
+    isDefinition: true
+    commentId: T:Global.HoverTip
+  Global.TextMeshProUGUI:
+    name:
+      CSharp:
+      - id: Global.TextMeshProUGUI
+        name: TextMeshProUGUI
+        nameWithType: TextMeshProUGUI
+        qualifiedName: TextMeshProUGUI
+        isExternal: true
+      VB:
+      - id: Global.TextMeshProUGUI
+        name: TextMeshProUGUI
+        nameWithType: TextMeshProUGUI
+        qualifiedName: TextMeshProUGUI
+        isExternal: true
+    isDefinition: true
+    commentId: '!:Global.TextMeshProUGUI'
+  Global.RectTransform:
+    name:
+      CSharp:
+      - id: Global.RectTransform
+        name: RectTransform
+        nameWithType: RectTransform
+        qualifiedName: RectTransform
+        isExternal: true
+      VB:
+      - id: Global.RectTransform
+        name: RectTransform
+        nameWithType: RectTransform
+        qualifiedName: RectTransform
+        isExternal: true
+    isDefinition: true
+    commentId: '!:Global.RectTransform'
+  Global.Action`2:
+    name:
+      CSharp:
+      - id: Global.Action`2
+        name: Action
+        nameWithType: Action
+        qualifiedName: Action
+        isExternal: true
+      - name: <
+        nameWithType: <
+        qualifiedName: <
+      - name: ''
+        nameWithType: ''
+        qualifiedName: ''
+      - name: ', '
+        nameWithType: ', '
+        qualifiedName: ', '
+      - name: ''
+        nameWithType: ''
+        qualifiedName: ''
+      - name: '>'
+        nameWithType: '>'
+        qualifiedName: '>'
+      VB:
+      - id: Global.Action`2
+        name: Action
+        nameWithType: Action
+        qualifiedName: Action
+        isExternal: true
+      - name: '(Of '
+        nameWithType: '(Of '
+        qualifiedName: '(Of '
+      - name: ''
+        nameWithType: ''
+        qualifiedName: ''
+      - name: ', '
+        nameWithType: ', '
+        qualifiedName: ', '
+      - name: ''
+        nameWithType: ''
+        qualifiedName: ''
+      - name: )
+        nameWithType: )
+        qualifiedName: )
+    isDefinition: true
+    commentId: '!:Global.Action`2'
+  Global.Action{System.String,Vector2}:
+    name:
+      CSharp:
+      - id: Global.Action`2
+        name: Action
+        nameWithType: Action
+        qualifiedName: Action
+        isExternal: true
+      - name: <
+        nameWithType: <
+        qualifiedName: <
+      - id: System.String
+        name: String
+        nameWithType: String
+        qualifiedName: System.String
+        isExternal: true
+      - name: ', '
+        nameWithType: ', '
+        qualifiedName: ', '
+      - id: Global.Vector2
+        name: Vector2
+        nameWithType: Vector2
+        qualifiedName: Vector2
+        isExternal: true
+      - name: '>'
+        nameWithType: '>'
+        qualifiedName: '>'
+      VB:
+      - id: Global.Action`2
+        name: Action
+        nameWithType: Action
+        qualifiedName: Action
+        isExternal: true
+      - name: '(Of '
+        nameWithType: '(Of '
+        qualifiedName: '(Of '
+      - id: System.String
+        name: String
+        nameWithType: String
+        qualifiedName: System.String
+        isExternal: true
+      - name: ', '
+        nameWithType: ', '
+        qualifiedName: ', '
+      - id: Global.Vector2
+        name: Vector2
+        nameWithType: Vector2
+        qualifiedName: Vector2
+        isExternal: true
+      - name: )
+        nameWithType: )
+        qualifiedName: )
+    isDefinition: false
+    definition: Global.Action`2
+    commentId: '!:Global.Action{System.String,Vector2}'
+  Global.Action:
+    name:
+      CSharp:
+      - id: Global.Action
+        name: Action
+        nameWithType: Action
+        qualifiedName: Action
+        isExternal: true
+      VB:
+      - id: Global.Action
+        name: Action
+        nameWithType: Action
+        qualifiedName: Action
+        isExternal: true
+    isDefinition: true
+    commentId: '!:Global.Action'
+  Global.HoverTipManager:
+    name:
+      CSharp:
+      - id: Global.HoverTipManager
+        name: HoverTipManager
+        nameWithType: HoverTipManager
+        qualifiedName: HoverTipManager
+      VB:
+      - id: Global.HoverTipManager
+        name: HoverTipManager
+        nameWithType: HoverTipManager
+        qualifiedName: HoverTipManager
+    isDefinition: true
+    commentId: T:Global.HoverTipManager
+  Global.Vector3:
+    name:
+      CSharp:
+      - id: Global.Vector3
+        name: Vector3
+        nameWithType: Vector3
+        qualifiedName: Vector3
+        isExternal: true
+      VB:
+      - id: Global.Vector3
+        name: Vector3
+        nameWithType: Vector3
+        qualifiedName: Vector3
+        isExternal: true
+    isDefinition: true
+  System.Single:
+    name:
+      CSharp:
+      - id: System.Single
+        name: Single
+        nameWithType: Single
+        qualifiedName: System.Single
+        isExternal: true
+      VB:
+      - id: System.Single
+        name: Single
+        nameWithType: Single
+        qualifiedName: System.Single
+        isExternal: true
+    isDefinition: true
+    parent: System
+    commentId: T:System.Single
+  Global.LevelCameraController.updateCamera*:
+    name:
+      CSharp:
+      - id: Global.LevelCameraController.updateCamera*
+        name: updateCamera
+        nameWithType: LevelCameraController.updateCamera
+        qualifiedName: LevelCameraController.updateCamera
+      VB:
+      - id: Global.LevelCameraController.updateCamera*
+        name: updateCamera
+        nameWithType: LevelCameraController.updateCamera
+        qualifiedName: LevelCameraController.updateCamera
+    isDefinition: true
+    commentId: Overload:Global.LevelCameraController.updateCamera
+  Global.LevelCameraController.recenterCamera*:
+    name:
+      CSharp:
+      - id: Global.LevelCameraController.recenterCamera*
+        name: recenterCamera
+        nameWithType: LevelCameraController.recenterCamera
+        qualifiedName: LevelCameraController.recenterCamera
+      VB:
+      - id: Global.LevelCameraController.recenterCamera*
+        name: recenterCamera
+        nameWithType: LevelCameraController.recenterCamera
+        qualifiedName: LevelCameraController.recenterCamera
+    isDefinition: true
+    commentId: Overload:Global.LevelCameraController.recenterCamera
+  Global.LevelCameraController.zoomIn*:
+    name:
+      CSharp:
+      - id: Global.LevelCameraController.zoomIn*
+        name: zoomIn
+        nameWithType: LevelCameraController.zoomIn
+        qualifiedName: LevelCameraController.zoomIn
+      VB:
+      - id: Global.LevelCameraController.zoomIn*
+        name: zoomIn
+        nameWithType: LevelCameraController.zoomIn
+        qualifiedName: LevelCameraController.zoomIn
+    isDefinition: true
+    commentId: Overload:Global.LevelCameraController.zoomIn
+  Global.LevelCameraController.zoomOut*:
+    name:
+      CSharp:
+      - id: Global.LevelCameraController.zoomOut*
+        name: zoomOut
+        nameWithType: LevelCameraController.zoomOut
+        qualifiedName: LevelCameraController.zoomOut
+      VB:
+      - id: Global.LevelCameraController.zoomOut*
+        name: zoomOut
+        nameWithType: LevelCameraController.zoomOut
+        qualifiedName: LevelCameraController.zoomOut
+    isDefinition: true
+    commentId: Overload:Global.LevelCameraController.zoomOut
+  System.Boolean:
+    name:
+      CSharp:
+      - id: System.Boolean
+        name: Boolean
+        nameWithType: Boolean
+        qualifiedName: System.Boolean
+        isExternal: true
+      VB:
+      - id: System.Boolean
+        name: Boolean
+        nameWithType: Boolean
+        qualifiedName: System.Boolean
+        isExternal: true
+    isDefinition: true
+    parent: System
+    commentId: T:System.Boolean
+  Global.LevelCameraController.IsPointerOverUIElement*:
+    name:
+      CSharp:
+      - id: Global.LevelCameraController.IsPointerOverUIElement*
+        name: IsPointerOverUIElement
+        nameWithType: LevelCameraController.IsPointerOverUIElement
+        qualifiedName: LevelCameraController.IsPointerOverUIElement
+      VB:
+      - id: Global.LevelCameraController.IsPointerOverUIElement*
+        name: IsPointerOverUIElement
+        nameWithType: LevelCameraController.IsPointerOverUIElement
+        qualifiedName: LevelCameraController.IsPointerOverUIElement
+    isDefinition: true
+    commentId: Overload:Global.LevelCameraController.IsPointerOverUIElement
+  Global.LevelCameraController:
+    name:
+      CSharp:
+      - id: Global.LevelCameraController
+        name: LevelCameraController
+        nameWithType: LevelCameraController
+        qualifiedName: LevelCameraController
+      VB:
+      - id: Global.LevelCameraController
+        name: LevelCameraController
+        nameWithType: LevelCameraController
+        qualifiedName: LevelCameraController
+    isDefinition: true
+    commentId: T:Global.LevelCameraController
+  Global.LevelManager.clearLevel*:
+    name:
+      CSharp:
+      - id: Global.LevelManager.clearLevel*
+        name: clearLevel
+        nameWithType: LevelManager.clearLevel
+        qualifiedName: LevelManager.clearLevel
+      VB:
+      - id: Global.LevelManager.clearLevel*
+        name: clearLevel
+        nameWithType: LevelManager.clearLevel
+        qualifiedName: LevelManager.clearLevel
+    isDefinition: true
+    commentId: Overload:Global.LevelManager.clearLevel
+  Global.LevelManager.generate*:
+    name:
+      CSharp:
+      - id: Global.LevelManager.generate*
+        name: generate
+        nameWithType: LevelManager.generate
+        qualifiedName: LevelManager.generate
+      VB:
+      - id: Global.LevelManager.generate*
+        name: generate
+        nameWithType: LevelManager.generate
+        qualifiedName: LevelManager.generate
+    isDefinition: true
+    commentId: Overload:Global.LevelManager.generate
+  Global.LevelManager.setupPlayer*:
+    name:
+      CSharp:
+      - id: Global.LevelManager.setupPlayer*
+        name: setupPlayer
+        nameWithType: LevelManager.setupPlayer
+        qualifiedName: LevelManager.setupPlayer
+      VB:
+      - id: Global.LevelManager.setupPlayer*
+        name: setupPlayer
+        nameWithType: LevelManager.setupPlayer
+        qualifiedName: LevelManager.setupPlayer
+    isDefinition: true
+    commentId: Overload:Global.LevelManager.setupPlayer
+  Global.LevelManager:
+    name:
+      CSharp:
+      - id: Global.LevelManager
+        name: LevelManager
+        nameWithType: LevelManager
+        qualifiedName: LevelManager
+      VB:
+      - id: Global.LevelManager
+        name: LevelManager
+        nameWithType: LevelManager
+        qualifiedName: LevelManager
+    isDefinition: true
+    commentId: T:Global.LevelManager
+  Global.PlayerController.setup*:
+    name:
+      CSharp:
+      - id: Global.PlayerController.setup*
+        name: setup
+        nameWithType: PlayerController.setup
+        qualifiedName: PlayerController.setup
+      VB:
+      - id: Global.PlayerController.setup*
+        name: setup
+        nameWithType: PlayerController.setup
+        qualifiedName: PlayerController.setup
+    isDefinition: true
+    commentId: Overload:Global.PlayerController.setup
+  System.Int32:
+    name:
+      CSharp:
+      - id: System.Int32
+        name: Int32
+        nameWithType: Int32
+        qualifiedName: System.Int32
+        isExternal: true
+      VB:
+      - id: System.Int32
+        name: Int32
+        nameWithType: Int32
+        qualifiedName: System.Int32
+        isExternal: true
+    isDefinition: true
+    parent: System
+    commentId: T:System.Int32
+  Global.PlayerController.MoveCharacter*:
+    name:
+      CSharp:
+      - id: Global.PlayerController.MoveCharacter*
+        name: MoveCharacter
+        nameWithType: PlayerController.MoveCharacter
+        qualifiedName: PlayerController.MoveCharacter
+      VB:
+      - id: Global.PlayerController.MoveCharacter*
+        name: MoveCharacter
+        nameWithType: PlayerController.MoveCharacter
+        qualifiedName: PlayerController.MoveCharacter
+    isDefinition: true
+    commentId: Overload:Global.PlayerController.MoveCharacter
+  Global.PlayerController.setPosition*:
+    name:
+      CSharp:
+      - id: Global.PlayerController.setPosition*
+        name: setPosition
+        nameWithType: PlayerController.setPosition
+        qualifiedName: PlayerController.setPosition
+      VB:
+      - id: Global.PlayerController.setPosition*
+        name: setPosition
+        nameWithType: PlayerController.setPosition
+        qualifiedName: PlayerController.setPosition
+    isDefinition: true
+    commentId: Overload:Global.PlayerController.setPosition
+  Global.PlayerController:
+    name:
+      CSharp:
+      - id: Global.PlayerController
+        name: PlayerController
+        nameWithType: PlayerController
+        qualifiedName: PlayerController
+      VB:
+      - id: Global.PlayerController
+        name: PlayerController
+        nameWithType: PlayerController
+        qualifiedName: PlayerController
+    isDefinition: true
+    commentId: T:Global.PlayerController
+  Global.UIManager.recenterCamera*:
+    name:
+      CSharp:
+      - id: Global.UIManager.recenterCamera*
+        name: recenterCamera
+        nameWithType: UIManager.recenterCamera
+        qualifiedName: UIManager.recenterCamera
+      VB:
+      - id: Global.UIManager.recenterCamera*
+        name: recenterCamera
+        nameWithType: UIManager.recenterCamera
+        qualifiedName: UIManager.recenterCamera
+    isDefinition: true
+    commentId: Overload:Global.UIManager.recenterCamera
+  Global.UIManager.zoomIn*:
+    name:
+      CSharp:
+      - id: Global.UIManager.zoomIn*
+        name: zoomIn
+        nameWithType: UIManager.zoomIn
+        qualifiedName: UIManager.zoomIn
+      VB:
+      - id: Global.UIManager.zoomIn*
+        name: zoomIn
+        nameWithType: UIManager.zoomIn
+        qualifiedName: UIManager.zoomIn
+    isDefinition: true
+    commentId: Overload:Global.UIManager.zoomIn
+  Global.UIManager.zoomOut*:
+    name:
+      CSharp:
+      - id: Global.UIManager.zoomOut*
+        name: zoomOut
+        nameWithType: UIManager.zoomOut
+        qualifiedName: UIManager.zoomOut
+      VB:
+      - id: Global.UIManager.zoomOut*
+        name: zoomOut
+        nameWithType: UIManager.zoomOut
+        qualifiedName: UIManager.zoomOut
+    isDefinition: true
+    commentId: Overload:Global.UIManager.zoomOut
+  Global.UIManager.generateLevel*:
+    name:
+      CSharp:
+      - id: Global.UIManager.generateLevel*
+        name: generateLevel
+        nameWithType: UIManager.generateLevel
+        qualifiedName: UIManager.generateLevel
+      VB:
+      - id: Global.UIManager.generateLevel*
+        name: generateLevel
+        nameWithType: UIManager.generateLevel
+        qualifiedName: UIManager.generateLevel
+    isDefinition: true
+    commentId: Overload:Global.UIManager.generateLevel
+  Global.UIManager.randomlyGenerateLevel*:
+    name:
+      CSharp:
+      - id: Global.UIManager.randomlyGenerateLevel*
+        name: randomlyGenerateLevel
+        nameWithType: UIManager.randomlyGenerateLevel
+        qualifiedName: UIManager.randomlyGenerateLevel
+      VB:
+      - id: Global.UIManager.randomlyGenerateLevel*
+        name: randomlyGenerateLevel
+        nameWithType: UIManager.randomlyGenerateLevel
+        qualifiedName: UIManager.randomlyGenerateLevel
+    isDefinition: true
+    commentId: Overload:Global.UIManager.randomlyGenerateLevel
+  Global.UIManager.demoLevel*:
+    name:
+      CSharp:
+      - id: Global.UIManager.demoLevel*
+        name: demoLevel
+        nameWithType: UIManager.demoLevel
+        qualifiedName: UIManager.demoLevel
+      VB:
+      - id: Global.UIManager.demoLevel*
+        name: demoLevel
+        nameWithType: UIManager.demoLevel
+        qualifiedName: UIManager.demoLevel
+    isDefinition: true
+    commentId: Overload:Global.UIManager.demoLevel
+  Global.UIManager:
+    name:
+      CSharp:
+      - id: Global.UIManager
+        name: UIManager
+        nameWithType: UIManager
+        qualifiedName: UIManager
+      VB:
+      - id: Global.UIManager
+        name: UIManager
+        nameWithType: UIManager
+        qualifiedName: UIManager
+    isDefinition: true
+    commentId: T:Global.UIManager
+  Global.LevelEditor.OnInspectorGUI*:
+    name:
+      CSharp:
+      - id: Global.LevelEditor.OnInspectorGUI*
+        name: OnInspectorGUI
+        nameWithType: LevelEditor.OnInspectorGUI
+        qualifiedName: LevelEditor.OnInspectorGUI
+      VB:
+      - id: Global.LevelEditor.OnInspectorGUI*
+        name: OnInspectorGUI
+        nameWithType: LevelEditor.OnInspectorGUI
+        qualifiedName: LevelEditor.OnInspectorGUI
+    isDefinition: true
+    commentId: Overload:Global.LevelEditor.OnInspectorGUI
+  Global.LevelEditor:
+    name:
+      CSharp:
+      - id: Global.LevelEditor
+        name: LevelEditor
+        nameWithType: LevelEditor
+        qualifiedName: LevelEditor
+      VB:
+      - id: Global.LevelEditor
+        name: LevelEditor
+        nameWithType: LevelEditor
+        qualifiedName: LevelEditor
+    isDefinition: true
+    commentId: T:Global.LevelEditor
+  Global:
+    name:
+      CSharp:
+      - name: Global
+        nameWithType: Global
+        qualifiedName: Global
+      VB:
+      - name: ''
+        nameWithType: ''
+        qualifiedName: ''
+    isDefinition: true
