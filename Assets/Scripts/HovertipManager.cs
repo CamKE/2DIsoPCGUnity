@@ -6,45 +6,95 @@ using TMPro;
 
 // Credit to Comp-3 Interative for the tutorial
 /// <summary>
-/// success
+/// This class is responsible for managing the functionality of the
+/// <see cref="HoverTip"/>.
 /// </summary>
 public class HoverTipManager : MonoBehaviour
 {
+    
+    /// <summary>
+    ///  The text to be displayed in the tip window.
+    /// </summary>
     public TextMeshProUGUI tipText;
+
+    /// <summary>
+    /// The 'floating' window which holds the tip text.
+    /// </summary>
     public RectTransform tipWindow;
 
+    /// <summary>
+    /// Delegate for response to the mouse hover over a element.
+    /// </summary>
     public static Action<string, Vector2> onMouseHover;
+
+    /// <summary>
+    /// Delegate for response to the mouse no longer hovering over a element.
+    /// </summary>
     public static Action onMouseLoseFocus;
 
+    /// <summary>
+    /// A function inherited from <see href="https://docs.unity3d.com/ScriptReference/MonoBehaviour.html">MonoBehaviour</see>
+    /// which is called on the frame when a script is enabled.
+    /// </summary>
     private void Start()
     {
+        // hide the tip upon application start
         hideTip();
     }
 
+    /// <summary>
+    /// A function inherited from <see href="https://docs.unity3d.com/ScriptReference/MonoBehaviour.html">MonoBehaviour</see>
+    /// which is called when an instance of this class is created.
+    /// </summary>
     private void OnEnable()
     {
+        // assign the function showTip to the onMouseHover delegate
         onMouseHover += showTip;
+        // assign the function hideTip to the onMouseLoseFocus delegate
         onMouseLoseFocus += hideTip;
     }
 
+    /// <summary>
+    /// A function inherited from <see href="https://docs.unity3d.com/ScriptReference/MonoBehaviour.html">MonoBehaviour</see>
+    /// which is called when an instance of this class is destroyed.
+    /// </summary>
     private void OnDisable()
     {
+        // remove the function showTip from the onMouseHover delegate
         onMouseHover -= showTip;
+        // remove the function hideTip to the onMouseLoseFocus delegate
         onMouseLoseFocus -= hideTip;
     }
 
+    /// <summary>
+    /// Responsible for displaying a given tip inside the tip window relative to the given postion.
+    /// </summary>
+    /// <param name="tip">The text to be displayed in the tip window</param>
+    /// <param name="mousePos">The position of the mouse where the tip was activated</param>
     private void showTip(string tip, Vector2 mousePos)
     {
+        // assign the new text to be displayed to the current tip text 
         tipText.text = tip;
+
+        // define the size of the tip window
+        // tip window width should be at most 200
+        // tip window height is set to text height
         tipWindow.sizeDelta = new Vector2(tipText.preferredWidth > 200 ? 200 : tipText.preferredWidth, tipText.preferredHeight);
-        Debug.Log(tipWindow.sizeDelta);
+        // make the tip window object active
         tipWindow.gameObject.SetActive(true);
+        // place the tip window slighty to the right
+        // of the position where the tip was activated
         tipWindow.transform.position = new Vector2(mousePos.x + tipWindow.sizeDelta.x * 0.6f, mousePos.y);
     }
 
+    /// <summary>
+    /// Responsible for hiding the tip window
+    /// </summary>
     private void hideTip()
     {
+        // remove the previous tip from the tiptext (set to null)
         tipText.text = default;
+        // deactivate the tip window object
         tipWindow.gameObject.SetActive(false);
     }
 }
