@@ -3,7 +3,7 @@ name: Example documentation
 on:
   push:
     branches:
-      - initial-map-generation
+      - main
 
 jobs:
   # Build the documentation
