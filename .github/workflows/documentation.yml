@@ -37,10 +37,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out my other private repo
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
         with:
-          repository: camke/camKE.github.io
-          token: ${{ secrets.my_pat }}
+            ref: camke.github.io
 
       # Download the generated documentation
       - name: Download site artifact
