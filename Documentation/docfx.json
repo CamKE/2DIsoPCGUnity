@@ -19,8 +19,8 @@
     ],
     "build": {
         "globalMetadata": {
-            "_appTitle": "Example Unity documentation",
-            "_appFooter": "Example Unity documentation",
+            "_appTitle": "Project documentation",
+            "_appFooter": "Project documentation",
             "_enableSearch": true
         },
         "content": [
@@ -62,7 +62,7 @@
             }
         ],
         "sitemap": {
-            "baseUrl": "https://camke.github.io/2DIsoPCGUnity",
+            "baseUrl": "https://camke.github.io/",
             "changefreq": "weekly",
             "fileOptions": {
                 "api/*": {
