@@ -21,7 +21,7 @@ public class LevelManager : MonoBehaviour
     [SerializeField][HideInInspector]
     private Tilemap tilemap;
 
-    [SerializeField][HideInInspector]
+    [SerializeField]
     private SpriteAtlas atlas;
 
     [SerializeField]
@@ -30,6 +30,8 @@ public class LevelManager : MonoBehaviour
     private PlayerController playerController;
 
     private LevelCameraController levelCameraController;
+
+    private bool playerIsInstantiated;
 
 
     // i use this instead of taking the grid center to world, as the grid center looks off. instead i take the tilemap tile center
@@ -41,6 +43,7 @@ public class LevelManager : MonoBehaviour
     {
         tileCenterOffset = new Vector3(0,0.7f,0);
         levelCameraController = levelCamera.GetComponent<LevelCameraController>();
+        playerIsInstantiated = false;
     }
 
     void Update()
@@ -154,8 +157,6 @@ public class LevelManager : MonoBehaviour
 
         tilemapRenderer.mode = TilemapRenderer.Mode.Individual;
 
-        atlas = (SpriteAtlas)AssetDatabase.LoadAssetAtPath("Assets/GoldenSkullStudios/2D/2D_Iso_Tile_Pack_Starter/Atlas/2D_Iso_Starter_Atlas.spriteatlas", typeof(SpriteAtlas));
-
         //setupPlayer(tilemap.GetCellCenterWorld(Vector3Int.zero) + tileCenterOffset);
     }
 
@@ -166,12 +167,14 @@ public class LevelManager : MonoBehaviour
         playerController.setup();
 
         playerController.setPosition(position);
-
+        playerIsInstantiated = true;
     }
 
     private void OnApplicationQuit()
     {
-        if (PrefabUtility.GetPrefabInstanceStatus(player) != PrefabInstanceStatus.NotAPrefab)
+        clearLevel();
+
+        if (playerIsInstantiated)
         {
             Destroy(player);
         }
