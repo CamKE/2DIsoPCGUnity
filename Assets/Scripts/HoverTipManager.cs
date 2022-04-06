@@ -32,20 +32,16 @@ public class HoverTipManager : MonoBehaviour
     /// </summary>
     public static Action onMouseLoseFocus;
 
-    /// <summary>
-    /// A function inherited from <see href="https://docs.unity3d.com/ScriptReference/MonoBehaviour.html">MonoBehaviour</see>
-    /// which is called on the frame when a script is enabled.
-    /// </summary>
+    
+    
+    // called on the frame when the script is enabled.
     private void Start()
     {
         // hide the tip upon application start
         hideTip();
     }
 
-    /// <summary>
-    /// A function inherited from <see href="https://docs.unity3d.com/ScriptReference/MonoBehaviour.html">MonoBehaviour</see>
-    /// which is called when an instance of this class is created.
-    /// </summary>
+     // called when an instance of this class is created.
     private void OnEnable()
     {
         // assign the function showTip to the onMouseHover delegate
@@ -54,10 +50,7 @@ public class HoverTipManager : MonoBehaviour
         onMouseLoseFocus += hideTip;
     }
 
-    /// <summary>
-    /// A function inherited from <see href="https://docs.unity3d.com/ScriptReference/MonoBehaviour.html">MonoBehaviour</see>
-    /// which is called when an instance of this class is destroyed.
-    /// </summary>
+    // called when an instance of this class is destroyed
     private void OnDisable()
     {
         // remove the function showTip from the onMouseHover delegate
@@ -66,11 +59,7 @@ public class HoverTipManager : MonoBehaviour
         onMouseLoseFocus -= hideTip;
     }
 
-    /// <summary>
-    /// Responsible for displaying a given tip inside the tip window relative to the given postion.
-    /// </summary>
-    /// <param name="tip">The text to be displayed in the tip window</param>
-    /// <param name="mousePos">The position of the mouse where the tip was activated</param>
+    // Responsible for displaying a given tip inside the tip window relative to the given postion
     private void showTip(string tip, Vector2 mousePos)
     {
         // assign the new text to be displayed to the current tip text 
@@ -87,9 +76,7 @@ public class HoverTipManager : MonoBehaviour
         tipWindow.transform.position = new Vector2(mousePos.x + tipWindow.sizeDelta.x * 0.6f, mousePos.y);
     }
 
-    /// <summary>
-    /// Responsible for hiding the tip window
-    /// </summary>
+    // Responsible for hiding the tip window
     private void hideTip()
     {
         // remove the previous tip from the tiptext (set to null)
