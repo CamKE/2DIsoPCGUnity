@@ -36,11 +36,6 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Check out my other private repo
-        uses: actions/checkout@v3
-        with:
-            repository: CamKE/camKE.github.io
-
       # Download the generated documentation
       - name: Download site artifact
         uses: actions/download-artifact@v1
@@ -50,5 +45,6 @@ jobs:
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+          external_repository: CamKE/camKE.github.io
           publish_dir: _site
