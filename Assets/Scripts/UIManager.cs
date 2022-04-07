@@ -27,6 +27,8 @@ public class UIManager : MonoBehaviour
 
     private GameObject demoUI;
 
+    private PopupManager popupManager;
+
     // start is called before the first frame update when the script is enabled
     private void Start()
     {
@@ -36,6 +38,8 @@ public class UIManager : MonoBehaviour
         levelGenUI = this.gameObject.transform.GetChild(0).gameObject;
 
         demoUI = this.gameObject.transform.GetChild(1).gameObject;
+
+        popupManager = this.gameObject.transform.GetChild(2).gameObject.GetComponent<PopupManager>();
 
     }
 
@@ -132,8 +136,13 @@ public class UIManager : MonoBehaviour
             levelManager.setupPlayer(new Vector3(1, 1, 3));
             // disable the level camera
             levelManager.setLevelCameraActive(false);
+        } else
+        // otherwise
+        {
+            // Show a popup message to the user
+            popupManager.showPopup("No Level Exists", "There is no level to be demoed.");
         }
-        // else popup
+     
 
     }
 
@@ -151,6 +160,15 @@ public class UIManager : MonoBehaviour
         demoUI.SetActive(false);
         // enable the level generation ui
         levelGenUI.SetActive(true);
+    }
+    
+    /// <summary>
+    /// Closes an opened popup. Used by the close button on the popup panel
+    /// </summary>
+    public void closePopup()
+    {
+        // tell the popup manager to hide the popup.
+        popupManager.hidePopup();
     }
 
     /*
