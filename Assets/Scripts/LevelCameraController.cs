@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 /// <summary>
 /// Controls the level camera's functionality that is used in the user interface.
@@ -37,13 +36,7 @@ public class LevelCameraController : MonoBehaviour
     // difference between mouse current position and the cameras position
     private Vector3 difference;
 
-    // whether or not a level is generated
-    private bool levelIsGenerated;
-
-    // layer value for ui elements
-    private int UILayer;
-
-    // the original point at which the mouse button was pressed
+    // the original point at which the left mouse button was pressed
     private Vector3 originalMouseDownPosition;
 
     // start is called before the first frame update when the script is enabled
@@ -51,30 +44,15 @@ public class LevelCameraController : MonoBehaviour
     {
         // set the ref to the camera component
         levelCamera = GetComponent<Camera>();
-        // ensure the levelIsGenerated bool is fault at the start
-        levelIsGenerated = false;
-        // get the layer value for ui elements
-        UILayer = LayerMask.NameToLayer("UI");
     }
 
-    // late update is called every frame when the script is enabled, after update
-    private void LateUpdate()
+    /// <summary>
+    /// Setter for the <see cref="originalMouseDownPosition"/>, used by the <see cref="UIManager"/>
+    /// </summary>
+    public void setOriginalMouseDownPosition()
     {
-        // if the mousebutton is pressed
-        if (Input.GetMouseButtonDown(0))
-        {
-            // set the original mouse down position to be the world position of where the mouse was pressed
-            originalMouseDownPosition = levelCamera.ScreenToWorldPoint(Input.mousePosition);
-        }
-
-        // if the level is generated and the mouse is not over any ui element
-        if (levelIsGenerated && !IsPointerOverUIElement())
-        {
-            // use the click and drag functionality
-            clickAndDrag();
-            // use the scroll to zoom functionality
-            scrollZoom();
-        }
+        // set the original mouse down position to be the world position of where the left mouse button was pressed
+        originalMouseDownPosition = levelCamera.ScreenToWorldPoint(Input.mousePosition);
     }
 
     /// <summary>
@@ -91,8 +69,6 @@ public class LevelCameraController : MonoBehaviour
         cameraOffset = new Vector3(newOrthoSize * 0.5f, 0, 0);
         // set the default orthographic size to be the new orthographic size
         defaultOrthoSize = newOrthoSize;
-        // the level is now generated, so set the levelIsGenerated bool to true
-        levelIsGenerated = true;
 
         // center the camera around the new level
         recenterCamera();
@@ -136,75 +112,61 @@ public class LevelCameraController : MonoBehaviour
     }
 
     /// <summary>
-    /// 
+    /// Functionality that uses the mouse as input to click and drag the level camera into position.
     /// </summary>
-    private void clickAndDrag()
+    public void clickAndDrag()
     {
+        // if the left mouse button is held down
         if (Input.GetMouseButton(0))
         {
+            // calculate the difference between the position of the mouse in the world and the position of the level
+            // camera in the world
             difference = levelCamera.ScreenToWorldPoint(Input.mousePosition) - levelCamera.transform.position;
 
+            // if drag is not enabled
             // comparing original position to current to avoid starting a mouse down on a ui element
             if (!dragEnabled && originalMouseDownPosition == levelCamera.ScreenToWorldPoint(Input.mousePosition))
             {
+                // enable drag
                 dragEnabled = true;
+                // set the origin of the mouse down to be the current position of the mouse 
                 mouseOrigin = levelCamera.ScreenToWorldPoint(Input.mousePosition);
             }
 
         }
+        // otherwise
         else
         {
+            // disable drag
             dragEnabled = false;
         }
 
+        // if drag is enabled
         if (dragEnabled)
         {
+            // move the level camera by the difference, relative to the origin of the mouse down
+            // (where the drag was started)
             levelCamera.transform.position = mouseOrigin - difference;
         }
     }
 
-    private void scrollZoom()
+    /// <summary>
+    /// functionality to zoom the level camera using a mouse scrollwheel. zoom out, and ortho size increases,
+    /// zoom in and ortho size decreases
+    /// </summary>
+    public void scrollZoom()
     {
+        // get the direction of the mouse vertical scroll. 0 if no scroll, 1.0 for forward, -1.0 for backward
         float mouseScrollDeltaY = Input.mouseScrollDelta.y;
 
         // limit zooming to be between 1 and the default size of the orthographic window
+        // if the orthographic size is greater than 1 AND the scroll y delta is forward
+        // OR 
+        // the orthographic size is less than the default size for the level AND the scroll y delta is backward
         if ((levelCamera.orthographicSize > 1 && mouseScrollDeltaY > 0) || (levelCamera.orthographicSize < defaultOrthoSize && mouseScrollDeltaY < 0))
         {
+            // reduce the orthographic size by the zoom speed in the direction denoted by the vertical(y) mouse scroll delta
             levelCamera.orthographicSize -= Input.mouseScrollDelta.y * zoomSpeed;
         }
-    }
-
-    /*
-     * code below from https://forum.unity.com/threads/how-to-detect-if-mouse-is-over-ui.1025533/
-     */
-
-    //Returns 'true' if we touched or hovering on Unity UI element.
-    public bool IsPointerOverUIElement()
-    {
-        return IsPointerOverUIElement(GetEventSystemRaycastResults());
-    }
-
-
-    //Returns 'true' if we touched or hovering on Unity UI element.
-    private bool IsPointerOverUIElement(List<RaycastResult> eventSystemRaysastResults)
-    {
-        for (int index = 0; index < eventSystemRaysastResults.Count; index++)
-        {
-            RaycastResult curRaysastResult = eventSystemRaysastResults[index];
-            if (curRaysastResult.gameObject.layer == UILayer)
-                return true;
-        }
-        return false;
-    }
-
-
-    //Gets all event system raycast results of current mouse or touch position.
-    static List<RaycastResult> GetEventSystemRaycastResults()
-    {
-        PointerEventData eventData = new PointerEventData(EventSystem.current);
-        eventData.position = Input.mousePosition;
-        List<RaycastResult> raysastResults = new List<RaycastResult>();
-        EventSystem.current.RaycastAll(eventData, raysastResults);
-        return raysastResults;
     }
 }

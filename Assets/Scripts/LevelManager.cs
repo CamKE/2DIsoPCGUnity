@@ -42,8 +42,10 @@ public class LevelManager : MonoBehaviour
     // whether or not the player character has been instantiated
     private bool playerIsInstantiated;
 
-    // whether or not a level is generated
-    private bool isGenerated;
+    /// <summary>
+    ///  whether or not a level is generated
+    /// </summary>
+    public bool levelisGenerated { get; private set; }
 
 
     // i use this instead of taking the grid center to world, as the grid center looks off. instead i take the tilemap tile center
@@ -60,7 +62,7 @@ public class LevelManager : MonoBehaviour
         // ensure the playerIsInstantiated bool to false by default
         playerIsInstantiated = false;
         // ensure the isGenerated bool is false by default
-        isGenerated = false;
+        levelisGenerated = false;
     }
 
     // update is called every frame when the script is enabled
@@ -115,7 +117,7 @@ public class LevelManager : MonoBehaviour
         // clear the current tilemap (temporary setup)
         tilemap.ClearAllTiles();
         // set is generated to be false
-        isGenerated = false;
+        levelisGenerated = false;
     }
 
     /// <summary>
@@ -154,7 +156,7 @@ public class LevelManager : MonoBehaviour
         tilemap.SetTiles(positions, tileArray);
 
         updateLevelCamera();
-        isGenerated = true;
+        levelisGenerated = true;
     }
 
     // gives the camera the new center of the level and the new orthographic size
@@ -218,15 +220,6 @@ public class LevelManager : MonoBehaviour
         playerController.setPosition(position);
         // player is now instantiated, set the bool to true
         playerIsInstantiated = true;
-    }
-
-    /// <summary>
-    /// Get whether or not a level is generated.
-    /// </summary>
-    /// <returns>True if a level is generated, false if no level is generated.</returns>
-    public bool levelIsGenerated()
-    {
-        return isGenerated;
     }
 
     // runs before the application is quit 

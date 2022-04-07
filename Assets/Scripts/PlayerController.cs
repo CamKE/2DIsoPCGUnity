@@ -2,29 +2,35 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// code adapted from GoldenSkullStudio's simple_char_move
+/// <summary>
+/// This class is responsible for controlling the player character on the level.
+/// </summary>
 [RequireComponent(typeof(SpriteRenderer))]
 public class PlayerController : MonoBehaviour
 {
+    // the speed of movemenet for the player
     [SerializeField]
-    private float speed = 1;
+    private float movementSpeed = 1;
 
-    private SpriteRenderer characterSprite;
+    // the component responsible for handling the player sprite
+    private SpriteRenderer playerSprite;
 
-    private Vector3 offset;
+    // the offset for the player sprite pivot to position the sprite relative
+    // to the players feet instead of the sprite center
+    private Vector3 pivotOffset;
 
     // start is called before the first frame update when the script is enabled
     private void Start()
     {
-        characterSprite = GetComponent<SpriteRenderer>();
-        // extent y is the distance from the sprite center pivot, to the bottom of the sprite. z set to 3 to keep player infront
-        // playerFeetOffset ensures the offset value moves the player relative to its feet position.-0.15f
-        offset = new Vector3(0, -0.15f, 3);
-    }
+        // store a ref to the player's sprite renderer component
+        playerSprite = GetComponent<SpriteRenderer>();
 
-    // Update is called once per frame
-    void Update()
-    {
+        //**note for me: removed the temporary z value of 3 from pivotOffset which was to keep the 
+        // player sprite infront of the tiles, but dont need it and it does make sense here
 
+        // set the pivot offset to be 0.15 down on the y axis
+        pivotOffset = new Vector3(0, -0.15f, 0);
     }
 
     public void MoveCharacter(int newZValue)
@@ -32,10 +38,10 @@ public class PlayerController : MonoBehaviour
         checkCharacterHeight();
         //I am putting these placeholder variables here, to make the logic behind the code easier to understand
         //we differentiate the movement speed between horizontal(x) and vertical(y) movement, since isometric uses "fake perspective"
-        float horizontalMovement = Input.GetAxisRaw("Horizontal") * speed * Time.deltaTime;
+        float horizontalMovement = Input.GetAxisRaw("Horizontal") * movementSpeed * Time.deltaTime;
         //since we are using this with isometric visuals, the vertical movement needs to be slower
         //for some reason, 50% feels too slow, so we will be going with 75%
-        float verticalMovement = Input.GetAxisRaw("Vertical") * speed * 0.5f * Time.deltaTime;
+        float verticalMovement = Input.GetAxisRaw("Vertical") * movementSpeed * 0.5f * Time.deltaTime;
 
         //make character appear as ontop of or behind terrain
         int heightDiff = newZValue - ((int)this.transform.position.z);
@@ -49,22 +55,30 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    public void setPosition(Vector3 position)
+    /// <summary>
+    /// Sets the position of the player on the level.
+    /// </summary>
+    /// <param name="newPosition">The new position of the player.</param>
+    public void setPosition(Vector3 newPosition)
     {
-        //player pivot in center of sprite, so offset corrects position relative to players feet as pivot
-        this.transform.position = position + offset;
-        Debug.Log("position before offset: " + position + ". offset: " + offset + ". After offset: " + this.transform.position);
+        // set the player position to be at the new position, offset by the pivotOffset
+        this.transform.position = newPosition + pivotOffset;
     }
 
     //if the player moves left, flip the sprite, if he moves right, flip it back, stay if no input is made
-    void FlipSpriteToMovement()
+    private void FlipSpriteToMovement()
     {
-        if (characterSprite != null)
+        // if there is a player sprite
+        if (playerSprite != null)
         {
+            // if the horizontal input axis is to the left
             if (Input.GetAxisRaw("Horizontal") < 0)
-                characterSprite.flipX = true;
+                // flip the sprite
+                playerSprite.flipX = true;
+            // if the horizontal input axis is to the right
             else if (Input.GetAxisRaw("Horizontal") > 0)
-                characterSprite.flipX = false;
+                // flip the sprite back to original position
+                playerSprite.flipX = false;
         }
     }
 }

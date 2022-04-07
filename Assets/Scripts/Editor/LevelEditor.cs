@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
+/// <summary>
+/// Responsible for customising the inspector window to allow for easy level generation via the inspector.
+/// </summary>
 [CustomEditor(typeof(LevelManager))]
 public class LevelEditor : Editor
 {
+    
     float myFloat = 1.23f;
     public override void OnInspectorGUI()
     {
