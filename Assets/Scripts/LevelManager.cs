@@ -63,6 +63,8 @@ public class LevelManager : MonoBehaviour
         playerIsInstantiated = false;
         // ensure the isGenerated bool is false by default
         levelisGenerated = false;
+
+        initialSetup();
     }
 
     // update is called every frame when the script is enabled
@@ -125,13 +127,9 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     public void generate()
     {
-        if (tilemap == null)
-        {
-            initialSetup();
-        } else
-        {
-            clearLevel();
-        }
+
+        clearLevel();
+      
       
         var tile = ScriptableObject.CreateInstance<Tile>();
         var tile2 = ScriptableObject.CreateInstance<Tile>();
@@ -212,14 +210,35 @@ public class LevelManager : MonoBehaviour
     /// <param name="position">Where the player should be placed on the level</param>
     public void setupPlayer(Vector3 position)
     {
-        // Instatiate the player
-        player = Instantiate(player, new Vector3(2, 2, 3.01f), Quaternion.identity);
-        // store the ref to the player component playerController
-        playerController = player.GetComponent<PlayerController>();
+        // if the player is not instantiated
+        if (!playerIsInstantiated)
+        {
+            // Instatiate the player
+            player = Instantiate(player, new Vector3(2, 2, 3.01f), Quaternion.identity);
+            // store the ref to the player component playerController
+            playerController = player.GetComponent<PlayerController>();
+            // player is now instantiated, set the bool to true
+            playerIsInstantiated = true;
+        } else
+        // otherwise
+        {
+            // player is instantiated, so enable the player object
+            player.SetActive(true);
+        }
+        
         // set the players intial position on the level
         playerController.setPosition(position);
-        // player is now instantiated, set the bool to true
-        playerIsInstantiated = true;
+ 
+    }
+
+    public void setLevelCameraActive(bool value)
+    {
+        levelCameraController.gameObject.SetActive(value);
+    }
+
+    public void setPlayerActive(bool value)
+    {
+        player.SetActive(value);
     }
 
     // runs before the application is quit 

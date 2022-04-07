@@ -11,7 +11,7 @@ public class PlayerController : MonoBehaviour
 {
     // the speed of movemenet for the player
     [SerializeField]
-    private float movementSpeed = 1;
+    private float movementSpeed = 2;
 
     // the component responsible for handling the player sprite
     private SpriteRenderer playerSprite;

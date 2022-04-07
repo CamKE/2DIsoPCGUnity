@@ -22,11 +22,21 @@ public class UIManager : MonoBehaviour
     // layer value for ui elements
     private int UILayer;
 
+
+    private GameObject levelGenUI;
+
+    private GameObject demoUI;
+
     // start is called before the first frame update when the script is enabled
     private void Start()
     {
         // get the layer value for ui elements
         UILayer = LayerMask.NameToLayer("UI");
+
+        levelGenUI = this.gameObject.transform.GetChild(0).gameObject;
+
+        demoUI = this.gameObject.transform.GetChild(1).gameObject;
+
     }
 
     // late update is called every frame when the script is enabled, after update
@@ -110,7 +120,37 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public void demoLevel()
     {
+        // if the level is generated
+        if (levelManager.levelisGenerated)
+        {
+            // disable the level generation ui
+            levelGenUI.SetActive(false);
+            // enable the demo mode ui
+            demoUI.SetActive(true);
 
+            // setup the player. temp initial position. position setting will be more complicated
+            levelManager.setupPlayer(new Vector3(1, 1, 3));
+            // disable the level camera
+            levelManager.setLevelCameraActive(false);
+        }
+        // else popup
+
+    }
+
+    /// <summary>
+    /// Returns the user back to the level generation user interface from the demo user interface.
+    /// </summary>
+    public void exitLevel()
+    {
+        // enable the level camera
+        levelManager.setLevelCameraActive(true);
+        // disable the player
+        levelManager.setPlayerActive(false);
+
+        // disable the demo mode ui
+        demoUI.SetActive(false);
+        // enable the level generation ui
+        levelGenUI.SetActive(true);
     }
 
     /*

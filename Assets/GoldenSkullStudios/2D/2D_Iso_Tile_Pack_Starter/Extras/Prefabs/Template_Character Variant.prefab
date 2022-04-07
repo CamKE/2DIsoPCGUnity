@@ -11,6 +11,18 @@ PrefabInstance:
       propertyPath: orthographic size
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 8554756282310181810, guid: 3a449432369bfb34091fa0191caa41d2, type: 3}
+      propertyPath: m_BackGroundColor.b
+      value: 0.9098039
+      objectReference: {fileID: 0}
+    - target: {fileID: 8554756282310181810, guid: 3a449432369bfb34091fa0191caa41d2, type: 3}
+      propertyPath: m_BackGroundColor.g
+      value: 0.9098039
+      objectReference: {fileID: 0}
+    - target: {fileID: 8554756282310181810, guid: 3a449432369bfb34091fa0191caa41d2, type: 3}
+      propertyPath: m_BackGroundColor.r
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8554756283065973568, guid: 3a449432369bfb34091fa0191caa41d2, type: 3}
       propertyPath: m_SortingOrder
       value: 0
@@ -95,4 +107,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 492d4823b309f6a43b714825d8f2f52a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 2
+  movementSpeed: 2
