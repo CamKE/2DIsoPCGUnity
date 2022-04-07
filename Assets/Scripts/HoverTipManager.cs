@@ -32,9 +32,9 @@ public class HoverTipManager : MonoBehaviour
     /// </summary>
     public static Action onMouseLoseFocus;
 
-    
-    
-    // called on the frame when the script is enabled.
+
+
+    // start is called before the first frame update when the script is enabled
     private void Start()
     {
         // hide the tip upon application start

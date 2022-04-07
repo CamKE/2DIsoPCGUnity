@@ -5,86 +5,122 @@ using UnityEngine.Tilemaps;
 using UnityEngine.U2D;
 using UnityEditor;
 
-
+/// <summary>
+/// Responsible for all operations to do with creating, managing and destroying the level and elements within it.
+/// </summary>
 public class LevelManager : MonoBehaviour
 {
+    // '[SerializeField] private' show up in the inspector but are not accessible by other scripts
 
+    // gameobject with grid component for aligning tiles
     [SerializeField]
     private Grid grid;
 
+    // player character to be used in demo mode
     [SerializeField]
     private GameObject player;
 
+    // the levelCameraController component of the player
     [SerializeField]
-    private Camera levelCamera;
+    private LevelCameraController levelCameraController;
+
 
     [SerializeField][HideInInspector]
     private Tilemap tilemap;
 
+    // sprites packed for more efficient use
     [SerializeField]
     private SpriteAtlas atlas;
+
 
     [SerializeField]
     private Vector2Int size;
 
+    // the playerController component of the player
     private PlayerController playerController;
 
-    private LevelCameraController levelCameraController;
-
+    // whether or not the player character has been instantiated
     private bool playerIsInstantiated;
+
+    // whether or not a level is generated
+    private bool isGenerated;
 
 
     // i use this instead of taking the grid center to world, as the grid center looks off. instead i take the tilemap tile center
     // which uses the pivot as the center. then i add an offset to the y axis to move the tile center to the middle of the tile.
     private Vector3 tileCenterOffset;
 
-    // Start is called before the first frame update
-    void Start()
+    // start is called before the first frame update when the script is enabled
+    private void Start()
     {
+        // set the offset of the tile center to a value relative to the center position of the sprites (0.205)
+        // , given sprite sizes are normalised to 1x1
         tileCenterOffset = new Vector3(0,0.7f,0);
-        levelCameraController = levelCamera.GetComponent<LevelCameraController>();
+
+        // ensure the playerIsInstantiated bool to false by default
         playerIsInstantiated = false;
+        // ensure the isGenerated bool is false by default
+        isGenerated = false;
     }
 
-    void Update()
+    // update is called every frame when the script is enabled
+    private void Update()
     {
-        if (playerController != null)
+        // if there is a player character
+        if (playerIsInstantiated)
         {
-            int playerHeight = calculatePlayerHeight();
-            playerController.MoveCharacter(playerHeight);
+            // work out what the player's z value should be
+            int playerZValue = calculatePlayerZValue();
+
+            // allow the user to control the player character, 
+            // and give the character the new height
+            playerController.MoveCharacter(playerZValue);
         }    
-
-
-        // calc which tile player is on
-        // get the tiles height
-        // if height difference between current and previous tiles does not exceed e.g. 1,
-        // set player height to tile height.
     }
 
-    private int calculatePlayerHeight()
+    // work out what the z value for the player should be based on their current position
+    // to ensure they are ordered correctly relative to the other sprites
+    private int calculatePlayerZValue()
     {
-        //Debug.Log(playerController.transform.position);
+        // the grid cell the player is on 
         var cellPos = tilemap.WorldToCell(new Vector3(playerController.transform.position.x, playerController.transform.position.y,0));
 
-        //i depends on terrain height variations.
-        for (int i = 0; i <= 2; i++)
+        // go through and find z value of the tile which exists in the x,y position of the player
+        // can flip the for loop to ensure tile which the highest z is found first
+        for (int terrainZValue = 0; terrainZValue <= 2; terrainZValue++)
         {
-            cellPos.z = i;
+            // set the cells z to be the z to be checked
+            cellPos.z = terrainZValue;
+            // if there is a tile at the z to be checked
             if (tilemap.GetTile(cellPos) != null)
             {
-                //Debug.Log("found at: " + cellPos);
-                return i;
+                // we have found the z value for the tile the player is on
+                return terrainZValue;
             }
         }
-        Debug.Log("no tile found");
-        return 1;
+
+        // no tile found, return invalid value
+        return -1;
     }
 
+    /// <summary>
+    /// Clear the tiles in all tilemaps in the level.
+    /// </summary>
     public void clearLevel()
     {
+        // tilemaps are not deleted even if they are not used, as it
+        // is more efficient to keep them instead of continuously creating
+        // and deleting them
+
+        // clear the current tilemap (temporary setup)
         tilemap.ClearAllTiles();
+        // set is generated to be false
+        isGenerated = false;
     }
 
+    /// <summary>
+    /// Generate the level. temporary setup.
+    /// </summary>
     public void generate()
     {
         if (tilemap == null)
@@ -118,27 +154,35 @@ public class LevelManager : MonoBehaviour
         tilemap.SetTiles(positions, tileArray);
 
         updateLevelCamera();
+        isGenerated = true;
     }
 
+    // gives the camera the new center of the level and the new orthographic size
     private void updateLevelCamera()
     {
+        // get the boundary information of the terrain tilemap
         BoundsInt terrainBounds = tilemap.cellBounds;
-
+        
+        // find the local position of the cell on the grid at the x most tile value and the 
+        // y most tile value
         Vector3 mapLocalDimension = grid.CellToLocal(new Vector3Int(terrainBounds.xMax, terrainBounds.yMax, 0));
 
+        // find the world position of the center of the level
         Vector3 levelCenter = grid.LocalToWorld(mapLocalDimension / 2.0f);
-        // z value to ensure level is always in view
+        // set the z value to ensure the level is always in view
         levelCenter.z = -50.0f;
 
+        // set the max dimension to be the largest dimension of the terrain
         int maxDimension = terrainBounds.xMax > terrainBounds.yMax ? terrainBounds.xMax : terrainBounds.yMax;
+     
+        // set the new camera orthographic size to be 40% of the maximum terrain dimension
         float newOrthoSize = 0.4f * maxDimension;
 
-        Vector3 cameraOffset = new Vector3(newOrthoSize * 0.5f, 0, 0);
-
-        levelCameraController.updateCamera(levelCenter, cameraOffset, newOrthoSize);
+        // update the camera with the new values
+        levelCameraController.updateCamera(levelCenter, newOrthoSize);
     }
 
-    // check each object exists! if not, then create it
+    // the initial setup for the level. temporary setup
     private void initialSetup()
     {
 
@@ -160,22 +204,41 @@ public class LevelManager : MonoBehaviour
         //setupPlayer(tilemap.GetCellCenterWorld(Vector3Int.zero) + tileCenterOffset);
     }
 
+    /// <summary>
+    /// Create the player and put them into the level at the given position.
+    /// </summary>
+    /// <param name="position">Where the player should be placed on the level</param>
     public void setupPlayer(Vector3 position)
     {
+        // Instatiate the player
         player = Instantiate(player, new Vector3(2, 2, 3.01f), Quaternion.identity);
+        // store the ref to the player component playerController
         playerController = player.GetComponent<PlayerController>();
-        playerController.setup();
-
+        // set the players intial position on the level
         playerController.setPosition(position);
+        // player is now instantiated, set the bool to true
         playerIsInstantiated = true;
     }
 
+    /// <summary>
+    /// Get whether or not a level is generated.
+    /// </summary>
+    /// <returns>True if a level is generated, false if no level is generated.</returns>
+    public bool levelIsGenerated()
+    {
+        return isGenerated;
+    }
+
+    // runs before the application is quit 
     private void OnApplicationQuit()
     {
+        // clear the level
         clearLevel();
 
+        // if the player exists
         if (playerIsInstantiated)
         {
+            // delete the player
             Destroy(player);
         }
 

@@ -1847,7 +1847,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07d02364b90c7854ebcd3fc321de3fe6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scrollZoomSpeed: 1
+  zoomSpeed: 1
 --- !u!1 &228287526
 GameObject:
   m_ObjectHideFlags: 0
@@ -1958,10 +1958,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   grid: {fileID: 1469670999}
   player: {fileID: 397201525090935536, guid: 31aac78f9ae5d844e81934a1a6e4c2c6, type: 3}
-  levelCamera: {fileID: 226959663}
+  levelCameraController: {fileID: 226959664}
   tilemap: {fileID: 0}
   atlas: {fileID: 4343727234628468602, guid: 56d9446267c095048b35f04a22590c7d, type: 2}
-  size: {x: 3, y: 3}
+  size: {x: 19, y: 19}
 --- !u!4 &233506742
 Transform:
   m_ObjectHideFlags: 0
@@ -6406,7 +6406,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 885104970}
   m_Direction: 2
   m_Value: 1.0000001
-  m_Size: 0.45533338
+  m_Size: 0.45533332
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -8787,8 +8787,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 840301218}
   m_HandleRect: {fileID: 840301217}
   m_Direction: 0
-  m_Value: 1
-  m_Size: 0.99999994
+  m_Value: 0
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

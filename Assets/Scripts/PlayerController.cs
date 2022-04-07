@@ -12,7 +12,8 @@ public class PlayerController : MonoBehaviour
 
     private Vector3 offset;
 
-    public void setup()
+    // start is called before the first frame update when the script is enabled
+    private void Start()
     {
         characterSprite = GetComponent<SpriteRenderer>();
         // extent y is the distance from the sprite center pivot, to the bottom of the sprite. z set to 3 to keep player infront
@@ -26,7 +27,7 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    public void MoveCharacter(int height)
+    public void MoveCharacter(int newZValue)
     {
         checkCharacterHeight();
         //I am putting these placeholder variables here, to make the logic behind the code easier to understand
@@ -37,7 +38,7 @@ public class PlayerController : MonoBehaviour
         float verticalMovement = Input.GetAxisRaw("Vertical") * speed * 0.5f * Time.deltaTime;
 
         //make character appear as ontop of or behind terrain
-        int heightDiff = height - ((int)this.transform.position.z);
+        int heightDiff = newZValue - ((int)this.transform.position.z);
         this.transform.Translate(horizontalMovement, verticalMovement, heightDiff);
         FlipSpriteToMovement();
 
