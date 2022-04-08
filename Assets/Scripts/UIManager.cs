@@ -1,8 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
-
+using UnityEngine.UI;
 
 /// <summary>
 /// This class is responsible for managing all operations to do with the user interface.
@@ -21,13 +23,24 @@ public class UIManager : MonoBehaviour
 
     // layer value for ui elements
     private int UILayer;
-
-
+    
+    // the parent object of all level generation ui options
     private GameObject levelGenUI;
 
+    // the parent object of all demo ui options
     private GameObject demoUI;
 
+    // the script for handling popups
     private PopupManager popupManager;
+
+    // the slider for the terrain size
+    private Slider terrainSizeSlider;
+
+    // the input field for the terrain size
+    private InputField terrainSizeInput;
+
+    // the dropdown for the terrain shape
+    private Dropdown terrainShapeDropdown;
 
     // start is called before the first frame update when the script is enabled
     private void Start()
@@ -35,12 +48,45 @@ public class UIManager : MonoBehaviour
         // get the layer value for ui elements
         UILayer = LayerMask.NameToLayer("UI");
 
+        // get the levelgenui gameobject to enable and disable
         levelGenUI = this.gameObject.transform.GetChild(0).gameObject;
 
+        // get the demoui gameobject to enable and disable
         demoUI = this.gameObject.transform.GetChild(1).gameObject;
 
+        // get the popupmanager to generate popups
         popupManager = this.gameObject.transform.GetChild(2).gameObject.GetComponent<PopupManager>();
 
+        // the transform content panel
+        Transform contentPanel = levelGenUI.gameObject.transform.GetChild(0).GetChild(0).GetChild(0);
+
+        // the transform of the terrain section
+        Transform terrainSection = contentPanel.transform.GetChild(1);
+
+        // the transform of the water bodies section
+        Transform waterBodiesSection = contentPanel.transform.GetChild(2);
+
+        // get the terrain size inputs relative to the terrain section transform
+        terrainSizeSlider = terrainSection.GetChild(0).GetChild(1).GetComponent<Slider>();
+        terrainSizeInput = terrainSection.GetChild(0).GetChild(2).GetComponent<InputField>();
+
+        // get the terrain shape dropdown relative to the terrain section transform
+        terrainShapeDropdown = terrainSection.GetChild(1).GetChild(1).GetComponent<Dropdown>();
+
+        // do the user interface setup after retieving the elements
+        setupUI();
+
+    }
+
+    //  setup the user interface with values and bounds
+    private void setupUI()
+    {
+        terrainSizeSlider.minValue = TerrainGenerator.terrainMinSize;
+        terrainSizeSlider.maxValue = TerrainGenerator.terrainMaxSize;
+        terrainSizeInput.text = terrainSizeSlider.value.ToString("0");
+
+        terrainShapeDropdown.ClearOptions();
+        terrainShapeDropdown.AddOptions(Enum.GetNames(typeof(TerrainGenerator.terrainShape)).ToList());
     }
 
     // late update is called every frame when the script is enabled, after update
@@ -169,6 +215,16 @@ public class UIManager : MonoBehaviour
     {
         // tell the popup manager to hide the popup.
         popupManager.hidePopup();
+    }
+
+    /// <summary>
+    /// Called anytime the terrain size slider is changed. Used to update
+    /// the corresponding input field.
+    /// </summary>
+    public void updateTerrainSizeField()
+    {
+        // set the terrain size input field to be the sliders current value
+        terrainSizeInput.text = terrainSizeSlider.value.ToString("0");
     }
 
     /*

@@ -47,11 +47,10 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     public bool levelisGenerated { get; private set; }
 
-
     // i use this instead of taking the grid center to world, as the grid center looks off. instead i take the tilemap tile center
     // which uses the pivot as the center. then i add an offset to the y axis to move the tile center to the middle of the tile.
     private Vector3 tileCenterOffset;
-
+    
     // start is called before the first frame update when the script is enabled
     private void Start()
     {
@@ -231,13 +230,25 @@ public class LevelManager : MonoBehaviour
  
     }
 
+    /// <summary>
+    /// Used by the UI manager to update the level camera's active status when swapping between
+    /// level generation and demo user interfaces
+    /// </summary>
+    /// <param name="value">The boolean value to set the level camera's active status to.</param>
     public void setLevelCameraActive(bool value)
     {
+        // set the level camera's active status to the given value
         levelCameraController.gameObject.SetActive(value);
     }
 
+    /// <summary>
+    /// Used by the UI manager to update the player's active status when swapping between
+    /// level generation and demo user interfaces
+    /// </summary>
+    /// <param name="value">The boolean value to set the player's active status to.</param>
     public void setPlayerActive(bool value)
     {
+        // set the player's active status to the given value
         player.SetActive(value);
     }
 
