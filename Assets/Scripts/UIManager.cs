@@ -6,8 +6,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-// this class can be heavily refactored such that events for the elements return themselves to be
-// modified. this also means i wont need a seperate method for each e.g. slider to update the input field.
+// this class can be heavily refactored to group serialised fields and loop setup
 /// <summary>
 /// This class is responsible for managing all operations to do with the user interface.
 /// </summary>
@@ -83,6 +82,32 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Dropdown terrainShapeDropdown;
 
+    [SerializeField]
+    private Toggle riverGenerationToggle;
+
+    [SerializeField]
+    private GameObject riverGenerationOptions;
+
+    [SerializeField]
+    private Dropdown riverAmountDropdown;
+
+    [SerializeField]
+    private Toggle riverIntersectionToggle;
+
+    [SerializeField]
+    private Toggle riverBridgesToggle;
+
+    [SerializeField]
+    private Toggle lakeGenerationToggle;
+
+    [SerializeField]
+    private GameObject lakeGenerationOptions;
+
+    [SerializeField]
+    private Dropdown lakeAmountDropdown;
+
+    [SerializeField]
+    private Dropdown lakeMaxSizeDropdown;
 
 
     // start is called before the first frame update when the script is enabled
@@ -99,25 +124,16 @@ public class UIManager : MonoBehaviour
     private void setupUI()
     {
         /*
-         * terrain size setup
+         * terrain options setup
          */
 
         // setup the terrain size slider
         setupSlider(terrainSizeSlider, terrainSizeInput, TerrainGenerator.terrainMinSize, TerrainGenerator.terrainMaxSize);
 
-        /*
-        * terrain type setup
-        */
-
         // setup the terrain type dropdown
         setupDropdown(terrainTypeDropdown, Enum.GetNames(typeof(TerrainGenerator.terrainType)).ToList());
 
-        /*
-        * terrain height setup
-        */
-
-        // if the first toggle to be active is the terrain exact height toggle
-
+        // setup the terrain height toggles
         setupToggle(terrainExactHeightToggle, terrainExactHeightOptions);
         setupToggle(terrainRangeHeightToggle, terrainRangeHeightOptions);
 
@@ -129,12 +145,27 @@ public class UIManager : MonoBehaviour
         // setup the terrain range height min slider
         setupSlider(terrainRangeHeightMaxSlider, terrainRangeHeightMaxInput, TerrainGenerator.terrainMinHeight, TerrainGenerator.terrainMaxHeight);
 
-        /*
-         * terrain shape setup
-         */
-
         // setup the terrain shape dropdown
         setupDropdown(terrainShapeDropdown, Enum.GetNames(typeof(TerrainGenerator.terrainShape)).ToList());
+
+        /*
+         * water bodies options setup
+         */
+        
+        // set the number of rivers dropdown
+        setupDropdown(riverAmountDropdown, Enum.GetNames(typeof(RiverGenerator.numRivers)).ToList());
+
+        // setup the river generation toggle
+        setupToggle(riverGenerationToggle, riverGenerationOptions);
+        
+        // setup the lake generation toggle
+        setupToggle(lakeGenerationToggle, lakeGenerationOptions);
+
+        // set the number of lakes dropdown
+        setupDropdown(lakeAmountDropdown, Enum.GetNames(typeof(LakeGenerator.numLakes)).ToList());
+
+        // set the maximum size of lakes dropdown
+        setupDropdown(lakeMaxSizeDropdown, Enum.GetNames(typeof(LakeGenerator.maxLakeSize)).ToList());
 
     }
 
@@ -165,7 +196,7 @@ public class UIManager : MonoBehaviour
         input.text = slider.value.ToString("0");
 
         slider.onValueChanged.AddListener(delegate { updateSliderField(slider, input); });
-        input.onEndEdit.AddListener(delegate { checkSliderField(input, minValue, maxValue); });
+        input.onEndEdit.AddListener(delegate { checkInputField(input, slider, minValue, maxValue); });
     }
 
     // late update is called every frame when the script is enabled, after update
@@ -303,13 +334,17 @@ public class UIManager : MonoBehaviour
     /// <param name="input"></param>
     public void updateSliderField(Slider slider, InputField input)
     {
-        input.text = slider.value.ToString("0");
+        if (slider.value != float.Parse(input.text))
+        {
+            input.text = slider.value.ToString("0");
+        }
     }
 
     /// <summary>
-    /// Called anytime an input field has been edited to ensure the input is valid
+    /// Called anytime an input field has been edited to ensure the input is valid and the 
+    /// slider is updated to reflect the input field.
     /// </summary>
-    public void checkSliderField(InputField input, int minValue, int maxValue)
+    public void checkInputField(InputField input, Slider slider, int minValue, int maxValue)
     {
         if (input.text.Length != 0)
         {
@@ -321,24 +356,15 @@ public class UIManager : MonoBehaviour
             {
                 input.text = maxValue.ToString("0");
             }
+
+            slider.value = int.Parse(input.text);
         }
+
     }
 
     public void toggleOption(Toggle toggle, GameObject option)
     {
         option.SetActive(toggle.isOn ? true : false);
-    }
-
-    public void toggleExactHeightOption()
-    {
-        terrainRangeHeightOptions.SetActive(false);
-        terrainExactHeightOptions.SetActive(true);
-    }
-
-    public void toggleHeightRangeOption()
-    {
-        terrainExactHeightOptions.SetActive(false);
-        terrainRangeHeightOptions.SetActive(true);
     }
 
     /*
