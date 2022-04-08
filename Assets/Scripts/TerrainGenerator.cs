@@ -21,4 +21,8 @@ public class TerrainGenerator
     /// The maximum size of a level specified by tile count.
     /// </summary>
     public const int terrainMaxSize = 2000;
+
+    public const int terrainMinHeight = 0;
+
+    public const int terrainMaxHeight = 5;
 }

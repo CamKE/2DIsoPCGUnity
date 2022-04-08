@@ -90,7 +90,7 @@ public class LevelManager : MonoBehaviour
 
         // go through and find z value of the tile which exists in the x,y position of the player
         // can flip the for loop to ensure tile which the highest z is found first
-        for (int terrainZValue = 0; terrainZValue <= 2; terrainZValue++)
+        for (int terrainZValue = TerrainGenerator.terrainMinHeight; terrainZValue <= TerrainGenerator.terrainMaxHeight; terrainZValue++)
         {
             // set the cells z to be the z to be checked
             cellPos.z = terrainZValue;

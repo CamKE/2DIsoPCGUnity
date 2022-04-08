@@ -6,6 +6,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+// this class can be heavily refactored such that events for the elements return themselves to be
+// modified. this also means i wont need a seperate method for each e.g. slider to update the input field.
 /// <summary>
 /// This class is responsible for managing all operations to do with the user interface.
 /// </summary>
@@ -42,6 +44,17 @@ public class UIManager : MonoBehaviour
     // the dropdown for the terrain shape
     private Dropdown terrainShapeDropdown;
 
+    private ToggleGroup terrainHeightTG;
+
+    private GameObject terrainExactHeightOptions;
+
+    private GameObject terrainRangeHeightOptions;
+
+    private Slider terrainExactHeightSlider;
+
+    private InputField terrainExactHeightInput;
+
+
     // start is called before the first frame update when the script is enabled
     private void Start()
     {
@@ -73,20 +86,69 @@ public class UIManager : MonoBehaviour
         // get the terrain shape dropdown relative to the terrain section transform
         terrainShapeDropdown = terrainSection.GetChild(1).GetChild(1).GetComponent<Dropdown>();
 
+        // get the terrain height toggle group relative to the terrain section transform
+        terrainHeightTG = terrainSection.GetChild(2).GetComponent<ToggleGroup>();
+        // get the terrain exact height options gameobject relative to the terrain section transform
+        terrainExactHeightOptions = terrainSection.GetChild(3).gameObject;
+        // get the terrain range height options gameobject relative to the terrain section transform
+        terrainRangeHeightOptions = terrainSection.GetChild(4).gameObject;
+
+        // get the terrain exact height slider relative to the terrainExactHeightOptions section
+        terrainExactHeightSlider = terrainExactHeightOptions.transform.GetChild(1).GetComponent<Slider>();
+        // get the terrain exact height input field relative to the terrainExactHeightOptions section
+        terrainExactHeightInput = terrainExactHeightOptions.transform.GetChild(2).GetComponent<InputField>();
+
         // do the user interface setup after retieving the elements
         setupUI();
-
     }
 
     //  setup the user interface with values and bounds
     private void setupUI()
     {
+        /*
+         * terrain size setup
+         */
+
+        // limit terrain size to be between the min and max size
         terrainSizeSlider.minValue = TerrainGenerator.terrainMinSize;
         terrainSizeSlider.maxValue = TerrainGenerator.terrainMaxSize;
+        // set the terrain size input field to be equal to the sliders value
         terrainSizeInput.text = terrainSizeSlider.value.ToString("0");
 
+         /*
+         * terrain type/shape setup
+         */
+
+        // clear the dropdown
         terrainShapeDropdown.ClearOptions();
+        // add the terrain shape options
         terrainShapeDropdown.AddOptions(Enum.GetNames(typeof(TerrainGenerator.terrainShape)).ToList());
+
+         /*
+         * terrain height setup
+         */
+
+        // if the first toggle to be active is the terrain exact height toggle
+        if (terrainHeightTG.GetFirstActiveToggle().name == terrainExactHeightOptions.name)
+        {
+            // show the exact height options only
+            terrainExactHeightOptions.SetActive(true);
+            terrainRangeHeightOptions.SetActive(false);
+        } else
+        // otherwise
+        {
+            // show the range height options only
+            terrainExactHeightOptions.SetActive(false);
+            terrainRangeHeightOptions.SetActive(true);
+        }
+
+        // limit terrain exact height to be between the min and max values
+        terrainExactHeightSlider.minValue = TerrainGenerator.terrainMinHeight;
+        terrainExactHeightSlider.maxValue = TerrainGenerator.terrainMaxHeight;
+        // set the terrain exact height input field to be equal to the sliders value
+        terrainExactHeightInput.text = terrainExactHeightSlider.value.ToString("0");
+
+
     }
 
     // late update is called every frame when the script is enabled, after update
@@ -227,9 +289,46 @@ public class UIManager : MonoBehaviour
         terrainSizeInput.text = terrainSizeSlider.value.ToString("0");
     }
 
+    /// <summary>
+    /// Called anytime the terrain exact height slider is changed. Used to update
+    /// the corresponding input field.
+    /// </summary>
+    public void updateTerrainExactHeightField()
+    {
+        // set the terrain size input field to be the sliders current value
+        terrainExactHeightInput.text = terrainExactHeightSlider.value.ToString("0");
+    }
+
+    public void checkTerrainInputSizeValue()
+    {
+        if (terrainSizeInput.text.Length != 0)
+        {
+            if (int.Parse(terrainSizeInput.text) < TerrainGenerator.terrainMinSize)
+            {
+                terrainSizeInput.text = TerrainGenerator.terrainMinSize.ToString("0");
+            }
+            else if (int.Parse(terrainSizeInput.text) > TerrainGenerator.terrainMaxSize)
+            {
+                terrainSizeInput.text = TerrainGenerator.terrainMaxSize.ToString("0");
+            }
+        }
+    }
+
+    public void toggleExactHeightOption()
+    {
+        terrainRangeHeightOptions.SetActive(false);
+        terrainExactHeightOptions.SetActive(true);
+    }
+
+    public void toggleHeightRangeOption()
+    {
+        terrainExactHeightOptions.SetActive(false);
+        terrainRangeHeightOptions.SetActive(true);
+    }
+
     /*
- * code below from https://forum.unity.com/threads/how-to-detect-if-mouse-is-over-ui.1025533/
- */
+    * code below from https://forum.unity.com/threads/how-to-detect-if-mouse-is-over-ui.1025533/
+    */
 
     //Returns 'true' if we touched or hovering on Unity UI element.
     private bool IsPointerOverUIElement()

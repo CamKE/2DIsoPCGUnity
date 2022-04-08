@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // code adapted from GoldenSkullStudio's simple_char_move
+// could change character size to sell the illusion of level depth
+// and distance from camera
 /// <summary>
 /// This class is responsible for controlling the player character on the level.
 /// </summary>
