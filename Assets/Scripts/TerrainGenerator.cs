@@ -13,6 +13,11 @@ public class TerrainGenerator
     public enum terrainShape { Square, Rectangle, Random };
 
     /// <summary>
+    /// The terrain type options.
+    /// </summary>
+    public enum terrainType { Greenery, Icy, Lava };
+
+    /// <summary>
     /// The minimum size of a level specified by tile count.
     /// </summary>
     public const int terrainMinSize = 10;

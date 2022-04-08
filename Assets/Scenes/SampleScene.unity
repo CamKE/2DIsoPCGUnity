@@ -522,7 +522,7 @@ GameObject:
   - component: {fileID: 67870894}
   - component: {fileID: 67870895}
   m_Layer: 5
-  m_Name: Exact height
+  m_Name: Toggle - Exact height
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1750,85 +1750,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoomSpeed: 1
---- !u!1 &228287526
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 228287527}
-  - component: {fileID: 228287529}
-  - component: {fileID: 228287528}
-  m_Layer: 5
-  m_Name: Placeholder
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &228287527
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 228287526}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1215883503}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.5}
-  m_SizeDelta: {x: -20, y: -13}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &228287528
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 228287526}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 0.5}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 14
-    m_FontStyle: 2
-    m_BestFit: 0
-    m_MinSize: 10
-    m_MaxSize: 40
-    m_Alignment: 0
-    m_AlignByGeometry: 0
-    m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
-    m_LineSpacing: 1
-  m_Text: Enter text...
---- !u!222 &228287529
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 228287526}
-  m_CullTransparentMesh: 1
 --- !u!1 &233506740
 GameObject:
   m_ObjectHideFlags: 0
@@ -2989,7 +2910,7 @@ GameObject:
   - component: {fileID: 429804940}
   - component: {fileID: 429804939}
   m_Layer: 5
-  m_Name: InputField
+  m_Name: InputField -  Exact height
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3129,7 +3050,7 @@ GameObject:
   - component: {fileID: 435336398}
   - component: {fileID: 435336399}
   m_Layer: 5
-  m_Name: Slider
+  m_Name: Slider - Exact height
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4151,7 +4072,7 @@ GameObject:
   - component: {fileID: 554738185}
   - component: {fileID: 554738184}
   m_Layer: 5
-  m_Name: InputField - max
+  m_Name: InputField - Max terrain height
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4168,7 +4089,6 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 1341816382}
   - {fileID: 1817632379}
   m_Father: {fileID: 995483306}
   m_RootOrder: 4
@@ -4220,7 +4140,7 @@ MonoBehaviour:
   m_Interactable: 1
   m_TargetGraphic: {fileID: 554738185}
   m_TextComponent: {fileID: 1817632380}
-  m_Placeholder: {fileID: 1341816383}
+  m_Placeholder: {fileID: 0}
   m_ContentType: 0
   m_InputType: 0
   m_AsteriskChar: 42
@@ -5623,7 +5543,7 @@ GameObject:
   - component: {fileID: 662353704}
   - component: {fileID: 662353705}
   m_Layer: 5
-  m_Name: Height range
+  m_Name: Toggle - Height range
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7228,7 +7148,7 @@ GameObject:
   - component: {fileID: 812659476}
   - component: {fileID: 812659477}
   m_Layer: 5
-  m_Name: Slider - min
+  m_Name: Slider - Min terrain height
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8467,7 +8387,7 @@ GameObject:
   - component: {fileID: 916835026}
   - component: {fileID: 916835027}
   m_Layer: 5
-  m_Name: Slider - max
+  m_Name: Slider - Max terrain height
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10031,7 +9951,7 @@ GameObject:
   - component: {fileID: 1204379717}
   - component: {fileID: 1204379716}
   m_Layer: 5
-  m_Name: Dropdown
+  m_Name: Dropdown - Terrain shape
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10401,7 +10321,7 @@ GameObject:
   - component: {fileID: 1215883505}
   - component: {fileID: 1215883504}
   m_Layer: 5
-  m_Name: InputField - min
+  m_Name: InputField - Min terrain height
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10418,7 +10338,6 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 228287527}
   - {fileID: 1508432014}
   m_Father: {fileID: 995483306}
   m_RootOrder: 2
@@ -10470,7 +10389,7 @@ MonoBehaviour:
   m_Interactable: 1
   m_TargetGraphic: {fileID: 1215883505}
   m_TextComponent: {fileID: 1508432015}
-  m_Placeholder: {fileID: 228287528}
+  m_Placeholder: {fileID: 0}
   m_ContentType: 0
   m_InputType: 0
   m_AsteriskChar: 42
@@ -10628,7 +10547,7 @@ GameObject:
   - component: {fileID: 1230816369}
   - component: {fileID: 1230816370}
   m_Layer: 5
-  m_Name: Slider
+  m_Name: Slider - Terrain Size
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10706,19 +10625,7 @@ MonoBehaviour:
   m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1871741129}
-        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: updateTerrainSizeField
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1 &1235453497
 GameObject:
   m_ObjectHideFlags: 0
@@ -11398,85 +11305,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1334338167}
   m_CullTransparentMesh: 1
---- !u!1 &1341816381
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1341816382}
-  - component: {fileID: 1341816384}
-  - component: {fileID: 1341816383}
-  m_Layer: 5
-  m_Name: Placeholder
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1341816382
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1341816381}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 554738183}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.5}
-  m_SizeDelta: {x: -20, y: -13}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1341816383
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1341816381}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 0.5}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 14
-    m_FontStyle: 2
-    m_BestFit: 0
-    m_MinSize: 10
-    m_MaxSize: 40
-    m_Alignment: 0
-    m_AlignByGeometry: 0
-    m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
-    m_LineSpacing: 1
-  m_Text: Enter text...
---- !u!222 &1341816384
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1341816381}
-  m_CullTransparentMesh: 1
 --- !u!1 &1376854016
 GameObject:
   m_ObjectHideFlags: 0
@@ -12048,7 +11876,7 @@ GameObject:
   - component: {fileID: 1472975214}
   - component: {fileID: 1472975213}
   m_Layer: 5
-  m_Name: InputField
+  m_Name: ' InputField - Terrain Size'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12061,7 +11889,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1472975211}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -12071,7 +11899,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 135, y: 10}
+  m_AnchoredPosition: {x: 135, y: 10.000056}
   m_SizeDelta: {x: -330, y: 30}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &1472975213
@@ -12127,19 +11955,7 @@ MonoBehaviour:
   m_CharacterLimit: 0
   m_OnEndEdit:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1871741129}
-        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: checkTerrainInputSizeValue
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -12298,7 +12114,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1215883503}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -12329,9 +12145,9 @@ MonoBehaviour:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
     m_FontSize: 14
     m_FontStyle: 0
-    m_BestFit: 0
+    m_BestFit: 1
     m_MinSize: 10
-    m_MaxSize: 40
+    m_MaxSize: 14
     m_Alignment: 0
     m_AlignByGeometry: 0
     m_RichText: 0
@@ -12801,7 +12617,7 @@ GameObject:
   - component: {fileID: 1560029915}
   - component: {fileID: 1560029914}
   m_Layer: 5
-  m_Name: Dropdown
+  m_Name: Dropdown - Terrain type
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14996,7 +14812,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 554738183}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -15027,9 +14843,9 @@ MonoBehaviour:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
     m_FontSize: 14
     m_FontStyle: 0
-    m_BestFit: 0
+    m_BestFit: 1
     m_MinSize: 10
-    m_MaxSize: 40
+    m_MaxSize: 14
     m_Alignment: 0
     m_AlignByGeometry: 0
     m_RichText: 0
@@ -15463,6 +15279,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   levelManager: {fileID: 233506741}
   levelCameraController: {fileID: 226959664}
+  levelGenUI: {fileID: 446614174}
+  demoUI: {fileID: 89930793}
+  popupManager: {fileID: 962399977}
+  terrainSizeSlider: {fileID: 1230816370}
+  terrainSizeInput: {fileID: 1472975213}
+  terrainTypeDropdown: {fileID: 1560029914}
+  terrainExactHeightToggle: {fileID: 67870895}
+  terrainRangeHeightToggle: {fileID: 662353705}
+  terrainExactHeightOptions: {fileID: 635608391}
+  terrainRangeHeightOptions: {fileID: 995483305}
+  terrainExactHeightSlider: {fileID: 435336399}
+  terrainExactHeightInput: {fileID: 429804939}
+  terrainRangeHeightMinSlider: {fileID: 812659477}
+  terrainRangeHeightMinInput: {fileID: 1215883504}
+  terrainRangeHeightMaxSlider: {fileID: 916835027}
+  terrainRangeHeightMaxInput: {fileID: 554738184}
+  terrainShapeDropdown: {fileID: 1204379716}
 --- !u!1 &1877819822
 GameObject:
   m_ObjectHideFlags: 0

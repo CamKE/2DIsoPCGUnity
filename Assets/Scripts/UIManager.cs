@@ -25,34 +25,64 @@ public class UIManager : MonoBehaviour
 
     // layer value for ui elements
     private int UILayer;
-    
+
     // the parent object of all level generation ui options
+    [SerializeField]
     private GameObject levelGenUI;
 
     // the parent object of all demo ui options
+    [SerializeField]
     private GameObject demoUI;
 
     // the script for handling popups
+    [SerializeField]
     private PopupManager popupManager;
 
     // the slider for the terrain size
+    [SerializeField]
     private Slider terrainSizeSlider;
 
     // the input field for the terrain size
+    [SerializeField]
     private InputField terrainSizeInput;
 
-    // the dropdown for the terrain shape
-    private Dropdown terrainShapeDropdown;
+    // the dropdown for the terrain type
+    [SerializeField]
+    private Dropdown terrainTypeDropdown;
 
-    private ToggleGroup terrainHeightTG;
+    [SerializeField]
+    private Toggle terrainExactHeightToggle;
 
+    [SerializeField]
+    private Toggle terrainRangeHeightToggle;
+
+    [SerializeField]
     private GameObject terrainExactHeightOptions;
 
+    [SerializeField]
     private GameObject terrainRangeHeightOptions;
 
+    [SerializeField]
     private Slider terrainExactHeightSlider;
 
+    [SerializeField]
     private InputField terrainExactHeightInput;
+
+    [SerializeField]
+    private Slider terrainRangeHeightMinSlider;
+
+    [SerializeField]
+    private InputField terrainRangeHeightMinInput;
+
+    [SerializeField]
+    private Slider terrainRangeHeightMaxSlider;
+
+    [SerializeField]
+    private InputField terrainRangeHeightMaxInput;
+
+    [SerializeField]
+    private Dropdown terrainShapeDropdown;
+
 
 
     // start is called before the first frame update when the script is enabled
@@ -60,43 +90,6 @@ public class UIManager : MonoBehaviour
     {
         // get the layer value for ui elements
         UILayer = LayerMask.NameToLayer("UI");
-
-        // get the levelgenui gameobject to enable and disable
-        levelGenUI = this.gameObject.transform.GetChild(0).gameObject;
-
-        // get the demoui gameobject to enable and disable
-        demoUI = this.gameObject.transform.GetChild(1).gameObject;
-
-        // get the popupmanager to generate popups
-        popupManager = this.gameObject.transform.GetChild(2).gameObject.GetComponent<PopupManager>();
-
-        // the transform content panel
-        Transform contentPanel = levelGenUI.gameObject.transform.GetChild(0).GetChild(0).GetChild(0);
-
-        // the transform of the terrain section
-        Transform terrainSection = contentPanel.transform.GetChild(1);
-
-        // the transform of the water bodies section
-        Transform waterBodiesSection = contentPanel.transform.GetChild(2);
-
-        // get the terrain size inputs relative to the terrain section transform
-        terrainSizeSlider = terrainSection.GetChild(0).GetChild(1).GetComponent<Slider>();
-        terrainSizeInput = terrainSection.GetChild(0).GetChild(2).GetComponent<InputField>();
-
-        // get the terrain shape dropdown relative to the terrain section transform
-        terrainShapeDropdown = terrainSection.GetChild(1).GetChild(1).GetComponent<Dropdown>();
-
-        // get the terrain height toggle group relative to the terrain section transform
-        terrainHeightTG = terrainSection.GetChild(2).GetComponent<ToggleGroup>();
-        // get the terrain exact height options gameobject relative to the terrain section transform
-        terrainExactHeightOptions = terrainSection.GetChild(3).gameObject;
-        // get the terrain range height options gameobject relative to the terrain section transform
-        terrainRangeHeightOptions = terrainSection.GetChild(4).gameObject;
-
-        // get the terrain exact height slider relative to the terrainExactHeightOptions section
-        terrainExactHeightSlider = terrainExactHeightOptions.transform.GetChild(1).GetComponent<Slider>();
-        // get the terrain exact height input field relative to the terrainExactHeightOptions section
-        terrainExactHeightInput = terrainExactHeightOptions.transform.GetChild(2).GetComponent<InputField>();
 
         // do the user interface setup after retieving the elements
         setupUI();
@@ -109,46 +102,70 @@ public class UIManager : MonoBehaviour
          * terrain size setup
          */
 
-        // limit terrain size to be between the min and max size
-        terrainSizeSlider.minValue = TerrainGenerator.terrainMinSize;
-        terrainSizeSlider.maxValue = TerrainGenerator.terrainMaxSize;
-        // set the terrain size input field to be equal to the sliders value
-        terrainSizeInput.text = terrainSizeSlider.value.ToString("0");
+        // setup the terrain size slider
+        setupSlider(terrainSizeSlider, terrainSizeInput, TerrainGenerator.terrainMinSize, TerrainGenerator.terrainMaxSize);
 
-         /*
-         * terrain type/shape setup
-         */
+        /*
+        * terrain type setup
+        */
 
-        // clear the dropdown
-        terrainShapeDropdown.ClearOptions();
-        // add the terrain shape options
-        terrainShapeDropdown.AddOptions(Enum.GetNames(typeof(TerrainGenerator.terrainShape)).ToList());
+        // setup the terrain type dropdown
+        setupDropdown(terrainTypeDropdown, Enum.GetNames(typeof(TerrainGenerator.terrainType)).ToList());
 
-         /*
-         * terrain height setup
-         */
+        /*
+        * terrain height setup
+        */
 
         // if the first toggle to be active is the terrain exact height toggle
-        if (terrainHeightTG.GetFirstActiveToggle().name == terrainExactHeightOptions.name)
-        {
-            // show the exact height options only
-            terrainExactHeightOptions.SetActive(true);
-            terrainRangeHeightOptions.SetActive(false);
-        } else
-        // otherwise
-        {
-            // show the range height options only
-            terrainExactHeightOptions.SetActive(false);
-            terrainRangeHeightOptions.SetActive(true);
-        }
 
-        // limit terrain exact height to be between the min and max values
-        terrainExactHeightSlider.minValue = TerrainGenerator.terrainMinHeight;
-        terrainExactHeightSlider.maxValue = TerrainGenerator.terrainMaxHeight;
-        // set the terrain exact height input field to be equal to the sliders value
-        terrainExactHeightInput.text = terrainExactHeightSlider.value.ToString("0");
+        setupToggle(terrainExactHeightToggle, terrainExactHeightOptions);
+        setupToggle(terrainRangeHeightToggle, terrainRangeHeightOptions);
 
+        // setup the terrain exact height slider
+        setupSlider(terrainExactHeightSlider, terrainExactHeightInput, TerrainGenerator.terrainMinHeight, TerrainGenerator.terrainMaxHeight);
 
+        // setup the terrain range height min slider
+        setupSlider(terrainRangeHeightMinSlider, terrainRangeHeightMinInput, TerrainGenerator.terrainMinHeight, TerrainGenerator.terrainMaxHeight);
+        // setup the terrain range height min slider
+        setupSlider(terrainRangeHeightMaxSlider, terrainRangeHeightMaxInput, TerrainGenerator.terrainMinHeight, TerrainGenerator.terrainMaxHeight);
+
+        /*
+         * terrain shape setup
+         */
+
+        // setup the terrain shape dropdown
+        setupDropdown(terrainShapeDropdown, Enum.GetNames(typeof(TerrainGenerator.terrainShape)).ToList());
+
+    }
+
+    private void setupToggle(Toggle toggle, GameObject option)
+    {
+        // make sure the options panel is initially in the correct state relative to the toggle state
+        toggleOption(toggle, option);
+        // add the toggle option to the on value change listener
+        toggle.onValueChanged.AddListener( delegate { toggleOption(toggle, option); });
+    }
+
+    // common setup tasks to be done for dropdowns
+    private void setupDropdown(Dropdown dropdown, List<string> options)
+    {
+        // clear the dropdown
+        dropdown.ClearOptions();
+        // add the options
+        dropdown.AddOptions(options);
+    }
+
+    // common setup tasks to be done for sliders
+    private void setupSlider(Slider slider, InputField input, int minValue, int maxValue)
+    {
+        // limit slider to be between the min and max values
+        slider.minValue = minValue;
+        slider.maxValue = maxValue;
+        // set the input field to be equal to the sliders value
+        input.text = slider.value.ToString("0");
+
+        slider.onValueChanged.AddListener(delegate { updateSliderField(slider, input); });
+        input.onEndEdit.AddListener(delegate { checkSliderField(input, minValue, maxValue); });
     }
 
     // late update is called every frame when the script is enabled, after update
@@ -280,38 +297,36 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Called anytime the terrain size slider is changed. Used to update
-    /// the corresponding input field.
+    /// Called anytime a slider changes to update the input field with the slider value.
     /// </summary>
-    public void updateTerrainSizeField()
+    /// <param name="slider"></param>
+    /// <param name="input"></param>
+    public void updateSliderField(Slider slider, InputField input)
     {
-        // set the terrain size input field to be the sliders current value
-        terrainSizeInput.text = terrainSizeSlider.value.ToString("0");
+        input.text = slider.value.ToString("0");
     }
 
     /// <summary>
-    /// Called anytime the terrain exact height slider is changed. Used to update
-    /// the corresponding input field.
+    /// Called anytime an input field has been edited to ensure the input is valid
     /// </summary>
-    public void updateTerrainExactHeightField()
+    public void checkSliderField(InputField input, int minValue, int maxValue)
     {
-        // set the terrain size input field to be the sliders current value
-        terrainExactHeightInput.text = terrainExactHeightSlider.value.ToString("0");
-    }
-
-    public void checkTerrainInputSizeValue()
-    {
-        if (terrainSizeInput.text.Length != 0)
+        if (input.text.Length != 0)
         {
-            if (int.Parse(terrainSizeInput.text) < TerrainGenerator.terrainMinSize)
+            if (int.Parse(input.text) < minValue)
             {
-                terrainSizeInput.text = TerrainGenerator.terrainMinSize.ToString("0");
+                terrainSizeInput.text = minValue.ToString("0");
             }
-            else if (int.Parse(terrainSizeInput.text) > TerrainGenerator.terrainMaxSize)
+            else if (int.Parse(input.text) > maxValue)
             {
-                terrainSizeInput.text = TerrainGenerator.terrainMaxSize.ToString("0");
+                input.text = maxValue.ToString("0");
             }
         }
+    }
+
+    public void toggleOption(Toggle toggle, GameObject option)
+    {
+        option.SetActive(toggle.isOn ? true : false);
     }
 
     public void toggleExactHeightOption()
