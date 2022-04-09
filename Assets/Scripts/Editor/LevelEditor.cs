@@ -21,7 +21,7 @@ public class LevelEditor : Editor
        
         if (GUILayout.Button("Generate Level"))
         {
-            levelManager.generate();
+            //levelManager.generate();
         }
     }
 }

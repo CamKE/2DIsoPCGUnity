@@ -263,8 +263,42 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public void generateLevel()
     {
+        TerrainGenerator.TerrainUserSettings terrainUserSettings;
+
+        // if exact height is on
+        if (terrainExactHeightToggle.isOn)
+        {
+            // collate the terrain settings struct with the exact terrain height
+             terrainUserSettings = new TerrainGenerator.TerrainUserSettings(int.Parse(terrainSizeInput.text),
+                (TerrainGenerator.terrainType)terrainTypeDropdown.value, int.Parse(terrainExactHeightInput.text), (TerrainGenerator.terrainShape)terrainShapeDropdown.value);
+        }
+        else
+        // otherwise
+        {
+            if (terrainRangeHeightMinSlider.value < terrainRangeHeightMaxSlider.value)
+            {
+                Debug.Log($"tmax height was  {terrainRangeHeightMaxSlider.value}");
+                // terrain range height is toggled, so collate the terrain settings with the min and max terrain height
+                terrainUserSettings = new TerrainGenerator.TerrainUserSettings(int.Parse(terrainSizeInput.text),
+                    (TerrainGenerator.terrainType)terrainTypeDropdown.value, int.Parse(terrainRangeHeightMinInput.text), int.Parse(terrainRangeHeightMaxInput.text), (TerrainGenerator.terrainShape)terrainShapeDropdown.value);
+            } else
+            {
+                popupManager.showPopup("Invalid Terrain Height Range","Terrain height minimum value cannot be greater than the maximum value.");
+                return;
+            }
+
+        }
+
+        // collate the river settings
+        RiverGenerator.RiverUserSettings riverUserSettings = new RiverGenerator.RiverUserSettings(riverGenerationToggle.isOn, (RiverGenerator.numRivers)riverAmountDropdown.value,
+            riverIntersectionToggle.isOn, riverBridgesToggle.isOn);
+
+        // collate the lake settings
+        LakeGenerator.LakeUserSettings lakeUserSettings = new LakeGenerator.LakeUserSettings(lakeGenerationToggle.isOn, (LakeGenerator.numLakes)lakeAmountDropdown.value,
+            (LakeGenerator.maxLakeSize)lakeMaxSizeDropdown.value);
+
         // generate the level
-        levelManager.generate();
+        levelManager.generate(terrainUserSettings, riverUserSettings, lakeUserSettings);
     }
 
     /// <summary>
@@ -336,7 +370,7 @@ public class UIManager : MonoBehaviour
     {
         if (slider.value != float.Parse(input.text))
         {
-            input.text = slider.value.ToString("0");
+            input.text = Math.Round(slider.value, MidpointRounding.AwayFromZero).ToString();
         }
     }
 

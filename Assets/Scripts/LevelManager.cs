@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.U2D;
 using UnityEditor;
+using System;
 
 /// <summary>
 /// Responsible for all operations to do with creating, managing and destroying the level and elements within it.
@@ -26,7 +27,7 @@ public class LevelManager : MonoBehaviour
 
 
     [SerializeField][HideInInspector]
-    private Tilemap tilemap;
+    private Tilemap terrainTilemap;
 
     // sprites packed for more efficient use
     [SerializeField]
@@ -42,12 +43,24 @@ public class LevelManager : MonoBehaviour
     // whether or not the player character has been instantiated
     private bool playerIsInstantiated;
 
+    private TerrainGenerator terrainGenerator;
+
+    private RiverGenerator riverGenerator;
+
+    private LakeGenerator lakeGenerator;
+
+    // the status of each cell in a grid of cells
+    public enum levelCellStatus { validCell, invalidCell, terrainCell, lakeCell, riverCell }
+
+    // a 3-dimensional array of cells in the level, denoting the status of each cell
+    private levelCellStatus[,,] levelCells;
+    
     /// <summary>
     ///  whether or not a level is generated
     /// </summary>
     public bool levelisGenerated { get; private set; }
 
-    // i use this instead of taking the grid center to world, as the grid center looks off. instead i take the tilemap tile center
+    // i use this instead of taking the grid center to world, as the grid center looks off. instead i take the terrainTilemap tile center
     // which uses the pivot as the center. then i add an offset to the y axis to move the tile center to the middle of the tile.
     private Vector3 tileCenterOffset;
     
@@ -86,7 +99,7 @@ public class LevelManager : MonoBehaviour
     private int calculatePlayerZValue()
     {
         // the grid cell the player is on 
-        var cellPos = tilemap.WorldToCell(new Vector3(playerController.transform.position.x, playerController.transform.position.y,0));
+        var cellPos = terrainTilemap.WorldToCell(new Vector3(playerController.transform.position.x, playerController.transform.position.y,0));
 
         // go through and find z value of the tile which exists in the x,y position of the player
         // can flip the for loop to ensure tile which the highest z is found first
@@ -95,7 +108,7 @@ public class LevelManager : MonoBehaviour
             // set the cells z to be the z to be checked
             cellPos.z = terrainZValue;
             // if there is a tile at the z to be checked
-            if (tilemap.GetTile(cellPos) != null)
+            if (terrainTilemap.GetTile(cellPos) != null)
             {
                 // we have found the z value for the tile the player is on
                 return terrainZValue;
@@ -107,29 +120,127 @@ public class LevelManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Clear the tiles in all tilemaps in the level.
+    /// Clear the tiles in all terrainTilemaps in the level.
     /// </summary>
     public void clearLevel()
     {
-        // tilemaps are not deleted even if they are not used, as it
+        // terrainTilemaps are not deleted even if they are not used, as it
         // is more efficient to keep them instead of continuously creating
         // and deleting them
 
-        // clear the current tilemap (temporary setup)
-        tilemap.ClearAllTiles();
+        // clear the current terrainTilemap (temporary setup)
+        //terrainTilemap.ClearAllTiles();
+        terrainGenerator.clearTilemap();
         // set is generated to be false
         levelisGenerated = false;
+    }
+
+    private void setLevelCellsDimensions(TerrainGenerator.TerrainUserSettings terrainUserSettings)
+    {
+        /*
+        * define the levelcells 3d array size
+        */
+
+        Vector3Int levelCellsDimensions = Vector3Int.zero;
+
+        // check the terrain shape chosen
+        switch (terrainUserSettings.tShape)
+        {
+            // for rectangular shape
+            case TerrainGenerator.terrainShape.Rectangle:
+                // 2 : 1 split
+                break;
+            // for random shape
+            case TerrainGenerator.terrainShape.Random:
+                // generate a random shape
+                // possibly return some other 2d structure that can grow like a list
+                // convert the 2d list of levelcellstatus to a 3d array 
+                break;
+            // default shape is square 
+            default:
+                int squareLength = getNearestSquare(terrainUserSettings.tSize);
+                
+                levelCellsDimensions = new Vector3Int(squareLength, squareLength, 1);
+                break;
+        }
+
+        // if the exact height is not in use
+        if (terrainUserSettings.tExactHeight == -1)
+        {
+            // then the z dimension of the level cells array must be equal to the max height of the terrain height range
+            // in the future, add max platform height or tree height (depending on which is bigger)
+            levelCellsDimensions.z = terrainUserSettings.tMaxHeight + 1;
+        }
+        else
+        // otherwise
+        {
+            // the z dimension of the level cells array must be equal to the exact height of the terrain
+            // in the future, add max platform height or tree height (depending on which is bigger)
+            levelCellsDimensions.z = terrainUserSettings.tExactHeight + 1;
+        }
+
+        Debug.Log(levelCellsDimensions);
+        levelCells = new levelCellStatus[levelCellsDimensions.x, levelCellsDimensions.y, levelCellsDimensions.z];
+    }
+
+    private int getNearestSquare(int value)
+    {
+        int length = (int)Math.Floor(Math.Sqrt(value));
+        //tminsize wrong, need user defined one
+        if ((length * length) < TerrainGenerator.terrainMinSize)
+        {
+            length = (int)Math.Ceiling(Math.Sqrt(value));
+        }
+
+        return length;
     }
 
     /// <summary>
     /// Generate the level. temporary setup.
     /// </summary>
-    public void generate()
+    public void generate(TerrainGenerator.TerrainUserSettings terrainUserSettings, RiverGenerator.RiverUserSettings riverUserSettings, LakeGenerator.LakeUserSettings lakeUserSettings)
     {
-
+        // clear the level tilemaps
         clearLevel();
-      
-      
+
+        // set the dimensions of the level cells 3d array based on the user settings
+        setLevelCellsDimensions(terrainUserSettings);
+
+        // populate the levelCells 3d array with the terrain cells
+        terrainGenerator.populateCells(terrainUserSettings, levelCells);
+
+        // if river generation is enabled
+        if (riverUserSettings.generationEnabled)
+        {
+            // populate the levelCells 3d array with the river cells
+            riverGenerator.populateCells(riverUserSettings, levelCells);
+        }
+
+        // if lake generation is enabled
+        if (lakeUserSettings.generationEnabled)
+        {
+            // populate the levelCells 3d array with the lake cells
+            lakeGenerator.populateCells(lakeUserSettings, levelCells);
+        }
+
+        // generate the terrain based on the current state of the levelCells array
+        terrainGenerator.generate(levelCells);
+
+        // if river generation is enabled
+        if (riverUserSettings.generationEnabled)
+        {
+            // populate the levelCells 3d array with the river cells
+            riverGenerator.generate(levelCells);
+        }
+
+        // if lake generation is enabled
+        if (lakeUserSettings.generationEnabled)
+        {
+            // populate the levelCells 3d array with the lake cells
+            lakeGenerator.generate(levelCells);
+        }
+
+        /*
         var tile = ScriptableObject.CreateInstance<Tile>();
         var tile2 = ScriptableObject.CreateInstance<Tile>();
 
@@ -145,22 +256,23 @@ public class LevelManager : MonoBehaviour
         
         for (int index = 0; index < positions.Length; index++)
         {
-            positions[index] = new Vector3Int(index % size.x, index / size.y, Random.Range(0, 2));
+            positions[index] = new Vector3Int(index % size.x, index / size.y, UnityEngine.Random.Range(0, 2));
             tileArray[index] = index % 2 == 0 ? tile : tile2;
         }
         
 
-        tilemap.SetTiles(positions, tileArray);
+        terrainTilemap.SetTiles(positions, tileArray);
+        */
 
-        updateLevelCamera();
+        updateLevelCamera(terrainGenerator.getTilemapBounds());
         levelisGenerated = true;
     }
 
     // gives the camera the new center of the level and the new orthographic size
-    private void updateLevelCamera()
+    private void updateLevelCamera(BoundsInt tilemapBounds)
     {
-        // get the boundary information of the terrain tilemap
-        BoundsInt terrainBounds = tilemap.cellBounds;
+        // get the boundary information of the terrain terrainTilemap
+        BoundsInt terrainBounds = tilemapBounds;
         
         // find the local position of the cell on the grid at the x most tile value and the 
         // y most tile value
@@ -185,22 +297,28 @@ public class LevelManager : MonoBehaviour
     private void initialSetup()
     {
 
-        tilemap = new GameObject("Terrain").AddComponent<Tilemap>();
+        terrainTilemap = new GameObject("TerrainOLD").AddComponent<Tilemap>();
 
-        tilemap.gameObject.AddComponent<TilemapRenderer>();
-        tilemap.transform.SetParent(grid.gameObject.transform);
-        tilemap.tileAnchor = new Vector3(0, 0, -2);
+        terrainTilemap.gameObject.AddComponent<TilemapRenderer>();
+        terrainTilemap.transform.SetParent(grid.gameObject.transform);
+        // move tile anchor from the button of the tile, to the front point of the tile (in the z)
+        terrainTilemap.tileAnchor = new Vector3(0, 0, -2);
 
         var gridComponent = grid.GetComponent<Grid>();
 
         gridComponent.cellSize = new Vector3(1, 0.5f, 1);
         gridComponent.cellLayout = GridLayout.CellLayout.IsometricZAsY;
 
-        var tilemapRenderer = tilemap.GetComponent<TilemapRenderer>();
+        var terrainTilemapRenderer = terrainTilemap.GetComponent<TilemapRenderer>();
 
-        tilemapRenderer.mode = TilemapRenderer.Mode.Individual;
+        terrainTilemapRenderer.mode = TilemapRenderer.Mode.Individual;
 
-        //setupPlayer(tilemap.GetCellCenterWorld(Vector3Int.zero) + tileCenterOffset);
+        terrainGenerator = new TerrainGenerator(grid, atlas);
+
+        riverGenerator = new RiverGenerator();
+
+        lakeGenerator = new LakeGenerator();
+        //setupPlayer(terrainTilemap.GetCellCenterWorld(Vector3Int.zero) + tileCenterOffset);
     }
 
     /// <summary>
@@ -255,8 +373,6 @@ public class LevelManager : MonoBehaviour
     // runs before the application is quit 
     private void OnApplicationQuit()
     {
-        // clear the level
-        clearLevel();
 
         // if the player exists
         if (playerIsInstantiated)
