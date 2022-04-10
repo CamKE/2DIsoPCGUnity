@@ -189,19 +189,20 @@ public class TerrainGenerator
         {
             // for rectangular shape
             case TerrainGenerator.terrainShape.Rectangle:
-                // 2 : 1 split
+                // 2:1, 3:1, or 4:1 ratio
+                levelCellsDimensions = getDimensions(terrainUserSettings.tSize, UnityEngine.Random.Range(2,4));
                 break;
             // for random shape
             case TerrainGenerator.terrainShape.Random:
                 // generate a random shape
                 // possibly return some other 2d structure that can grow like a list
                 // convert the 2d list of levelcellstatus to a 3d array 
+
                 break;
             // default shape is square 
             default:
-                int squareLength = getNearestSquare(terrainUserSettings.tSize);
 
-                levelCellsDimensions = new Vector3Int(squareLength, squareLength, 1);
+                levelCellsDimensions = getDimensions(terrainUserSettings.tSize);
                 break;
         }
 
@@ -225,16 +226,20 @@ public class TerrainGenerator
         return new LevelManager.levelCellStatus[levelCellsDimensions.x, levelCellsDimensions.y, levelCellsDimensions.z];
     }
 
-    private int getNearestSquare(int value)
+    // calculates the square for 1:1 length to width ratio.
+    private Vector3Int getDimensions(int terrainSize, int ratio = 1)
     {
-        int length = (int)Math.Floor(Math.Sqrt(value));
+
+        double rawLength = Math.Sqrt((float) terrainSize / ratio);
+        int length = (int)Math.Floor(rawLength);
         //tminsize wrong, need user defined one
-        if ((length * length) < TerrainGenerator.terrainMinSize)
+        if ((length * length * ratio) < TerrainGenerator.terrainMinSize)
         {
-            length = (int)Math.Ceiling(Math.Sqrt(value));
+            length = (int)Math.Ceiling(rawLength);
         }
 
-        return length;
+        // random orientation of width and height
+        return UnityEngine.Random.value > 0.5f ? new Vector3Int(length, length * ratio, 1) : new Vector3Int(length * ratio, length, 1);
     }
 
     private void setCellsRange(LevelManager.levelCellStatus[,,] levelCells, int levelCellsWidth, int levelCellsHeight, int minCellDepth, int maxCellDepth)
