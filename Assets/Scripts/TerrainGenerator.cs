@@ -57,7 +57,7 @@ public class TerrainGenerator
     /// <summary>
     /// The maximum size of a level specified by tile count.
     /// </summary>
-    public const int terrainMaxSize = 2000;
+    public const int terrainMaxSize = 1500;
 
     public const int terrainMinHeight = 0;
 
@@ -65,9 +65,13 @@ public class TerrainGenerator
 
     // determines the resolution at which we sample the perlin noise
     // set such that the variation in values returned is gradual
-    private const float perlinScale = 30;
+    private const float perlinScale = 5.0f;
 
-    Tilemap terrainTilemap;
+    private Tilemap terrainTilemap;
+
+    private readonly string[] greeneryGroundTileNames = { "ISO_Tile_Dirt_01_Grass_01", "ISO_Tile_Dirt_01_Grass_02","ISO_Tile_Dirt_01_GrassPatch_01",
+        "ISO_Tile_Dirt_01_GrassPatch_02", "ISO_Tile_Dirt_01_GrassPatch_03"};
+    private Tile[] greeneryGroundTiles;
 
     Tile tile;
 
@@ -87,6 +91,16 @@ public class TerrainGenerator
         tile = ScriptableObject.CreateInstance<Tile>();
 
         tile.sprite = atlas.GetSprite("ISO_Tile_Dirt_01_Grass_01");
+
+        int length = greeneryGroundTileNames.Length;
+
+        greeneryGroundTiles = new Tile[length];
+
+        for (int x = 0; x < length; x++)
+        {
+            greeneryGroundTiles[x] = ScriptableObject.CreateInstance<Tile>();
+            greeneryGroundTiles[x].sprite = atlas.GetSprite(greeneryGroundTileNames[x]);
+        }
     }
 
     public BoundsInt getTilemapBounds()
@@ -115,6 +129,8 @@ public class TerrainGenerator
 
     private void setCellsRange(LevelManager.levelCellStatus[,,] levelCells, int levelCellsWidth, int levelCellsHeight, int minCellDepth, int maxCellDepth)
     {
+        Vector2 perlinOffset = new Vector2(UnityEngine.Random.Range(0.0f, 999.0f), UnityEngine.Random.Range(0.0f, 999.0f));
+
         for (int x = 0; x < levelCellsWidth; x++)
         {
             for (int y = 0; y < levelCellsHeight; y++)
@@ -124,7 +140,7 @@ public class TerrainGenerator
                 if (levelCells[x, y, 0] == LevelManager.levelCellStatus.validCell)
                 {
                     // work out which cell in the z plane should be populated
-                    int zValue = calculateDepth(x, y, levelCellsWidth, levelCellsHeight, minCellDepth, maxCellDepth);
+                    int zValue = calculateDepth(x, y, levelCellsWidth, levelCellsHeight, minCellDepth, maxCellDepth, perlinOffset);
 
                     // mark the cell as a terrain cell
                     levelCells[x, y, zValue] = LevelManager.levelCellStatus.terrainCell;
@@ -175,15 +191,19 @@ public class TerrainGenerator
         }
     }
 
-    private int calculateDepth(int x,int y, int width, int height, float minCellDepth, float maxCellDepth)
+    private int calculateDepth(int x,int y, int width, int height, float minCellDepth, float maxCellDepth, Vector2 offset)
     {
         // normalise the x and y positions to be between 0 and 1
         float xPos = (float)x / width;
         float yPos = (float)y / height;
 
-        // then apply scale and add random offset
+        // then apply scale
         xPos *= perlinScale;
         yPos *= perlinScale;
+
+        // and add random offset to get a different section of the noise each generation
+        xPos += offset.x;
+        yPos += offset.y;
 
         // perlin should return value between 0.0f and 1.0f, but the doc says it
         // may return values slightly outside the bounds, so clamp it
@@ -215,7 +235,7 @@ public class TerrainGenerator
                     if (levelCells[x, y, z] == LevelManager.levelCellStatus.terrainCell)
                     {
                         positions.Add(new Vector3Int(x, y, z));
-                        tiles.Add(tile);
+                        tiles.Add(greeneryGroundTiles[z % 2]);
                         // set tile
                     }
                 }
