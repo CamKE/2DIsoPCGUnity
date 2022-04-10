@@ -135,65 +135,7 @@ public class LevelManager : MonoBehaviour
         levelisGenerated = false;
     }
 
-    private void setLevelCellsDimensions(TerrainGenerator.TerrainUserSettings terrainUserSettings)
-    {
-        /*
-        * define the levelcells 3d array size
-        */
-
-        Vector3Int levelCellsDimensions = Vector3Int.zero;
-
-        // check the terrain shape chosen
-        switch (terrainUserSettings.tShape)
-        {
-            // for rectangular shape
-            case TerrainGenerator.terrainShape.Rectangle:
-                // 2 : 1 split
-                break;
-            // for random shape
-            case TerrainGenerator.terrainShape.Random:
-                // generate a random shape
-                // possibly return some other 2d structure that can grow like a list
-                // convert the 2d list of levelcellstatus to a 3d array 
-                break;
-            // default shape is square 
-            default:
-                int squareLength = getNearestSquare(terrainUserSettings.tSize);
-                
-                levelCellsDimensions = new Vector3Int(squareLength, squareLength, 1);
-                break;
-        }
-
-        // if the exact height is not in use
-        if (terrainUserSettings.tExactHeight == -1)
-        {
-            // then the z dimension of the level cells array must be equal to the max height of the terrain height range
-            // in the future, add max platform height or tree height (depending on which is bigger)
-            levelCellsDimensions.z = terrainUserSettings.tMaxHeight + 1;
-        }
-        else
-        // otherwise
-        {
-            // the z dimension of the level cells array must be equal to the exact height of the terrain
-            // in the future, add max platform height or tree height (depending on which is bigger)
-            levelCellsDimensions.z = terrainUserSettings.tExactHeight + 1;
-        }
-
-        Debug.Log(levelCellsDimensions);
-        levelCells = new levelCellStatus[levelCellsDimensions.x, levelCellsDimensions.y, levelCellsDimensions.z];
-    }
-
-    private int getNearestSquare(int value)
-    {
-        int length = (int)Math.Floor(Math.Sqrt(value));
-        //tminsize wrong, need user defined one
-        if ((length * length) < TerrainGenerator.terrainMinSize)
-        {
-            length = (int)Math.Ceiling(Math.Sqrt(value));
-        }
-
-        return length;
-    }
+    
 
     /// <summary>
     /// Generate the level. temporary setup.
@@ -203,8 +145,7 @@ public class LevelManager : MonoBehaviour
         // clear the level tilemaps
         clearLevel();
 
-        // set the dimensions of the level cells 3d array based on the user settings
-        setLevelCellsDimensions(terrainUserSettings);
+        levelCells = terrainGenerator.createLevelCells(terrainUserSettings);
 
         // populate the levelCells 3d array with the terrain cells
         terrainGenerator.populateCells(terrainUserSettings, levelCells);

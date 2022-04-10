@@ -47,12 +47,12 @@ public class TerrainGenerator
     /// <summary>
     /// The terrain type options.
     /// </summary>
-    public enum terrainType { Greenery, Icy, Lava };
+    public enum terrainType { Greenery, Dessert, Snow, Lava };
 
     /// <summary>
     /// The minimum size of a level specified by tile count.
     /// </summary>
-    public const int terrainMinSize = 10;
+    public const int terrainMinSize = 50;
 
     /// <summary>
     /// The maximum size of a level specified by tile count.
@@ -65,15 +65,56 @@ public class TerrainGenerator
 
     // determines the resolution at which we sample the perlin noise
     // set such that the variation in values returned is gradual
-    private const float perlinScale = 5.0f;
+    private const float perlinScale = 3.0f;
 
     private Tilemap terrainTilemap;
 
-    private readonly string[] greeneryGroundTileNames = { "ISO_Tile_Dirt_01_Grass_01", "ISO_Tile_Dirt_01_Grass_02","ISO_Tile_Dirt_01_GrassPatch_01",
-        "ISO_Tile_Dirt_01_GrassPatch_02", "ISO_Tile_Dirt_01_GrassPatch_03"};
-    private Tile[] greeneryGroundTiles;
+    private readonly string[] greeneryGroundTileNames = { "ISO_Tile_Dirt_01_Grass_01", "ISO_Tile_Dirt_01_Grass_02"};
 
-    Tile tile;
+    private readonly string[] greeneryAccessoryTileNames = {"ISO_Tile_Dirt_01_GrassPatch_01",
+        "ISO_Tile_Dirt_01_GrassPatch_02", "ISO_Tile_Dirt_01_GrassPatch_03"};
+
+    private readonly string[] desertGroundTileNames = { "ISO_Tile_Sand_01", "ISO_Tile_Sand_02", "ISO_Tile_Sand_03", "ISO_Tile_Sand_04" };
+
+    private readonly string[] desertAccessoryTileNames = {"ISO_Tile_Sand_01_ToStone_01",
+        "ISO_Tile_Sand_01_ToStone_02", "ISO_Tile_Sand_02_ToStone_01", "ISO_Tile_Sand_02_ToStone_02", "ISO_Tile_Sand_03_ToStone_01", "ISO_Tile_Sand_03_ToStone_02"};
+
+    private readonly string[] snowGroundTileNames = { "ISO_Tile_Snow_01", "ISO_Tile_Snow_02" };
+
+    private readonly string[] snowAccessoryTileNames = {"ISO_Tile_Snow_01_ToStone_01",
+        "ISO_Tile_Snow_01_ToStone_02", "ISO_Tile_Snow_02_ToStone_01", "ISO_Tile_Snow_02_ToStone_02"};
+
+    private readonly string[] lavaGroundTileNames = { "ISO_Tile_LavaStone_01", "ISO_Tile_Tar_01" };
+
+    private readonly string[] lavaAccessoryTileNames = { "ISO_Tile_LavaCracks_01", "ISO_Tile_LavaCracks_01 1" };
+
+    Dictionary<terrainType, terrainTiles> terrainTilesByType;
+
+    private terrainType selectedType;
+
+    struct terrainTiles
+    {
+        public Tile[] groundTiles;
+        public Tile[] accessoryTiles;
+
+        public terrainTiles(string[] groundTileNames, string[] accessoryTileNames, SpriteAtlas atlas)
+        {
+            groundTiles = new Tile[groundTileNames.Length];
+            accessoryTiles = new Tile[accessoryTileNames.Length];
+
+            setTiles(groundTileNames, groundTiles, atlas);
+            setTiles(accessoryTileNames, accessoryTiles, atlas);
+        }
+
+        private void setTiles(string[] names, Tile[] tiles, SpriteAtlas atlas)
+        {
+            for (int x = 0; x < tiles.Length; x++)
+            {
+                tiles[x] = ScriptableObject.CreateInstance<Tile>();
+                tiles[x].sprite = atlas.GetSprite(names[x]);
+            }
+        }
+    }
 
     public TerrainGenerator(Grid grid, SpriteAtlas atlas)
     {
@@ -88,19 +129,19 @@ public class TerrainGenerator
 
         terrainTilemapRenderer.mode = TilemapRenderer.Mode.Individual;
 
-        tile = ScriptableObject.CreateInstance<Tile>();
+        terrainTilesByType = new Dictionary<terrainType, terrainTiles>();
 
-        tile.sprite = atlas.GetSprite("ISO_Tile_Dirt_01_Grass_01");
+        terrainTiles greeneryTiles = new terrainTiles(greeneryGroundTileNames, greeneryAccessoryTileNames, atlas);
+        terrainTilesByType.Add(terrainType.Greenery, greeneryTiles);
 
-        int length = greeneryGroundTileNames.Length;
+        terrainTiles dessertTiles = new terrainTiles(desertGroundTileNames, desertAccessoryTileNames, atlas);
+        terrainTilesByType.Add(terrainType.Dessert, dessertTiles);
 
-        greeneryGroundTiles = new Tile[length];
+        terrainTiles snowTiles = new terrainTiles(snowGroundTileNames, snowAccessoryTileNames, atlas);
+        terrainTilesByType.Add(terrainType.Snow, snowTiles);
 
-        for (int x = 0; x < length; x++)
-        {
-            greeneryGroundTiles[x] = ScriptableObject.CreateInstance<Tile>();
-            greeneryGroundTiles[x].sprite = atlas.GetSprite(greeneryGroundTileNames[x]);
-        }
+        terrainTiles lavaTiles = new terrainTiles(lavaGroundTileNames, lavaAccessoryTileNames, atlas);
+        terrainTilesByType.Add(terrainType.Lava, lavaTiles);
     }
 
     public BoundsInt getTilemapBounds()
@@ -110,6 +151,8 @@ public class TerrainGenerator
 
     public void populateCells(TerrainUserSettings terrainUserSettings, LevelManager.levelCellStatus[,,] levelCells)
     {
+        selectedType = terrainUserSettings.tType;
+
         // define all the terrain cells
 
         // get width and height of the array
@@ -125,6 +168,73 @@ public class TerrainGenerator
         }
 
 
+    }
+
+    /// <summary>
+    /// Creates the three dimensional array levelCells, defining the shape of the terrain based on 
+    /// the user settings.
+    /// </summary>
+    /// <param name="terrainUserSettings">The settings defined by the user.</param>
+    /// <returns></returns>
+    public LevelManager.levelCellStatus[,,] createLevelCells(TerrainUserSettings terrainUserSettings)
+    {
+        /*
+        * define the levelcells 3d array size
+        */
+
+        Vector3Int levelCellsDimensions = Vector3Int.zero;
+
+        // check the terrain shape chosen
+        switch (terrainUserSettings.tShape)
+        {
+            // for rectangular shape
+            case TerrainGenerator.terrainShape.Rectangle:
+                // 2 : 1 split
+                break;
+            // for random shape
+            case TerrainGenerator.terrainShape.Random:
+                // generate a random shape
+                // possibly return some other 2d structure that can grow like a list
+                // convert the 2d list of levelcellstatus to a 3d array 
+                break;
+            // default shape is square 
+            default:
+                int squareLength = getNearestSquare(terrainUserSettings.tSize);
+
+                levelCellsDimensions = new Vector3Int(squareLength, squareLength, 1);
+                break;
+        }
+
+        // if the exact height is not in use
+        if (terrainUserSettings.tExactHeight == -1)
+        {
+            // then the z dimension of the level cells array must be equal to the max height of the terrain height range
+            // in the future, add max platform height or tree height (depending on which is bigger)
+            levelCellsDimensions.z = terrainUserSettings.tMaxHeight + 1;
+        }
+        else
+        // otherwise
+        {
+            // the z dimension of the level cells array must be equal to the exact height of the terrain
+            // in the future, add max platform height or tree height (depending on which is bigger)
+            levelCellsDimensions.z = terrainUserSettings.tExactHeight + 1;
+        }
+
+        Debug.Log(levelCellsDimensions);
+
+        return new LevelManager.levelCellStatus[levelCellsDimensions.x, levelCellsDimensions.y, levelCellsDimensions.z];
+    }
+
+    private int getNearestSquare(int value)
+    {
+        int length = (int)Math.Floor(Math.Sqrt(value));
+        //tminsize wrong, need user defined one
+        if ((length * length) < TerrainGenerator.terrainMinSize)
+        {
+            length = (int)Math.Ceiling(Math.Sqrt(value));
+        }
+
+        return length;
     }
 
     private void setCellsRange(LevelManager.levelCellStatus[,,] levelCells, int levelCellsWidth, int levelCellsHeight, int minCellDepth, int maxCellDepth)
@@ -226,6 +336,11 @@ public class TerrainGenerator
         List<Vector3Int> positions = new List<Vector3Int>();
         List<TileBase> tiles = new List<TileBase>();
 
+        Tile[] groundTiles = terrainTilesByType[selectedType].groundTiles;
+        Tile[] accessoryTiles = terrainTilesByType[selectedType].accessoryTiles;
+        int groundTilesLength = groundTiles.Length;
+        int accessoryTilesLength = accessoryTiles.Length;
+
         for (int x = 0; x < levelCells.GetLength(0); x++)
         {
             for (int y = 0; y < levelCells.GetLength(1); y++)
@@ -235,8 +350,8 @@ public class TerrainGenerator
                     if (levelCells[x, y, z] == LevelManager.levelCellStatus.terrainCell)
                     {
                         positions.Add(new Vector3Int(x, y, z));
-                        tiles.Add(greeneryGroundTiles[z % 2]);
-                        // set tile
+                        // select random accessory tile at 30% chance
+                        tiles.Add(UnityEngine.Random.Range(0.0f, 10.0f) > 3.0f ? groundTiles[z % groundTilesLength] : accessoryTiles[z % accessoryTilesLength]);
                     }
                 }
             }
