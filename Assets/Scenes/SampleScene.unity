@@ -3455,7 +3455,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tipToShow: Specify the size of the terrain in terms of number of tiles. This value
-    will be rounded for square and rectangular shaped levels.
+    will be rounded for square and rectangular shaped levels. For randomly shaped
+    levels, this value will define the maximum possible area.
 --- !u!1 &480631752
 GameObject:
   m_ObjectHideFlags: 0
@@ -6157,7 +6158,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 885104970}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.45533332
+  m_Size: 0.45533338
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -8098,8 +8099,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 840301218}
   m_HandleRect: {fileID: 840301217}
   m_Direction: 0
-  m_Value: 1
-  m_Size: 0.9999998
+  m_Value: 0
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

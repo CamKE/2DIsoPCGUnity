@@ -50,7 +50,7 @@ public class LevelManager : MonoBehaviour
     private LakeGenerator lakeGenerator;
 
     // the status of each cell in a grid of cells
-    public enum levelCellStatus { validCell, invalidCell, terrainCell, lakeCell, riverCell }
+    public enum levelCellStatus { validCell, invalidCell, terrainCell, lakeCell, riverCell, outOfBounds }
 
     // a 3-dimensional array of cells in the level, denoting the status of each cell
     private levelCellStatus[,,] levelCells;

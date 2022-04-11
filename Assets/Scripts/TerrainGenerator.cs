@@ -182,7 +182,25 @@ public class TerrainGenerator
         * define the levelcells 3d array size
         */
 
-        Vector3Int levelCellsDimensions = Vector3Int.zero;
+        Vector2Int levelCells2DDimensions = Vector2Int.zero;
+        int levelCellsDepth = 0;
+
+        LevelManager.levelCellStatus[,,] levelCells = null;
+
+        // if the exact height is not in use
+        if (terrainUserSettings.tExactHeight == -1)
+        {
+            // then the z dimension of the level cells array must be equal to the max height of the terrain height range
+            // in the future, add max platform height or tree height (depending on which is bigger)
+            levelCellsDepth = terrainUserSettings.tMaxHeight + 1;
+        }
+        else
+        // otherwise
+        {
+            // the z dimension of the level cells array must be equal to the exact height of the terrain
+            // in the future, add max platform height or tree height (depending on which is bigger)
+            levelCellsDepth = terrainUserSettings.tExactHeight + 1;
+        }
 
         // check the terrain shape chosen
         switch (terrainUserSettings.tShape)
@@ -190,44 +208,153 @@ public class TerrainGenerator
             // for rectangular shape
             case TerrainGenerator.terrainShape.Rectangle:
                 // 2:1, 3:1, or 4:1 ratio
-                levelCellsDimensions = getDimensions(terrainUserSettings.tSize, UnityEngine.Random.Range(2,4));
+                levelCells2DDimensions = getDimensions(terrainUserSettings.tSize, UnityEngine.Random.Range(2,4));
+                levelCells = new LevelManager.levelCellStatus[levelCells2DDimensions.x, levelCells2DDimensions.y, levelCellsDepth];
                 break;
             // for random shape
             case TerrainGenerator.terrainShape.Random:
                 // generate a random shape
                 // possibly return some other 2d structure that can grow like a list
                 // convert the 2d list of levelcellstatus to a 3d array 
-
+                levelCells = randomLevelShape(terrainUserSettings.tSize,levelCellsDepth);
                 break;
             // default shape is square 
             default:
 
-                levelCellsDimensions = getDimensions(terrainUserSettings.tSize);
+                levelCells2DDimensions = getDimensions(terrainUserSettings.tSize);
+                levelCells = new LevelManager.levelCellStatus[levelCells2DDimensions.x, levelCells2DDimensions.y, levelCellsDepth];
                 break;
         }
 
-        // if the exact height is not in use
-        if (terrainUserSettings.tExactHeight == -1)
+        Debug.Log(levelCells2DDimensions);
+
+        return levelCells;
+    }
+
+    private LevelManager.levelCellStatus[,,] randomLevelShape(int terrainSize, int levelCellsDepth)
+    {
+        // get the square size.
+        Vector2Int dimensions = getDimensions(terrainSize);
+
+        // simple cellular automata to define a level shape
+        LevelManager.levelCellStatus[,] newLevelShape = getLevelShapeCA(dimensions.x);
+
+        LevelManager.levelCellStatus[,,] newLevelCells = new LevelManager.levelCellStatus[dimensions.x + 1, dimensions.y + 1,levelCellsDepth];
+
+        // set the level cells to match the shape defined in the 2d array
+        for (int x = 0; x < newLevelShape.GetLength(0); x++)
         {
-            // then the z dimension of the level cells array must be equal to the max height of the terrain height range
-            // in the future, add max platform height or tree height (depending on which is bigger)
-            levelCellsDimensions.z = terrainUserSettings.tMaxHeight + 1;
-        }
-        else
-        // otherwise
-        {
-            // the z dimension of the level cells array must be equal to the exact height of the terrain
-            // in the future, add max platform height or tree height (depending on which is bigger)
-            levelCellsDimensions.z = terrainUserSettings.tExactHeight + 1;
+            for (int y = 0; y < newLevelShape.GetLength(1); y++)
+            {
+                if (newLevelShape[x,y] != LevelManager.levelCellStatus.validCell)
+                {
+                    LevelManager.levelCellStatus cellStatus = newLevelShape[x, y];
+
+                    for (int z = 0; z < levelCellsDepth; z++)
+                    {
+                        newLevelCells[x, y, z] = cellStatus;
+                    }
+                }
+            }
         }
 
-        Debug.Log(levelCellsDimensions);
+        return newLevelCells;
+    }
 
-        return new LevelManager.levelCellStatus[levelCellsDimensions.x, levelCellsDimensions.y, levelCellsDimensions.z];
+    private LevelManager.levelCellStatus[,] getLevelShapeCA(int terrainLength)
+    {
+        int dimension = terrainLength + 1;
+        LevelManager.levelCellStatus[,] currentLevelShape = new LevelManager.levelCellStatus[dimension, dimension];
+
+        // turn the 1 tile padding around the 2d array to out of bound cells
+        for (int x = 0; x < dimension; x+= terrainLength)
+        {
+            for (int y = 0; y < dimension; y++)
+            {
+                currentLevelShape[x, y] = LevelManager.levelCellStatus.outOfBounds;
+            }
+        }
+        for (int y = 0; y < dimension; y+= terrainLength)
+        {
+            for (int x = 0; x < dimension; x++)
+            {
+                currentLevelShape[x, y] = LevelManager.levelCellStatus.outOfBounds;
+            }
+        }
+        // add random invalid cells, and add the outofbounds 1 cell padding around the 2d array
+        for (int x = 0; x < dimension; x++)
+        {
+            for (int y = 0; y < dimension; y++)
+            {
+                if (x == 0 || y == 0 || x == dimension-1 || y == dimension-1)
+                {
+                    currentLevelShape[x, y] = LevelManager.levelCellStatus.outOfBounds;
+                } else
+                {
+                    // change cell to valid cell at 50% change
+                    if (UnityEngine.Random.value > 0.5f)
+                    {
+                        currentLevelShape[x, y] = LevelManager.levelCellStatus.invalidCell;
+                    }
+                }
+            }
+        }
+
+        // create a new 2d array so the old one does not change as it is searched
+        LevelManager.levelCellStatus[,] newLevelShape = (LevelManager.levelCellStatus[,])currentLevelShape.Clone();
+
+        // how many automata passes
+        for (int a = 0; a < 1; a++)
+        {
+
+
+            // loop through 2d array
+            for (int x = 1; x < terrainLength; x++)
+            {
+                for (int y = 1; y < terrainLength; y++)
+                {
+                    int validNeighbourCount = 0;
+                    int invalidNeighbourCount = 0;
+                    int outOfBoundsNeighbourCount = 0;
+
+                    // get the neighbours
+                    for (int i = -1; i <= 1; i +=2)
+                    {
+                        for (int j = -1; j <= 1; j+=2)
+                        {
+                            LevelManager.levelCellStatus cellStatus = currentLevelShape[x + i, y + j];
+                            switch (cellStatus)
+                            {
+                                case LevelManager.levelCellStatus.validCell:
+                                    validNeighbourCount++;
+                                    break;
+                                case LevelManager.levelCellStatus.invalidCell:
+                                    invalidNeighbourCount++;
+                                    break;
+                                case LevelManager.levelCellStatus.outOfBounds:
+                                    outOfBoundsNeighbourCount++;
+                                    break;
+                            }
+                        }
+                    }
+
+                    // define the rules by drawing them out, and figuring out the combos
+                    if (validNeighbourCount > 1)
+                    {
+                        newLevelShape[x, y] = LevelManager.levelCellStatus.validCell;
+                    }
+                }
+            }
+
+            currentLevelShape = (LevelManager.levelCellStatus[,])newLevelShape.Clone();
+
+        }
+
+        return newLevelShape;
     }
 
     // calculates the square for 1:1 length to width ratio.
-    private Vector3Int getDimensions(int terrainSize, int ratio = 1)
+    private Vector2Int getDimensions(int terrainSize, int ratio = 1)
     {
 
         double rawLength = Math.Sqrt((float) terrainSize / ratio);
@@ -239,7 +366,7 @@ public class TerrainGenerator
         }
 
         // random orientation of width and height
-        return UnityEngine.Random.value > 0.5f ? new Vector3Int(length, length * ratio, 1) : new Vector3Int(length * ratio, length, 1);
+        return UnityEngine.Random.value > 0.5f ? new Vector2Int(length, length * ratio) : new Vector2Int(length * ratio, length);
     }
 
     private void setCellsRange(LevelManager.levelCellStatus[,,] levelCells, int levelCellsWidth, int levelCellsHeight, int minCellDepth, int maxCellDepth)
