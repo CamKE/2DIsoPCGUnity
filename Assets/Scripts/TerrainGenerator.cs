@@ -239,7 +239,7 @@ public class TerrainGenerator
         // simple cellular automata to define a level shape
         LevelManager.levelCellStatus[,] newLevelShape = getLevelShapeCA(dimensions.x);
 
-        LevelManager.levelCellStatus[,,] newLevelCells = new LevelManager.levelCellStatus[dimensions.x + 1, dimensions.y + 1,levelCellsDepth];
+        LevelManager.levelCellStatus[,,] newLevelCells = new LevelManager.levelCellStatus[dimensions.x, dimensions.y,levelCellsDepth];
 
         // set the level cells to match the shape defined in the 2d array
         for (int x = 0; x < newLevelShape.GetLength(0); x++)
@@ -263,90 +263,59 @@ public class TerrainGenerator
 
     private LevelManager.levelCellStatus[,] getLevelShapeCA(int terrainLength)
     {
-        int dimension = terrainLength + 1;
-        LevelManager.levelCellStatus[,] currentLevelShape = new LevelManager.levelCellStatus[dimension, dimension];
+        LevelManager.levelCellStatus[,] newLevelShape = new LevelManager.levelCellStatus[terrainLength,terrainLength];
 
-        // turn the 1 tile padding around the 2d array to out of bound cells
-        for (int x = 0; x < dimension; x+= terrainLength)
+        // set all cells to be invalid initially
+        for (int x = 0; x < terrainLength; x++)
         {
-            for (int y = 0; y < dimension; y++)
+            for (int y = 0; y < terrainLength; y++)
             {
-                currentLevelShape[x, y] = LevelManager.levelCellStatus.outOfBounds;
+                newLevelShape[x, y] = LevelManager.levelCellStatus.invalidCell;
             }
         }
-        for (int y = 0; y < dimension; y+= terrainLength)
+
+        Vector2Int centerCell = new Vector2Int(terrainLength / 2, terrainLength / 2);
+
+        newLevelShape[centerCell.x, centerCell.y] = LevelManager.levelCellStatus.validCell;
+
+        Queue<Vector2Int> neighbourCellPositions = new Queue<Vector2Int>();
+        List<Vector2Int> visitedPositions = new List<Vector2Int>();
+        neighbourCellPositions.Enqueue(centerCell);
+
+        Vector2Int currentCellPosition;
+
+        while (neighbourCellPositions.Count != 0)
         {
-            for (int x = 0; x < dimension; x++)
+            currentCellPosition = neighbourCellPositions.Dequeue();
+
+            visitedPositions.Add(currentCellPosition);
+
+            //make valid based on random prob
+            if (neighbourCellPositions.Count != 0 && UnityEngine.Random.value > 0.5f)
             {
-                currentLevelShape[x, y] = LevelManager.levelCellStatus.outOfBounds;
+                newLevelShape[currentCellPosition.x, currentCellPosition.y] = LevelManager.levelCellStatus.validCell;
             }
-        }
-        // add random invalid cells, and add the outofbounds 1 cell padding around the 2d array
-        for (int x = 0; x < dimension; x++)
-        {
-            for (int y = 0; y < dimension; y++)
+
+
+            if (newLevelShape[currentCellPosition.x, currentCellPosition.y] == LevelManager.levelCellStatus.validCell)
             {
-                if (x == 0 || y == 0 || x == dimension-1 || y == dimension-1)
+                for (int i = -1; i <= 1; i += 2)
                 {
-                    currentLevelShape[x, y] = LevelManager.levelCellStatus.outOfBounds;
-                } else
-                {
-                    // change cell to valid cell at 50% change
-                    if (UnityEngine.Random.value > 0.5f)
+                    int xPos = currentCellPosition.x + i;
+                    Vector2Int adjacentXCellPosition = new Vector2Int(xPos, currentCellPosition.y);
+                    if ((xPos >= 0 && xPos < terrainLength) && (visitedPositions.Find(match => match.x == adjacentXCellPosition.x && match.y == adjacentXCellPosition.y) == default))
                     {
-                        currentLevelShape[x, y] = LevelManager.levelCellStatus.invalidCell;
+                        neighbourCellPositions.Enqueue(adjacentXCellPosition);
                     }
-                }
-            }
-        }
-
-        // create a new 2d array so the old one does not change as it is searched
-        LevelManager.levelCellStatus[,] newLevelShape = (LevelManager.levelCellStatus[,])currentLevelShape.Clone();
-
-        // how many automata passes
-        for (int a = 0; a < 1; a++)
-        {
-
-
-            // loop through 2d array
-            for (int x = 1; x < terrainLength; x++)
-            {
-                for (int y = 1; y < terrainLength; y++)
-                {
-                    int validNeighbourCount = 0;
-                    int invalidNeighbourCount = 0;
-                    int outOfBoundsNeighbourCount = 0;
-
-                    // get the neighbours
-                    for (int i = -1; i <= 1; i +=2)
+                    int yPos = currentCellPosition.y + i;
+                    Vector2Int adjacentYCellPosition = new Vector2Int(currentCellPosition.x, yPos);
+                    if ((yPos >= 0 && yPos < terrainLength) && (visitedPositions.Find(match => match.x == adjacentYCellPosition.x && match.y == adjacentYCellPosition.y) == default))
                     {
-                        for (int j = -1; j <= 1; j+=2)
-                        {
-                            LevelManager.levelCellStatus cellStatus = currentLevelShape[x + i, y + j];
-                            switch (cellStatus)
-                            {
-                                case LevelManager.levelCellStatus.validCell:
-                                    validNeighbourCount++;
-                                    break;
-                                case LevelManager.levelCellStatus.invalidCell:
-                                    invalidNeighbourCount++;
-                                    break;
-                                case LevelManager.levelCellStatus.outOfBounds:
-                                    outOfBoundsNeighbourCount++;
-                                    break;
-                            }
-                        }
-                    }
-
-                    // define the rules by drawing them out, and figuring out the combos
-                    if (validNeighbourCount > 1)
-                    {
-                        newLevelShape[x, y] = LevelManager.levelCellStatus.validCell;
+                        neighbourCellPositions.Enqueue(adjacentYCellPosition);
                     }
                 }
             }
 
-            currentLevelShape = (LevelManager.levelCellStatus[,])newLevelShape.Clone();
 
         }
 
