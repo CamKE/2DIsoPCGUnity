@@ -290,7 +290,7 @@ public class UIManager : MonoBehaviour
         }
 
         // collate the river settings
-        RiverGenerator.RiverUserSettings riverUserSettings = new RiverGenerator.RiverUserSettings(riverGenerationToggle.isOn, (RiverGenerator.numRivers)riverAmountDropdown.value,
+        RiverGenerator.RiverUserSettings riverUserSettings = new RiverGenerator.RiverUserSettings(terrainUserSettings.tType, riverGenerationToggle.isOn, (RiverGenerator.numRivers)riverAmountDropdown.value,
             riverIntersectionToggle.isOn, riverBridgesToggle.isOn);
 
         // collate the lake settings
@@ -323,7 +323,7 @@ public class UIManager : MonoBehaviour
             demoUI.SetActive(true);
 
             // setup the player. temp initial position. position setting will be more complicated
-            levelManager.setupPlayer(new Vector3(1, 1, 3));
+            levelManager.setupPlayer();
             // disable the level camera
             levelManager.setLevelCameraActive(false);
         } else

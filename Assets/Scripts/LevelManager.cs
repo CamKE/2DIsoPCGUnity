@@ -25,17 +25,9 @@ public class LevelManager : MonoBehaviour
     [SerializeField]
     private LevelCameraController levelCameraController;
 
-
-    [SerializeField][HideInInspector]
-    private Tilemap terrainTilemap;
-
     // sprites packed for more efficient use
     [SerializeField]
     private SpriteAtlas atlas;
-
-
-    [SerializeField]
-    private Vector2Int size;
 
     // the playerController component of the player
     private PlayerController playerController;
@@ -49,33 +41,34 @@ public class LevelManager : MonoBehaviour
 
     private LakeGenerator lakeGenerator;
 
+    private bool terrainVariation;
+
     // the status of each cell in a grid of cells
     public enum levelCellStatus { validCell, invalidCell, terrainCell, lakeCell, riverCell, outOfBounds }
 
     // a 3-dimensional array of cells in the level, denoting the status of each cell
     private levelCellStatus[,,] levelCells;
-    
+
+    private Vector3Int currentCell;
+    private Vector3 previousPosition;
+
     /// <summary>
     ///  whether or not a level is generated
     /// </summary>
     public bool levelisGenerated { get; private set; }
-
-    // i use this instead of taking the grid center to world, as the grid center looks off. instead i take the terrainTilemap tile center
-    // which uses the pivot as the center. then i add an offset to the y axis to move the tile center to the middle of the tile.
-    private Vector3 tileCenterOffset;
     
     // start is called before the first frame update when the script is enabled
     private void Start()
     {
         // set the offset of the tile center to a value relative to the center position of the sprites (0.205)
         // , given sprite sizes are normalised to 1x1
-        tileCenterOffset = new Vector3(0,0.7f,0);
 
         // ensure the playerIsInstantiated bool to false by default
         playerIsInstantiated = false;
         // ensure the isGenerated bool is false by default
         levelisGenerated = false;
 
+        currentCell = Vector3Int.zero;
         initialSetup();
     }
 
@@ -85,22 +78,55 @@ public class LevelManager : MonoBehaviour
         // if there is a player character
         if (playerIsInstantiated)
         {
-            // work out what the player's z value should be
-            int playerZValue = calculatePlayerZValue();
+            if(terrainVariation)
+            {
 
-            // allow the user to control the player character, 
-            // and give the character the new height
-            playerController.MoveCharacter(playerZValue);
+                float playerZValue = calculatePlayerZValue();
+
+                playerController.MoveCharacter(playerZValue);
+                
+            } else
+            {
+                playerController.MoveCharacter();
+            }
+
         }    
     }
 
     // work out what the z value for the player should be based on their current position
     // to ensure they are ordered correctly relative to the other sprites
-    private int calculatePlayerZValue()
+    private float calculatePlayerZValue()
     {
-        // the grid cell the player is on 
-        var cellPos = terrainTilemap.WorldToCell(new Vector3(playerController.transform.position.x, playerController.transform.position.y,0));
+        // work out what the player's z value should be
+        Vector3 playerPosition = playerController.getPosition();
 
+        if(!previousPosition.x.Equals(playerPosition.x) && !previousPosition.y.Equals(playerPosition.y))
+        {
+            previousPosition = playerController.getPosition();
+
+            currentCell = grid.WorldToCell(new Vector3(playerPosition.x, playerPosition.y,playerPosition.z-0.5f));
+
+        // the grid cell the player is on 
+        //var cellPos = grid.WorldToCell(new Vector3(playerController.transform.position.x, playerController.transform.position.y,0));
+        int x = Mathf.Clamp(currentCell.x, 0, levelCells.GetLength(0)-1);
+        int y = Mathf.Clamp(currentCell.y, 0, levelCells.GetLength(1)-1);
+
+        for (int z = levelCells.GetLength(2)-1; z > -1; z--)
+        {
+            if (levelCells[x,y,z] == levelCellStatus.terrainCell)
+            {
+                currentCell = new Vector3Int(x, y, z);
+                return z + 0.5f;
+            }
+        }
+
+        }
+        else
+        {
+            return playerPosition.z;
+        }
+        /*
+         
         // go through and find z value of the tile which exists in the x,y position of the player
         // can flip the for loop to ensure tile which the highest z is found first
         for (int terrainZValue = TerrainGenerator.terrainMinHeight; terrainZValue <= TerrainGenerator.terrainMaxHeight; terrainZValue++)
@@ -111,9 +137,11 @@ public class LevelManager : MonoBehaviour
             if (terrainTilemap.GetTile(cellPos) != null)
             {
                 // we have found the z value for the tile the player is on
-                return terrainZValue;
+                return terrainZValue +0.5f;
             }
         }
+
+        */
 
         // no tile found, return invalid value
         return -1;
@@ -131,6 +159,7 @@ public class LevelManager : MonoBehaviour
         // clear the current terrainTilemap (temporary setup)
         //terrainTilemap.ClearAllTiles();
         terrainGenerator.clearTilemap();
+        riverGenerator.clearTilemap();
         // set is generated to be false
         levelisGenerated = false;
     }
@@ -144,6 +173,8 @@ public class LevelManager : MonoBehaviour
     {
         // clear the level tilemaps
         clearLevel();
+
+        terrainVariation = terrainUserSettings.tExactHeight == -1 ? true : false;
 
         levelCells = terrainGenerator.createLevelCells(terrainUserSettings);
 
@@ -237,26 +268,9 @@ public class LevelManager : MonoBehaviour
     // the initial setup for the level. temporary setup
     private void initialSetup()
     {
-
-        terrainTilemap = new GameObject("TerrainOLD").AddComponent<Tilemap>();
-
-        terrainTilemap.gameObject.AddComponent<TilemapRenderer>();
-        terrainTilemap.transform.SetParent(grid.gameObject.transform);
-        // move tile anchor from the button of the tile, to the front point of the tile (in the z)
-        terrainTilemap.tileAnchor = new Vector3(0, 0, -2);
-
-        var gridComponent = grid.GetComponent<Grid>();
-
-        gridComponent.cellSize = new Vector3(1, 0.5f, 1);
-        gridComponent.cellLayout = GridLayout.CellLayout.IsometricZAsY;
-
-        var terrainTilemapRenderer = terrainTilemap.GetComponent<TilemapRenderer>();
-
-        terrainTilemapRenderer.mode = TilemapRenderer.Mode.Individual;
-
         terrainGenerator = new TerrainGenerator(grid, atlas);
 
-        riverGenerator = new RiverGenerator();
+        riverGenerator = new RiverGenerator(grid, atlas);
 
         lakeGenerator = new LakeGenerator();
         //setupPlayer(terrainTilemap.GetCellCenterWorld(Vector3Int.zero) + tileCenterOffset);
@@ -266,7 +280,7 @@ public class LevelManager : MonoBehaviour
     /// Create the player and put them into the level at the given position.
     /// </summary>
     /// <param name="position">Where the player should be placed on the level</param>
-    public void setupPlayer(Vector3 position)
+    public void setupPlayer()
     {
         // if the player is not instantiated
         if (!playerIsInstantiated)
@@ -283,9 +297,28 @@ public class LevelManager : MonoBehaviour
             // player is instantiated, so enable the player object
             player.SetActive(true);
         }
-        
+
+        bool cellFound = false;
+        while (!cellFound)
+        {
+            Vector2Int cellPosition = new Vector2Int(UnityEngine.Random.Range(0, levelCells.GetLength(0)), UnityEngine.Random.Range(0, levelCells.GetLength(1)));
+            
+            for (int z = 0; z < levelCells.GetLength(2); z++)
+            {
+                if (levelCells[cellPosition.x,cellPosition.y,z] == levelCellStatus.terrainCell)
+                {
+                    if ((z+1) == levelCells.GetLength(2) || levelCells[cellPosition.x, cellPosition.y, z + 1] == levelCellStatus.validCell)
+                    {
+                        currentCell = new Vector3Int(cellPosition.x, cellPosition.y, z);
+                        Debug.Log(currentCell);
+                        playerController.setPosition(grid.CellToWorld(currentCell));
+                        cellFound = true;
+                    }
+                    break;
+                }
+            }
+        }
         // set the players intial position on the level
-        playerController.setPosition(position);
  
     }
 

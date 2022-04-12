@@ -237,7 +237,7 @@ public class TerrainGenerator
         Vector2Int dimensions = getDimensions(terrainSize);
 
         // simple cellular automata to define a level shape
-        LevelManager.levelCellStatus[,] newLevelShape = getLevelShapeCA(dimensions.x);
+        LevelManager.levelCellStatus[,] newLevelShape = getLevelShapeBFS(dimensions.x, terrainSize);
 
         LevelManager.levelCellStatus[,,] newLevelCells = new LevelManager.levelCellStatus[dimensions.x, dimensions.y,levelCellsDepth];
 
@@ -261,7 +261,8 @@ public class TerrainGenerator
         return newLevelCells;
     }
 
-    private LevelManager.levelCellStatus[,] getLevelShapeCA(int terrainLength)
+    // von neumann breadth first search based approach
+    private LevelManager.levelCellStatus[,] getLevelShapeBFS(int terrainLength, int terrainSize)
     {
         LevelManager.levelCellStatus[,] newLevelShape = new LevelManager.levelCellStatus[terrainLength,terrainLength];
 
@@ -279,43 +280,45 @@ public class TerrainGenerator
         newLevelShape[centerCell.x, centerCell.y] = LevelManager.levelCellStatus.validCell;
 
         Queue<Vector2Int> neighbourCellPositions = new Queue<Vector2Int>();
-        List<Vector2Int> visitedPositions = new List<Vector2Int>();
+        HashSet<Vector2Int> visitedPositions = new HashSet<Vector2Int>();
         neighbourCellPositions.Enqueue(centerCell);
 
         Vector2Int currentCellPosition;
+
+        float validTileChance = 1.0f;
 
         while (neighbourCellPositions.Count != 0)
         {
             currentCellPosition = neighbourCellPositions.Dequeue();
 
-            visitedPositions.Add(currentCellPosition);
-
             //make valid based on random prob
-            if (neighbourCellPositions.Count != 0 && UnityEngine.Random.value > 0.5f)
+            if (neighbourCellPositions.Count != 0 && UnityEngine.Random.value < validTileChance)
             {
                 newLevelShape[currentCellPosition.x, currentCellPosition.y] = LevelManager.levelCellStatus.validCell;
+                validTileChance -= (1.0f / terrainSize);
             }
 
 
-            if (newLevelShape[currentCellPosition.x, currentCellPosition.y] == LevelManager.levelCellStatus.validCell)
+            if (!visitedPositions.Contains(currentCellPosition) && newLevelShape[currentCellPosition.x, currentCellPosition.y] == LevelManager.levelCellStatus.validCell)
             {
                 for (int i = -1; i <= 1; i += 2)
                 {
                     int xPos = currentCellPosition.x + i;
                     Vector2Int adjacentXCellPosition = new Vector2Int(xPos, currentCellPosition.y);
-                    if ((xPos >= 0 && xPos < terrainLength) && (visitedPositions.Find(match => match.x == adjacentXCellPosition.x && match.y == adjacentXCellPosition.y) == default))
+                    if ((xPos >= 0 && xPos < terrainLength))
                     {
                         neighbourCellPositions.Enqueue(adjacentXCellPosition);
                     }
                     int yPos = currentCellPosition.y + i;
                     Vector2Int adjacentYCellPosition = new Vector2Int(currentCellPosition.x, yPos);
-                    if ((yPos >= 0 && yPos < terrainLength) && (visitedPositions.Find(match => match.x == adjacentYCellPosition.x && match.y == adjacentYCellPosition.y) == default))
+                    if ((yPos >= 0 && yPos < terrainLength))
                     {
                         neighbourCellPositions.Enqueue(adjacentYCellPosition);
                     }
                 }
-            }
 
+                visitedPositions.Add(currentCellPosition);
+            }
 
         }
 
