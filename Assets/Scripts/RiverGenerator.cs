@@ -37,8 +37,11 @@ public class RiverGenerator
 
     private int riverMaxCount;
 
+    private List<Vector3Int>[] rivers;
+
     public enum numRivers { Low, Medium, High }
 
+    // river gen currently only for square and rectangular levels
     public RiverGenerator(Grid grid, SpriteAtlas atlas)
     {
         riverTilemap = new GameObject("River").AddComponent<Tilemap>();
@@ -67,17 +70,51 @@ public class RiverGenerator
         riverTilesByType[TerrainGenerator.terrainType.Snow].sprite = atlas.GetSprite(iceTileName);
     }
 
-    public void populateCells(RiverUserSettings riverUserSettings, LevelManager.levelCellStatus[,,] levelCells)
+    public void populateCells(RiverUserSettings riverUserSettings, LevelManager.levelCellStatus[,,] levelCells, List<Vector3Int> terrainCellList, List<Vector2Int> boundaryCellList)
     {
+        Debug.Log("River generation started");
         selectedType = riverUserSettings.tType;
         int levelArea = levelCells.GetLength(0) * levelCells.GetLength(1);
+        Debug.Log($"level area is {levelArea}. Used to calc the max rivercount");
+
 
         riverMaxCount = (int)Math.Ceiling(levelArea * (0.01f * ((int)riverUserSettings.rNum + 1)));
+        Debug.Log($"Max river count is {riverMaxCount}");
 
+        Debug.Log("Creating the grid...");
+        Node[,] grid = createGrid(levelCells, terrainCellList);
+        Debug.Log("grid created");
+
+        rivers = new List<Vector3Int>[riverMaxCount];
+
+        Debug.Log($"riverCount from 0 to riverMaxCount-1 ({riverMaxCount-1})...");
         for (int riverCount = 0; riverCount < riverMaxCount; riverCount++)
         {
+            Debug.Log($"at riverCount {riverCount}");
+            Debug.Log("get random boundary cells xy pos from the boundary cell xy list to set a start node");
+            Vector2Int boundaryCellXYPosition = boundaryCellList[UnityEngine.Random.Range(0,boundaryCellList.Count-1)];
+            Debug.Log($"random cell {boundaryCellXYPosition} chosen, remove it from the list");
 
+            boundaryCellList.Remove(boundaryCellXYPosition);
+            Debug.Log("set the start node to that boundary cell by using the xy from the list");
+            Node startNode = grid[boundaryCellXYPosition.x, boundaryCellXYPosition.y];
+            Debug.Log($"to confirm, {startNode.position} and {boundaryCellXYPosition} should have the same xy positions");
+
+            Debug.Log("get random boundary cells xy pos from the boundary cell xy list to set an end node");
+            boundaryCellXYPosition = boundaryCellList[UnityEngine.Random.Range(0, boundaryCellList.Count - 1)];
+            Debug.Log($"random cell {boundaryCellXYPosition} chosen, remove it from the list");
+
+            boundaryCellList.Remove(boundaryCellXYPosition);
+
+            Debug.Log("set the end node to that boundary cell by using the xy from the list");
+            Node endNode = grid[boundaryCellXYPosition.x, boundaryCellXYPosition.y];
+            Debug.Log($"to confirm, {endNode.position} and {boundaryCellXYPosition} should have the same xy positions");
+
+            Debug.Log($"find the shortest path between the start and end nodes: {startNode.position} and {endNode.position}");
+            rivers[riverCount] = findAStarPath(grid, startNode, endNode, levelCells);
         }
+
+        /*
         //rando test
         levelCells[4, 0, 0] = LevelManager.levelCellStatus.riverCell;
         levelCells[4, 1, 0] = LevelManager.levelCellStatus.riverCell;
@@ -85,9 +122,145 @@ public class RiverGenerator
         levelCells[4, 3, 0] = LevelManager.levelCellStatus.riverCell;
         levelCells[4, 4, 0] = LevelManager.levelCellStatus.riverCell;
         levelCells[4, 5, 0] = LevelManager.levelCellStatus.riverCell;
-
+        */
     }
 
+    private Node[,] createGrid(LevelManager.levelCellStatus[,,] levelCells, List<Vector3Int> terrainCellList)
+    {
+
+        Debug.Log($"New node grid of dimension {levelCells.GetLength(0)} by {levelCells.GetLength(0)}");
+        Node[,] grid = new Node[levelCells.GetLength(0), levelCells.GetLength(1)];
+
+        Debug.Log("foreach terraincell position in terrain cell list...");
+        foreach (Vector3Int terrainCellPosition in terrainCellList)
+        {
+            Debug.Log($"position {terrainCellPosition} added to node grid");
+            grid[terrainCellPosition.x, terrainCellPosition.y] = new Node(terrainCellPosition, true);
+        }
+
+        Debug.Log("return the grid");
+        return grid;
+    }
+ 
+    private List<Vector3Int> findAStarPath(Node[,] grid, Node startNode, Node endNode, LevelManager.levelCellStatus[,,] levelCells)
+    {
+        List<Node> openList = new List<Node>();
+        HashSet<Node> closedList = new HashSet<Node>();
+        Node currentNode;
+
+        Debug.Log("Add the start node to the openlist");
+        openList.Add(startNode);
+
+        Debug.Log("while the openlist is not empty...");
+        while (openList.Count > 0)
+        {
+            Debug.Log($"set the current node to be the first node in the openlist: {openList[0]}");
+            currentNode = openList[0];
+
+            Debug.Log($"i from 1 to openList.Count-1 ({openList.Count - 1})...");
+            for (int i = 1; i < openList.Count; i++)
+            {
+                Debug.Log($"if the f cost of node i from the open list is less than or equal to the f cost of the current node ({openList[i].fCost()} <= {currentNode.fCost()}?)...");
+                if (openList[i].fCost() <= currentNode.fCost())
+                {
+                    Debug.Log($"if the above is true, then if the h cost of node i from the open list is less than the h cost of the current node ({openList[i].hCost} <= {currentNode.hCost}?)...");
+                    if (openList[i].hCost < currentNode.hCost)
+                    {
+                        Debug.Log("if the above is true, set the current node to be the node at i in the openlist");
+                        currentNode = openList[i];
+                    }
+                }
+            }
+
+            Debug.Log("remove the current node from the open list");
+            openList.Remove(currentNode);
+            Debug.Log("add the current node from the closed list");
+            closedList.Add(currentNode);
+
+            Debug.Log($"if the current node is equal to the end node ({currentNode == endNode})");
+            if (currentNode == endNode)
+            {
+                Debug.Log("if the above is true, set the current node to be the end node");
+                List<Vector3Int> path = new List<Vector3Int>();
+                currentNode = endNode;
+
+                Debug.Log("trace the path backwards");
+
+                Debug.Log("while the current node is not equal to the end node...");
+                while (currentNode != startNode)
+                {
+                    Debug.Log($"add the current node position {currentNode.position} to the path");
+                    Vector3Int position = currentNode.position;
+                    path.Add(currentNode.position);
+                    levelCells[position.x, position.y, position.z] = LevelManager.levelCellStatus.riverCell;
+                    Debug.Log("set the parent of the current node to be the current node");
+                    currentNode = currentNode.parent;
+                }
+                Debug.Log("entire path traced backwards, now reverse it");
+
+                path.Reverse();
+
+                return path;
+            }
+
+            Debug.Log("");
+            foreach (Node neighbourNode in getNeighbours(grid, currentNode))
+            {
+                if (!neighbourNode.isTraversable || closedList.Contains(neighbourNode))
+                {
+                    continue;
+                }
+
+                int newNeighbourCost = currentNode.gCost + GetDistance(currentNode,neighbourNode);
+                if (newNeighbourCost < currentNode.gCost || !openList.Contains(neighbourNode))
+                {
+                    neighbourNode.gCost = newNeighbourCost;
+                    neighbourNode.hCost = GetDistance(neighbourNode, endNode);
+                    neighbourNode.parent = currentNode;
+
+                    if (!openList.Contains(neighbourNode))
+                        openList.Add(neighbourNode);
+                }
+            }
+
+        }
+        return null;
+    }
+
+    private int GetDistance(Node startNode, Node endNode)
+    {
+        int xDistance = Mathf.Abs(startNode.position.x - endNode.position.x);
+        int yDistance = Mathf.Abs(startNode.position.y - endNode.position.y);
+
+        if (xDistance > yDistance)
+            return 14 * yDistance + 10 * (xDistance - yDistance);
+        return 14 * xDistance + 10 * (yDistance - xDistance);
+    }
+
+    private List<Node> getNeighbours(Node[,] grid, Node currentNode)
+    {
+        List<Node> neighbours = new List<Node>();
+        int width = grid.GetLength(0);
+        int height = grid.GetLength(1);
+
+        for (int i = -1; i < 2; i++)
+        {
+            for (int j = -1; j < 2; j++)
+            {
+                if (i != 0 && j != 0)
+                {
+                    int xPos = currentNode.position.x + i;
+                    int yPos = currentNode.position.y + j;
+
+                    if (xPos >= 0 && xPos < width && yPos >= 0 && yPos < height)
+                    {
+                        neighbours.Add(grid[xPos, yPos]);
+                    }
+                }
+            }
+        }
+        return neighbours;
+    }
 
     public void clearTilemap()
     {
@@ -101,20 +274,17 @@ public class RiverGenerator
         List<Vector3Int> positions = new List<Vector3Int>();
         List<TileBase> tiles = new List<TileBase>();
 
-        for (int x = 0; x < levelCells.GetLength(0); x++)
+        foreach (List<Vector3Int> river in rivers)
         {
-            for (int y = 0; y < levelCells.GetLength(1); y++)
+
+            foreach (Vector3Int riverPos in river)
             {
-                for (int z = 0; z < levelCells.GetLength(2); z++)
-                {
-                    if (levelCells[x, y, z] == LevelManager.levelCellStatus.riverCell)
-                    {
-                        positions.Add(new Vector3Int(x, y, z-1));
-                        tiles.Add(riverTilesByType[selectedType]);
-                    }
-                }
+                Vector3Int newRiverPos = riverPos + Vector3Int.back;
+                positions.Add(newRiverPos);
+                tiles.Add(riverTilesByType[selectedType]);
             }
         }
+
         riverTilemap.SetTiles(positions.ToArray(), tiles.ToArray());
     }
 

@@ -185,7 +185,7 @@ public class LevelManager : MonoBehaviour
         if (riverUserSettings.generationEnabled)
         {
             // populate the levelCells 3d array with the river cells
-            riverGenerator.populateCells(riverUserSettings, levelCells);
+            riverGenerator.populateCells(riverUserSettings, levelCells, terrainGenerator.terrainCellList, terrainGenerator.boundaryCellList);
         }
 
         // if lake generation is enabled
