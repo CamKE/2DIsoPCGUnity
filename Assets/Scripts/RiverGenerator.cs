@@ -187,15 +187,24 @@ public class RiverGenerator
                 Debug.Log("trace the path backwards");
 
                 Debug.Log("while the current node is not equal to the end node...");
+                Vector3Int position;
                 while (currentNode != startNode)
                 {
                     Debug.Log($"add the current node position {currentNode.position} to the path");
-                    Vector3Int position = currentNode.position;
+                    position = currentNode.position;
                     path.Add(currentNode.position);
                     levelCells[position.x, position.y, position.z] = LevelManager.levelCellStatus.riverCell;
                     Debug.Log("set the parent of the current node to be the current node");
                     currentNode = currentNode.parent;
                 }
+
+                // add the start node
+                path.Add(currentNode.position);
+                // change the level cells map
+                position = currentNode.position;
+                levelCells[position.x, position.y, position.z] = LevelManager.levelCellStatus.riverCell;
+
+
                 Debug.Log("entire path traced backwards, now reverse it");
 
                 path.Reverse();
@@ -203,26 +212,44 @@ public class RiverGenerator
                 return path;
             }
 
-            Debug.Log("");
+            Debug.Log($"for each neighbour of the current node: {currentNode.position}...");
             foreach (Node neighbourNode in getNeighbours(grid, currentNode))
             {
+                Debug.Log($"At neighbour: {neighbourNode.position}");
+
+                Debug.Log($"if the neighbou is not traversable: {!neighbourNode.isTraversable} or the closed list already has neighbour {closedList.Contains(neighbourNode)}");
                 if (!neighbourNode.isTraversable || closedList.Contains(neighbourNode))
                 {
+                    Debug.Log("move onto the next neighbour");
                     continue;
                 }
 
-                int newNeighbourCost = currentNode.gCost + GetDistance(currentNode,neighbourNode);
-                if (newNeighbourCost < currentNode.gCost || !openList.Contains(neighbourNode))
+                int newNeighbourGCost = currentNode.gCost + GetDistance(currentNode,neighbourNode);
+
+                Debug.Log($"otherwise set neighbours new gCost to current node g {currentNode.gCost} plus distance between " +
+                    $"current and neighbour node {GetDistance(currentNode, neighbourNode)} which equals{newNeighbourGCost}");
+
+                Debug.Log($"if the new neighbour G cost is less than the current node g cost ({newNeighbourGCost < currentNode.gCost }) or openlist does not contain neighbour ({!openList.Contains(neighbourNode)})");
+
+                if (newNeighbourGCost < currentNode.gCost || !openList.Contains(neighbourNode))
                 {
-                    neighbourNode.gCost = newNeighbourCost;
+
+                    neighbourNode.gCost = newNeighbourGCost;
+                    Debug.Log("set the neighbour g cost to their new g cost");
+
                     neighbourNode.hCost = GetDistance(neighbourNode, endNode);
+                    Debug.Log($"set the neighbours distance from the end node (hcost): {neighbourNode.hCost}");
+
+                    Debug.Log("set the parent of the neighbour to be the current node");
                     neighbourNode.parent = currentNode;
 
+                    Debug.Log("if openlist does not contain neighbour ({!openList.Contains(neighbourNode)})");
                     if (!openList.Contains(neighbourNode))
+                        Debug.Log("add neighbour to openlist");
                         openList.Add(neighbourNode);
                 }
             }
-
+            Debug.Log("finished with current node, onto the next node in the openlist");
         }
         return null;
     }
@@ -232,9 +259,7 @@ public class RiverGenerator
         int xDistance = Mathf.Abs(startNode.position.x - endNode.position.x);
         int yDistance = Mathf.Abs(startNode.position.y - endNode.position.y);
 
-        if (xDistance > yDistance)
-            return 14 * yDistance + 10 * (xDistance - yDistance);
-        return 14 * xDistance + 10 * (yDistance - xDistance);
+        return 10 * xDistance + 10 * (yDistance - xDistance);
     }
 
     private List<Node> getNeighbours(Node[,] grid, Node currentNode)
@@ -247,7 +272,12 @@ public class RiverGenerator
         {
             for (int j = -1; j < 2; j++)
             {
-                if (i != 0 && j != 0)
+                if ((i == 0 && j == 0))
+                {
+                    continue;
+                }
+
+                if (i == 0 || j == 0)
                 {
                     int xPos = currentNode.position.x + i;
                     int yPos = currentNode.position.y + j;
