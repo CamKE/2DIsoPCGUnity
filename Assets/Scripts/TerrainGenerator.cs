@@ -67,7 +67,7 @@ public class TerrainGenerator
     // set such that the variation in values returned is gradual
     private const float perlinScale = 3.0f;
 
-    private Tilemap terrainTilemap;
+    public Tilemap terrainTilemap;
 
     private readonly string[] greeneryGroundTileNames = { "ISO_Tile_Dirt_01_Grass_01", "ISO_Tile_Dirt_01_Grass_02" };
 

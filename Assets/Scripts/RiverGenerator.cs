@@ -41,6 +41,8 @@ public class RiverGenerator
 
     public enum numRivers { Low, Medium, High }
 
+    public Node[,] grid;
+
     // river gen currently only for square and rectangular levels
     public RiverGenerator(Grid grid, SpriteAtlas atlas)
     {
@@ -82,7 +84,7 @@ public class RiverGenerator
         Debug.Log($"Max river count is {riverMaxCount}");
 
         Debug.Log("Creating the grid...");
-        Node[,] grid = createGrid(levelCells, terrainCellList);
+        grid = createGrid(levelCells, terrainCellList);
         Debug.Log("grid created");
 
         rivers = new List<Vector3Int>[riverMaxCount];

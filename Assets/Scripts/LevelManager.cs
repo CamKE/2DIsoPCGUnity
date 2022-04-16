@@ -81,11 +81,16 @@ public class LevelManager : MonoBehaviour
             if(terrainVariation)
             {
 
-                float playerZValue = calculatePlayerZValue();
+                // float playerZValue = calculatePlayerZValue();
 
-                playerController.MoveCharacter(playerZValue);
-                
-            } else
+                //  playerController.MoveCharacter(playerZValue);
+
+                playerController.moveCharacter();
+                Vector3Int gridpos = grid.WorldToCell(playerController.playerGridPosition);
+                playerController.setStartPosition(riverGenerator.grid[gridpos.x, gridpos.y].position.z);
+
+            }
+            else
             {
                 playerController.MoveCharacter();
             }
@@ -104,7 +109,9 @@ public class LevelManager : MonoBehaviour
         {
             previousPosition = playerController.getPosition();
 
-            currentCell = grid.WorldToCell(new Vector3(playerPosition.x, playerPosition.y,playerPosition.z-0.5f));
+            Vector3Int gridCell = grid.WorldToCell(new Vector3(playerPosition.x, playerPosition.y, 0));
+            Debug.Log(gridCell);
+            currentCell = riverGenerator.grid[gridCell.x, gridCell.y].position;
 
         // the grid cell the player is on 
         //var cellPos = grid.WorldToCell(new Vector3(playerController.transform.position.x, playerController.transform.position.y,0));
@@ -310,8 +317,10 @@ public class LevelManager : MonoBehaviour
                     if ((z+1) == levelCells.GetLength(2) || levelCells[cellPosition.x, cellPosition.y, z + 1] == levelCellStatus.validCell)
                     {
                         currentCell = new Vector3Int(cellPosition.x, cellPosition.y, z);
-                        Debug.Log(currentCell);
-                        playerController.setPosition(grid.CellToWorld(currentCell));
+                        playerController.setInitialGridPosition(grid.CellToWorld(new Vector3Int(1, 0, 0)));
+                        playerController.setStartPosition(riverGenerator.grid[1,0].position.z);
+                        
+                        //playerController.setPosition(grid.CellToWorld(currentCell));
                         cellFound = true;
                     }
                     break;

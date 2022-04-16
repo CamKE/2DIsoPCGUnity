@@ -1197,7 +1197,6 @@ GameObject:
   m_Component:
   - component: {fileID: 226959661}
   - component: {fileID: 226959663}
-  - component: {fileID: 226959662}
   - component: {fileID: 226959664}
   m_Layer: 0
   m_Name: Level Camera
@@ -1220,14 +1219,6 @@ Transform:
   m_Father: {fileID: 1469671000}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!81 &226959662
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 226959660}
-  m_Enabled: 1
 --- !u!20 &226959663
 Camera:
   m_ObjectHideFlags: 0
@@ -1316,9 +1307,7 @@ MonoBehaviour:
   grid: {fileID: 1469670999}
   player: {fileID: 397201525090935536, guid: 31aac78f9ae5d844e81934a1a6e4c2c6, type: 3}
   levelCameraController: {fileID: 226959664}
-  terrainTilemap: {fileID: 0}
   atlas: {fileID: 4343727234628468602, guid: 56d9446267c095048b35f04a22590c7d, type: 2}
-  size: {x: 19, y: 19}
 --- !u!4 &233506742
 Transform:
   m_ObjectHideFlags: 0

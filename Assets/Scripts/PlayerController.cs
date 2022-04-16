@@ -30,7 +30,23 @@ public class PlayerController : MonoBehaviour
     // make sure player is sorted properly
     private readonly Vector3 playerZOffset = new Vector3(0, 0, 0.5f);
 
-    private Vector3 movement;
+    // the offset for the player sprite pivot to position the sprite relative
+    // to the players feet instead of the sprite center
+    private readonly Vector2 pivotOffset1 = new Vector3(0, -0.15f, 0);
+
+
+    // i use this instead of taking the grid center to world, as the grid center looks off. instead i take the grid cell positon
+    // and offset it by 0.25
+    private readonly Vector2 tileCenterOffset1 = new Vector3(0, 0.25f, 0);
+
+    // make sure player is sorted properly
+    private readonly Vector3 playerZOffset1 = new Vector3(0, 0, 0.5f);
+
+    private Vector2 movement;
+
+    public Vector2 playerGridPosition;
+
+    public Vector3 playerWorldPosition;
 
     // start is called before the first frame update when the script is enabled
     private void Start()
@@ -64,7 +80,6 @@ public class PlayerController : MonoBehaviour
         //for some reason, 50% feels too slow, so we will be going with 75%
         float verticalMovement = Input.GetAxisRaw("Vertical") * movementSpeed * 0.5f * Time.deltaTime;
 
-        
         movement = new Vector2(horizontalMovement, verticalMovement);
         setPosition(movement, newZValue);
         //make character appear as ontop of or behind terrain
@@ -72,8 +87,46 @@ public class PlayerController : MonoBehaviour
         //this.transform.Translate(horizontalMovement, verticalMovement, heightDiff);
         FlipSpriteToMovement();
 
+
     }
 
+    public void moveCharacter()
+    {
+        //I am putting these placeholder variables here, to make the logic behind the code easier to understand
+        //we differentiate the movement speed between horizontal(x) and vertical(y) movement, since isometric uses "fake perspective"
+        float horizontalMovement = Input.GetAxisRaw("Horizontal") * movementSpeed * Time.deltaTime;
+        //since we are using this with isometric visuals, the vertical movement needs to be slower
+        //for some reason, 50% feels too slow, so we will be going with 75%
+        float verticalMovement = Input.GetAxisRaw("Vertical") * movementSpeed * 0.5f * Time.deltaTime;
+
+        movement = new Vector2(horizontalMovement, verticalMovement);
+        playerGridPosition += movement;
+
+        FlipSpriteToMovement();
+
+
+    }
+
+    public void setPosition()
+    {
+        this.transform.position = playerWorldPosition;
+    }
+
+    public void setPosition(int zval)
+    {
+        this.transform.position = playerWorldPosition;
+    }
+
+    public void setStartPosition(int zval)
+    {   //zval time tile height difference at each z increment
+        Vector3 startPos = new Vector3(playerGridPosition.x, playerGridPosition.y + (zval * 0.25f), zval) + playerZOffset;
+        this.transform.position = startPos;
+    }
+
+    public void setInitialGridPosition(Vector2 newgridworldpos)
+    {
+        playerGridPosition = newgridworldpos + tileCenterOffset1 + pivotOffset1;
+    }
     public void MoveCharacter()
     {
         checkCharacterHeight();
