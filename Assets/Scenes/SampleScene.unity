@@ -9719,7 +9719,7 @@ GameObject:
   - component: {fileID: 1230816369}
   - component: {fileID: 1230816370}
   m_Layer: 5
-  m_Name: Slider - Terrain Size
+  m_Name: Slider - Terrain size
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10916,7 +10916,7 @@ GameObject:
   - component: {fileID: 1472975214}
   - component: {fileID: 1472975213}
   m_Layer: 5
-  m_Name: ' InputField - Terrain Size'
+  m_Name: ' InputField - Terrain size'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13675,20 +13675,6 @@ MonoBehaviour:
   levelGenUI: {fileID: 446614174}
   demoUI: {fileID: 89930793}
   popupManager: {fileID: 962399977}
-  terrainSizeSlider: {fileID: 1230816370}
-  terrainSizeInput: {fileID: 1472975213}
-  terrainTypeDropdown: {fileID: 1560029914}
-  terrainExactHeightToggle: {fileID: 67870895}
-  terrainRangeHeightToggle: {fileID: 662353705}
-  terrainExactHeightOptions: {fileID: 635608391}
-  terrainRangeHeightOptions: {fileID: 995483305}
-  terrainExactHeightSlider: {fileID: 435336399}
-  terrainExactHeightInput: {fileID: 429804939}
-  terrainRangeHeightMinSlider: {fileID: 812659477}
-  terrainRangeHeightMinInput: {fileID: 1215883504}
-  terrainRangeHeightMaxSlider: {fileID: 916835027}
-  terrainRangeHeightMaxInput: {fileID: 554738184}
-  terrainShapeDropdown: {fileID: 1204379716}
   riverGenerationToggle: {fileID: 1217324608}
   riverGenerationOptions: {fileID: 872007262}
   riverAmountDropdown: {fileID: 464750977}
@@ -13698,6 +13684,26 @@ MonoBehaviour:
   lakeGenerationOptions: {fileID: 1030147225}
   lakeAmountDropdown: {fileID: 1235453499}
   lakeMaxSizeDropdown: {fileID: 238733971}
+  terrainOptions:
+    sliders:
+    - {fileID: 1230816370}
+    - {fileID: 435336399}
+    - {fileID: 812659477}
+    - {fileID: 916835027}
+    inputFields:
+    - {fileID: 1472975213}
+    - {fileID: 429804939}
+    - {fileID: 1215883504}
+    - {fileID: 554738184}
+    dropdowns:
+    - {fileID: 1560029914}
+    - {fileID: 1204379716}
+    toggles:
+    - {fileID: 67870895}
+    - {fileID: 662353705}
+    toggleOptions:
+    - {fileID: 635608391}
+    - {fileID: 995483305}
 --- !u!1 &1877819822
 GameObject:
   m_ObjectHideFlags: 0

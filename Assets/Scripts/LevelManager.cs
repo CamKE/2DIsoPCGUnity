@@ -41,7 +41,7 @@ public class LevelManager : MonoBehaviour
 
     private LakeGenerator lakeGenerator;
 
-    private bool terrainVariation;
+    private bool rangeHeightEnabled;
 
     // the status of each cell in a grid of cells
     public enum levelCellStatus { validCell, invalidCell, terrainCell, lakeCell, riverCell, outOfBounds }
@@ -78,7 +78,7 @@ public class LevelManager : MonoBehaviour
         // if there is a player character
         if (playerIsInstantiated)
         {
-            if(terrainVariation)
+            if(rangeHeightEnabled)
             {
 
                 // float playerZValue = calculatePlayerZValue();
@@ -176,17 +176,17 @@ public class LevelManager : MonoBehaviour
     /// <summary>
     /// Generate the level. temporary setup.
     /// </summary>
-    public void generate(TerrainGenerator.TerrainUserSettings terrainUserSettings, RiverGenerator.RiverUserSettings riverUserSettings, LakeGenerator.LakeUserSettings lakeUserSettings)
+    public void generate(TerrainOptions terrainOptions, RiverGenerator.RiverUserSettings riverUserSettings, LakeGenerator.LakeUserSettings lakeUserSettings)
     {
         // clear the level tilemaps
         clearLevel();
 
-        terrainVariation = terrainUserSettings.tExactHeight == -1 ? true : false;
+        rangeHeightEnabled = terrainOptions.isRangedHeightEnabled();
 
-        levelCells = terrainGenerator.createLevelCells(terrainUserSettings);
+        levelCells = terrainGenerator.createLevelCells(terrainOptions);
 
         // populate the levelCells 3d array with the terrain cells
-        terrainGenerator.populateCells(terrainUserSettings, levelCells);
+        terrainGenerator.populateCells(terrainOptions, levelCells);
 
         // if river generation is enabled
         if (riverUserSettings.generationEnabled)

@@ -37,51 +37,6 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private PopupManager popupManager;
 
-    // the slider for the terrain size
-    [SerializeField]
-    private Slider terrainSizeSlider;
-
-    // the input field for the terrain size
-    [SerializeField]
-    private InputField terrainSizeInput;
-
-    // the dropdown for the terrain type
-    [SerializeField]
-    private Dropdown terrainTypeDropdown;
-
-    [SerializeField]
-    private Toggle terrainExactHeightToggle;
-
-    [SerializeField]
-    private Toggle terrainRangeHeightToggle;
-
-    [SerializeField]
-    private GameObject terrainExactHeightOptions;
-
-    [SerializeField]
-    private GameObject terrainRangeHeightOptions;
-
-    [SerializeField]
-    private Slider terrainExactHeightSlider;
-
-    [SerializeField]
-    private InputField terrainExactHeightInput;
-
-    [SerializeField]
-    private Slider terrainRangeHeightMinSlider;
-
-    [SerializeField]
-    private InputField terrainRangeHeightMinInput;
-
-    [SerializeField]
-    private Slider terrainRangeHeightMaxSlider;
-
-    [SerializeField]
-    private InputField terrainRangeHeightMaxInput;
-
-    [SerializeField]
-    private Dropdown terrainShapeDropdown;
-
     [SerializeField]
     private Toggle riverGenerationToggle;
 
@@ -109,6 +64,8 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Dropdown lakeMaxSizeDropdown;
 
+    [SerializeField]
+    private TerrainOptions terrainOptions;
 
     // start is called before the first frame update when the script is enabled
     private void Start()
@@ -118,35 +75,12 @@ public class UIManager : MonoBehaviour
 
         // do the user interface setup after retieving the elements
         setupUI();
+        terrainOptions.setupOptions();
     }
 
     //  setup the user interface with values and bounds
     private void setupUI()
     {
-        /*
-         * terrain options setup
-         */
-
-        // setup the terrain size slider
-        setupSlider(terrainSizeSlider, terrainSizeInput, TerrainGenerator.terrainMinSize, TerrainGenerator.terrainMaxSize);
-
-        // setup the terrain type dropdown
-        setupDropdown(terrainTypeDropdown, Enum.GetNames(typeof(TerrainGenerator.terrainType)).ToList());
-
-        // setup the terrain height toggles
-        setupToggle(terrainExactHeightToggle, terrainExactHeightOptions);
-        setupToggle(terrainRangeHeightToggle, terrainRangeHeightOptions);
-
-        // setup the terrain exact height slider
-        setupSlider(terrainExactHeightSlider, terrainExactHeightInput, TerrainGenerator.terrainMinHeight, TerrainGenerator.terrainMaxHeight);
-
-        // setup the terrain range height min slider
-        setupSlider(terrainRangeHeightMinSlider, terrainRangeHeightMinInput, TerrainGenerator.terrainMinHeight, TerrainGenerator.terrainMaxHeight);
-        // setup the terrain range height min slider
-        setupSlider(terrainRangeHeightMaxSlider, terrainRangeHeightMaxInput, TerrainGenerator.terrainMinHeight, TerrainGenerator.terrainMaxHeight);
-
-        // setup the terrain shape dropdown
-        setupDropdown(terrainShapeDropdown, Enum.GetNames(typeof(TerrainGenerator.terrainShape)).ToList());
 
         /*
          * water bodies options setup
@@ -263,34 +197,14 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public void generateLevel()
     {
-        TerrainGenerator.TerrainUserSettings terrainUserSettings;
-
-        // if exact height is on
-        if (terrainExactHeightToggle.isOn)
+        if (terrainOptions.heightRangeIsOnAndInvalid())
         {
-            // collate the terrain settings struct with the exact terrain height
-             terrainUserSettings = new TerrainGenerator.TerrainUserSettings(int.Parse(terrainSizeInput.text),
-                (TerrainGenerator.terrainType)terrainTypeDropdown.value, int.Parse(terrainExactHeightInput.text), (TerrainGenerator.terrainShape)terrainShapeDropdown.value);
-        }
-        else
-        // otherwise
-        {
-            if (terrainRangeHeightMinSlider.value < terrainRangeHeightMaxSlider.value)
-            {
-                Debug.Log($"tmax height was  {terrainRangeHeightMaxSlider.value}");
-                // terrain range height is toggled, so collate the terrain settings with the min and max terrain height
-                terrainUserSettings = new TerrainGenerator.TerrainUserSettings(int.Parse(terrainSizeInput.text),
-                    (TerrainGenerator.terrainType)terrainTypeDropdown.value, int.Parse(terrainRangeHeightMinInput.text), int.Parse(terrainRangeHeightMaxInput.text), (TerrainGenerator.terrainShape)terrainShapeDropdown.value);
-            } else
-            {
-                popupManager.showPopup("Invalid Terrain Height Range","Terrain height minimum value cannot be greater than the maximum value.");
-                return;
-            }
-
+            popupManager.showPopup("Invalid Terrain Height Range", "Terrain height minimum value cannot be greater than the maximum value.");
+            return;
         }
 
         // collate the river settings
-        RiverGenerator.RiverUserSettings riverUserSettings = new RiverGenerator.RiverUserSettings(terrainUserSettings.tType, riverGenerationToggle.isOn, (RiverGenerator.numRivers)riverAmountDropdown.value,
+        RiverGenerator.RiverUserSettings riverUserSettings = new RiverGenerator.RiverUserSettings(terrainOptions.getTerrainType(), riverGenerationToggle.isOn, (RiverGenerator.numRivers)riverAmountDropdown.value,
             riverIntersectionToggle.isOn, riverBridgesToggle.isOn);
 
         // collate the lake settings
@@ -298,7 +212,7 @@ public class UIManager : MonoBehaviour
             (LakeGenerator.maxLakeSize)lakeMaxSizeDropdown.value);
 
         // generate the level
-        levelManager.generate(terrainUserSettings, riverUserSettings, lakeUserSettings);
+        levelManager.generate(terrainOptions, riverUserSettings, lakeUserSettings);
     }
 
     /// <summary>
@@ -384,7 +298,7 @@ public class UIManager : MonoBehaviour
         {
             if (int.Parse(input.text) < minValue)
             {
-                terrainSizeInput.text = minValue.ToString("0");
+                input.text = minValue.ToString("0");
             }
             else if (int.Parse(input.text) > maxValue)
             {
