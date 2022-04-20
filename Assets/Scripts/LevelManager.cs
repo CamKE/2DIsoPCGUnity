@@ -176,72 +176,52 @@ public class LevelManager : MonoBehaviour
     /// <summary>
     /// Generate the level. temporary setup.
     /// </summary>
-    public void generate(TerrainOptions terrainOptions, RiverGenerator.RiverUserSettings riverUserSettings, LakeGenerator.LakeUserSettings lakeUserSettings)
+    public void generate(TerrainOptions.TerrainSettings terrainSettings, RiverOptions.RiverSettings riverSettings, LakeOptions.LakeSettings lakeSettings)
     {
         // clear the level tilemaps
         clearLevel();
 
-        rangeHeightEnabled = terrainOptions.isRangedHeightEnabled();
+        rangeHeightEnabled = terrainSettings.heightRangedEnabled;
 
-        levelCells = terrainGenerator.createLevelCells(terrainOptions);
+        terrainGenerator.setTerrainSettings(terrainSettings);
+
+        levelCells = terrainGenerator.createLevelCells();
 
         // populate the levelCells 3d array with the terrain cells
-        terrainGenerator.populateCells(terrainOptions, levelCells);
+        terrainGenerator.populateCells(levelCells);
 
         // if river generation is enabled
-        if (riverUserSettings.generationEnabled)
+        if (riverSettings.rGenerationEnabled)
         {
+            riverGenerator.setRiverSettings(riverSettings);
             // populate the levelCells 3d array with the river cells
-            riverGenerator.populateCells(riverUserSettings, levelCells, terrainGenerator.terrainCellList, terrainGenerator.boundaryCellList);
+            riverGenerator.populateCells(levelCells, terrainGenerator.terrainCellList, terrainGenerator.boundaryCellList);
         }
 
         // if lake generation is enabled
-        if (lakeUserSettings.generationEnabled)
+        if (lakeSettings.lGenerationEnabled)
         {
+            lakeGenerator.setLakeSettings(lakeSettings);
             // populate the levelCells 3d array with the lake cells
-            lakeGenerator.populateCells(lakeUserSettings, levelCells);
+            lakeGenerator.populateCells(levelCells);
         }
 
         // generate the terrain based on the current state of the levelCells array
         terrainGenerator.generate(levelCells);
 
         // if river generation is enabled
-        if (riverUserSettings.generationEnabled)
+        if (riverSettings.rGenerationEnabled)
         {
             // populate the levelCells 3d array with the river cells
             riverGenerator.generate(levelCells);
         }
 
         // if lake generation is enabled
-        if (lakeUserSettings.generationEnabled)
+        if (lakeSettings.lGenerationEnabled)
         {
             // populate the levelCells 3d array with the lake cells
             lakeGenerator.generate(levelCells);
         }
-
-        /*
-        var tile = ScriptableObject.CreateInstance<Tile>();
-        var tile2 = ScriptableObject.CreateInstance<Tile>();
-
-        tile.sprite = atlas.GetSprite("ISO_Tile_Brick_Brick_02");
-        tile2.sprite = atlas.GetSprite("ISO_Tile_Dirt_01_Grass_01");
-
-        tile.colliderType = Tile.ColliderType.Grid;
-        tile2.colliderType = Tile.ColliderType.Grid;
-
-        Vector3Int[] positions = new Vector3Int[size.x * size.y];
-        TileBase[] tileArray = new TileBase[positions.Length];
-
-        
-        for (int index = 0; index < positions.Length; index++)
-        {
-            positions[index] = new Vector3Int(index % size.x, index / size.y, UnityEngine.Random.Range(0, 2));
-            tileArray[index] = index % 2 == 0 ? tile : tile2;
-        }
-        
-
-        terrainTilemap.SetTiles(positions, tileArray);
-        */
 
         updateLevelCamera(terrainGenerator.getTilemapBounds());
         levelisGenerated = true;

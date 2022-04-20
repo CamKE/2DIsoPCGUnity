@@ -13675,15 +13675,6 @@ MonoBehaviour:
   levelGenUI: {fileID: 446614174}
   demoUI: {fileID: 89930793}
   popupManager: {fileID: 962399977}
-  riverGenerationToggle: {fileID: 1217324608}
-  riverGenerationOptions: {fileID: 872007262}
-  riverAmountDropdown: {fileID: 464750977}
-  riverIntersectionToggle: {fileID: 508473190}
-  riverBridgesToggle: {fileID: 896576348}
-  lakeGenerationToggle: {fileID: 1739816217}
-  lakeGenerationOptions: {fileID: 1030147225}
-  lakeAmountDropdown: {fileID: 1235453499}
-  lakeMaxSizeDropdown: {fileID: 238733971}
   terrainOptions:
     sliders:
     - {fileID: 1230816370}
@@ -13704,6 +13695,27 @@ MonoBehaviour:
     toggleOptions:
     - {fileID: 635608391}
     - {fileID: 995483305}
+  riverOptions:
+    sliders: []
+    inputFields: []
+    dropdowns:
+    - {fileID: 464750977}
+    toggles:
+    - {fileID: 1217324608}
+    - {fileID: 508473190}
+    - {fileID: 896576348}
+    toggleOptions:
+    - {fileID: 872007262}
+  lakeOptions:
+    sliders: []
+    inputFields: []
+    dropdowns:
+    - {fileID: 1235453499}
+    - {fileID: 238733971}
+    toggles:
+    - {fileID: 1739816217}
+    toggleOptions:
+    - {fileID: 1030147225}
 --- !u!1 &1877819822
 GameObject:
   m_ObjectHideFlags: 0

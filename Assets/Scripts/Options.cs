@@ -23,6 +23,9 @@ public class Options
     [SerializeField]
     protected List<GameObject> toggleOptions;
 
+    // all generators need the type of terrain
+    protected static TerrainGenerator.terrainType terrainType;
+
     // common setup tasks to be done for sliders
     protected void setupSlider(Slider slider, InputField input, int minValue, int maxValue)
     {
@@ -86,5 +89,10 @@ public class Options
     public void toggleOption(Toggle toggle, GameObject option)
     {
         option.SetActive(toggle.isOn ? true : false);
+    }
+
+    public TerrainGenerator.terrainType getTerrainType()
+    {
+        return terrainType;
     }
 }

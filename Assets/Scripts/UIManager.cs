@@ -23,7 +23,7 @@ public class UIManager : MonoBehaviour
     private LevelCameraController levelCameraController;
 
     // layer value for ui elements
-    private int UILayer;
+    private int uiLayer;
 
     // the parent object of all level generation ui options
     [SerializeField]
@@ -38,99 +38,24 @@ public class UIManager : MonoBehaviour
     private PopupManager popupManager;
 
     [SerializeField]
-    private Toggle riverGenerationToggle;
-
-    [SerializeField]
-    private GameObject riverGenerationOptions;
-
-    [SerializeField]
-    private Dropdown riverAmountDropdown;
-
-    [SerializeField]
-    private Toggle riverIntersectionToggle;
-
-    [SerializeField]
-    private Toggle riverBridgesToggle;
-
-    [SerializeField]
-    private Toggle lakeGenerationToggle;
-
-    [SerializeField]
-    private GameObject lakeGenerationOptions;
-
-    [SerializeField]
-    private Dropdown lakeAmountDropdown;
-
-    [SerializeField]
-    private Dropdown lakeMaxSizeDropdown;
-
-    [SerializeField]
     private TerrainOptions terrainOptions;
+
+    [SerializeField]
+    private RiverOptions riverOptions;
+
+    [SerializeField]
+    private LakeOptions lakeOptions;
 
     // start is called before the first frame update when the script is enabled
     private void Start()
     {
         // get the layer value for ui elements
-        UILayer = LayerMask.NameToLayer("UI");
+        uiLayer = LayerMask.NameToLayer("UI");
 
-        // do the user interface setup after retieving the elements
-        setupUI();
-        terrainOptions.setupOptions();
-    }
-
-    //  setup the user interface with values and bounds
-    private void setupUI()
-    {
-
-        /*
-         * water bodies options setup
-         */
-        
-        // set the number of rivers dropdown
-        setupDropdown(riverAmountDropdown, Enum.GetNames(typeof(RiverGenerator.numRivers)).ToList());
-
-        // setup the river generation toggle
-        setupToggle(riverGenerationToggle, riverGenerationOptions);
-        
-        // setup the lake generation toggle
-        setupToggle(lakeGenerationToggle, lakeGenerationOptions);
-
-        // set the number of lakes dropdown
-        setupDropdown(lakeAmountDropdown, Enum.GetNames(typeof(LakeGenerator.numLakes)).ToList());
-
-        // set the maximum size of lakes dropdown
-        setupDropdown(lakeMaxSizeDropdown, Enum.GetNames(typeof(LakeGenerator.maxLakeSize)).ToList());
-
-    }
-
-    private void setupToggle(Toggle toggle, GameObject option)
-    {
-        // make sure the options panel is initially in the correct state relative to the toggle state
-        toggleOption(toggle, option);
-        // add the toggle option to the on value change listener
-        toggle.onValueChanged.AddListener( delegate { toggleOption(toggle, option); });
-    }
-
-    // common setup tasks to be done for dropdowns
-    private void setupDropdown(Dropdown dropdown, List<string> options)
-    {
-        // clear the dropdown
-        dropdown.ClearOptions();
-        // add the options
-        dropdown.AddOptions(options);
-    }
-
-    // common setup tasks to be done for sliders
-    private void setupSlider(Slider slider, InputField input, int minValue, int maxValue)
-    {
-        // limit slider to be between the min and max values
-        slider.minValue = minValue;
-        slider.maxValue = maxValue;
-        // set the input field to be equal to the sliders value
-        input.text = slider.value.ToString("0");
-
-        slider.onValueChanged.AddListener(delegate { updateSliderField(slider, input); });
-        input.onEndEdit.AddListener(delegate { checkInputField(input, slider, minValue, maxValue); });
+        // do the user interface setup
+        terrainOptions.setupUIElements();
+        riverOptions.setupUIElements();
+        lakeOptions.setupUIElements();
     }
 
     // late update is called every frame when the script is enabled, after update
@@ -203,16 +128,12 @@ public class UIManager : MonoBehaviour
             return;
         }
 
-        // collate the river settings
-        RiverGenerator.RiverUserSettings riverUserSettings = new RiverGenerator.RiverUserSettings(terrainOptions.getTerrainType(), riverGenerationToggle.isOn, (RiverGenerator.numRivers)riverAmountDropdown.value,
-            riverIntersectionToggle.isOn, riverBridgesToggle.isOn);
-
-        // collate the lake settings
-        LakeGenerator.LakeUserSettings lakeUserSettings = new LakeGenerator.LakeUserSettings(lakeGenerationToggle.isOn, (LakeGenerator.numLakes)lakeAmountDropdown.value,
-            (LakeGenerator.maxLakeSize)lakeMaxSizeDropdown.value);
+        TerrainOptions.TerrainSettings terrainSettings =  terrainOptions.createUserSettings();
+        RiverOptions.RiverSettings riverSettings = riverOptions.createUserSettings();
+        LakeOptions.LakeSettings lakeSettings = lakeOptions.createUserSettings();
 
         // generate the level
-        levelManager.generate(terrainOptions, riverUserSettings, lakeUserSettings);
+        levelManager.generate(terrainSettings, riverSettings, lakeSettings);
     }
 
     /// <summary>
@@ -275,46 +196,6 @@ public class UIManager : MonoBehaviour
         popupManager.hidePopup();
     }
 
-    /// <summary>
-    /// Called anytime a slider changes to update the input field with the slider value.
-    /// </summary>
-    /// <param name="slider"></param>
-    /// <param name="input"></param>
-    public void updateSliderField(Slider slider, InputField input)
-    {
-        if (slider.value != float.Parse(input.text))
-        {
-            input.text = Math.Round(slider.value, MidpointRounding.AwayFromZero).ToString();
-        }
-    }
-
-    /// <summary>
-    /// Called anytime an input field has been edited to ensure the input is valid and the 
-    /// slider is updated to reflect the input field.
-    /// </summary>
-    public void checkInputField(InputField input, Slider slider, int minValue, int maxValue)
-    {
-        if (input.text.Length != 0)
-        {
-            if (int.Parse(input.text) < minValue)
-            {
-                input.text = minValue.ToString("0");
-            }
-            else if (int.Parse(input.text) > maxValue)
-            {
-                input.text = maxValue.ToString("0");
-            }
-
-            slider.value = int.Parse(input.text);
-        }
-
-    }
-
-    public void toggleOption(Toggle toggle, GameObject option)
-    {
-        option.SetActive(toggle.isOn ? true : false);
-    }
-
     /*
     * code below from https://forum.unity.com/threads/how-to-detect-if-mouse-is-over-ui.1025533/
     */
@@ -332,7 +213,7 @@ public class UIManager : MonoBehaviour
         for (int index = 0; index < eventSystemRaysastResults.Count; index++)
         {
             RaycastResult curRaysastResult = eventSystemRaysastResults[index];
-            if (curRaysastResult.gameObject.layer == UILayer)
+            if (curRaysastResult.gameObject.layer == uiLayer)
                 return true;
         }
         return false;

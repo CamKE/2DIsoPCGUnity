@@ -23,12 +23,19 @@ public class LakeGenerator
 
     public enum maxLakeSize { Small, Medium, Large }
 
+    LakeOptions.LakeSettings lakeSettings;
+
     public LakeGenerator()
     {
 
     }
 
-    public void populateCells(LakeUserSettings lakeUserSettings, LevelManager.levelCellStatus[,,] levelCells)
+    public void setLakeSettings(LakeOptions.LakeSettings lakeSettings)
+    {
+        this.lakeSettings = lakeSettings;
+    }
+
+    public void populateCells(LevelManager.levelCellStatus[,,] levelCells)
     {
 
     }

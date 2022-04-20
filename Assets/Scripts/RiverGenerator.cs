@@ -7,24 +7,6 @@ using UnityEngine.U2D;
 
 public class RiverGenerator
 {
-    public struct RiverUserSettings
-    {
-        readonly public bool generationEnabled;
-        readonly public numRivers rNum;
-        readonly public bool intersectionsEnabled;
-        readonly public bool bridgesEnabled;
-        readonly public TerrainGenerator.terrainType tType;
-
-        public RiverUserSettings(TerrainGenerator.terrainType tType, bool generationEnabled, numRivers rNum, bool intersectionsEnabled, bool bridgesEnabled)
-        {
-            this.tType = tType;
-            this.generationEnabled = generationEnabled;
-            this.rNum = rNum;
-            this.intersectionsEnabled = intersectionsEnabled;
-            this.bridgesEnabled = bridgesEnabled;
-        }
-    }
-
     private Tilemap riverTilemap;
 
     Dictionary<TerrainGenerator.terrainType, Tile> riverTilesByType;
@@ -42,6 +24,8 @@ public class RiverGenerator
     public enum numRivers { Low, Medium, High }
 
     public Node[,] grid;
+
+    RiverOptions.RiverSettings riverSettings;
 
     // river gen currently only for square and rectangular levels
     public RiverGenerator(Grid grid, SpriteAtlas atlas)
@@ -72,15 +56,20 @@ public class RiverGenerator
         riverTilesByType[TerrainGenerator.terrainType.Snow].sprite = atlas.GetSprite(iceTileName);
     }
 
-    public void populateCells(RiverUserSettings riverUserSettings, LevelManager.levelCellStatus[,,] levelCells, List<Vector3Int> terrainCellList, List<Vector2Int> boundaryCellList)
+    public void setRiverSettings(RiverOptions.RiverSettings riverSettings)
+    {
+        this.riverSettings = riverSettings;
+    }
+
+    public void populateCells(LevelManager.levelCellStatus[,,] levelCells, List<Vector3Int> terrainCellList, List<Vector2Int> boundaryCellList)
     {
         Debug.Log("River generation started");
-        selectedType = riverUserSettings.tType;
+        selectedType = riverSettings.tType;
         int levelArea = levelCells.GetLength(0) * levelCells.GetLength(1);
         Debug.Log($"level area is {levelArea}. Used to calc the max rivercount");
 
 
-        riverMaxCount = (int)Math.Ceiling(levelArea * (0.01f * ((int)riverUserSettings.rNum + 1)));
+        riverMaxCount = (int)Math.Ceiling(levelArea * (0.01f * ((int)riverSettings.rNum + 1)));
         Debug.Log($"Max river count is {riverMaxCount}");
 
         Debug.Log("Creating the grid...");
@@ -116,15 +105,6 @@ public class RiverGenerator
             rivers[riverCount] = findAStarPath(grid, startNode, endNode, levelCells);
         }
 
-        /*
-        //rando test
-        levelCells[4, 0, 0] = LevelManager.levelCellStatus.riverCell;
-        levelCells[4, 1, 0] = LevelManager.levelCellStatus.riverCell;
-        levelCells[4, 2, 0] = LevelManager.levelCellStatus.riverCell;
-        levelCells[4, 3, 0] = LevelManager.levelCellStatus.riverCell;
-        levelCells[4, 4, 0] = LevelManager.levelCellStatus.riverCell;
-        levelCells[4, 5, 0] = LevelManager.levelCellStatus.riverCell;
-        */
     }
 
     private Node[,] createGrid(LevelManager.levelCellStatus[,,] levelCells, List<Vector3Int> terrainCellList)

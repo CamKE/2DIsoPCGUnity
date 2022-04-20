@@ -16,7 +16,39 @@ public class TerrainOptions : Options
 
     private bool rangeHeightEnabled;
 
-    public void setupOptions()
+    public struct TerrainSettings
+    {
+        readonly public TerrainGenerator.terrainType tType;
+        readonly public int tSize;
+        readonly public int tMinHeight, tMaxHeight;
+        readonly public int tExactHeight;
+        readonly public TerrainGenerator.terrainShape tShape;
+        readonly public bool heightRangedEnabled;
+
+        public TerrainSettings(int tSize, TerrainGenerator.terrainType tType, int tMinHeight, int tMaxHeight, TerrainGenerator.terrainShape tShape)
+        {
+            this.tSize = tSize;
+            this.tType = tType;
+            this.tMinHeight = tMinHeight;
+            this.tMaxHeight = tMaxHeight;
+            this.tShape = tShape;
+            tExactHeight = -1;
+            heightRangedEnabled = true;
+        }
+
+        public TerrainSettings(int tSize, TerrainGenerator.terrainType tType, int tExactHeight, TerrainGenerator.terrainShape tShape)
+        {
+            this.tSize = tSize;
+            this.tType = tType;
+            this.tExactHeight = tExactHeight;
+            this.tShape = tShape;
+            tMinHeight = -1;
+            tMaxHeight = -1;
+            heightRangedEnabled = false;
+        }
+    }
+
+    public void setupUIElements()
     {
         // setup sliders
         int terrainSizeEnum = ((int)sliderInputName.terrainSize);
@@ -40,65 +72,31 @@ public class TerrainOptions : Options
 
     }
 
-    public int getTerrainSize()
+    public TerrainSettings createUserSettings()
     {
-        return int.Parse(inputFields[((int)sliderInputName.terrainSize)].text);
-    }
+        int tSize = int.Parse(inputFields[((int)sliderInputName.terrainSize)].text);
+        TerrainGenerator.terrainShape tShape = (TerrainGenerator.terrainShape)dropdowns[((int)dropdownName.terrainShape)].value;
 
-    public TerrainGenerator.terrainType getTerrainType()
-    {
-        return (TerrainGenerator.terrainType)dropdowns[((int)dropdownName.terrainType)].value;
-    }
-
-    public int getTerrainMinHeight()
-    {
         if (rangeHeightEnabled)
         {
-            return int.Parse(inputFields[((int)sliderInputName.terrainRangeHeightMin)].text);
-        } else
-        { 
-            return -1;
-        }
+            int tMinHeight = int.Parse(inputFields[((int)sliderInputName.terrainRangeHeightMin)].text);
+            int tMaxHeight = int.Parse(inputFields[((int)sliderInputName.terrainRangeHeightMax)].text);
 
-    }
-
-    public int getTerrainMaxHeight()
-    {
-        if (rangeHeightEnabled)
-        {
-            return int.Parse(inputFields[((int)sliderInputName.terrainRangeHeightMax)].text);
+            return new TerrainSettings(tSize, terrainType, tMinHeight, tMaxHeight, tShape);
         }
         else
         {
-            return -1;
-        }
-    }
+            int tExactHeight = int.Parse(inputFields[((int)sliderInputName.terrainExactHeight)].text);
 
-    public int getTerrainExactHeight()
-    {
-        if (!rangeHeightEnabled)
-        {
-            return int.Parse(inputFields[((int)sliderInputName.terrainExactHeight)].text);
+            return new TerrainSettings(tSize, terrainType, tExactHeight, tShape);
         }
-        else
-        {
-            return -1;
-        }
-    }
-
-    public TerrainGenerator.terrainShape getTerrainShape()
-    {
-        return (TerrainGenerator.terrainShape)dropdowns[((int)dropdownName.terrainShape)].value;
     }
 
     public bool heightRangeIsOnAndInvalid()
     {
+        // variables set here as this method is always called after submission of the options
+        terrainType = (TerrainGenerator.terrainType)dropdowns[((int)dropdownName.terrainType)].value;
         rangeHeightEnabled = toggles[(int)toggleOptionName.terrainRangeHeight].isOn;
         return rangeHeightEnabled && (int.Parse(inputFields[((int)sliderInputName.terrainRangeHeightMin)].text) > int.Parse(inputFields[((int)sliderInputName.terrainRangeHeightMax)].text));
-    }
-
-    public bool isRangedHeightEnabled()
-    {
-        return rangeHeightEnabled;
     }
 }

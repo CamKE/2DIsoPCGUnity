@@ -10,35 +10,6 @@ using UnityEngine.U2D;
 /// </summary>
 public class TerrainGenerator
 {
-    public struct TerrainUserSettings
-    {
-        readonly public int tSize;
-        readonly public terrainType tType;
-        readonly public int tMinHeight, tMaxHeight;
-
-        readonly public int tExactHeight;
-        readonly public terrainShape tShape;
-
-        public TerrainUserSettings(int tSize, terrainType tType, int tMinHeight, int tMaxHeight, terrainShape tShape)
-        {
-            this.tSize = tSize;
-            this.tType = tType;
-            this.tMinHeight = tMinHeight;
-            this.tMaxHeight = tMaxHeight;
-            this.tShape = tShape;
-            tExactHeight = -1;
-        }
-
-        public TerrainUserSettings(int tSize, terrainType tType, int tExactHeight, terrainShape tShape)
-        {
-            this.tSize = tSize;
-            this.tType = tType;
-            this.tExactHeight = tExactHeight;
-            this.tShape = tShape;
-            tMinHeight = -1;
-            tMaxHeight = -1;
-        }
-    }
     /// <summary>
     /// The terrain shape options.
     /// </summary>
@@ -121,6 +92,8 @@ public class TerrainGenerator
         }
     }
 
+    TerrainOptions.TerrainSettings terrainSettings;
+
     public TerrainGenerator(Grid grid, SpriteAtlas atlas)
     {
         terrainTilemap = new GameObject("Terrain").AddComponent<Tilemap>();
@@ -155,10 +128,14 @@ public class TerrainGenerator
         return terrainTilemap.cellBounds;
     }
 
-    public void populateCells(TerrainOptions terrainOptions, LevelManager.levelCellStatus[,,] levelCells)
+    public void setTerrainSettings(TerrainOptions.TerrainSettings terrainSettings)
     {
-        selectedType = terrainOptions.getTerrainType();
+        this.terrainSettings = terrainSettings;
+    }
 
+    public void populateCells(LevelManager.levelCellStatus[,,] levelCells)
+    {
+        
         // define all the terrain cells
 
         // get width and height of the array
@@ -167,13 +144,13 @@ public class TerrainGenerator
 
         terrainCellList = new List<Vector3Int>();
 
-        if (terrainOptions.isRangedHeightEnabled())
+        if (terrainSettings.heightRangedEnabled)
         {
-            setCellsRange(levelCells, width, height, terrainOptions.getTerrainMinHeight(), terrainOptions.getTerrainMaxHeight()); ;
+            setCellsRange(levelCells, width, height, terrainSettings.tMinHeight, terrainSettings.tMaxHeight); ;
         }
         else
         {
-            setCellsExact(levelCells, width, height, terrainOptions.getTerrainExactHeight());
+            setCellsExact(levelCells, width, height, terrainSettings.tExactHeight);
         }
 
     }
@@ -184,7 +161,7 @@ public class TerrainGenerator
     /// </summary>
     /// <param name="terrainUserSettings">The settings defined by the user.</param>
     /// <returns></returns>
-    public LevelManager.levelCellStatus[,,] createLevelCells(TerrainOptions terrainOptions)
+    public LevelManager.levelCellStatus[,,] createLevelCells()
     {
         /*
         * define the levelcells 3d array size
@@ -198,29 +175,28 @@ public class TerrainGenerator
 
 
         // if the exact height is not in use
-        if (terrainOptions.isRangedHeightEnabled())
+        if (terrainSettings.heightRangedEnabled)
         {
             // then the z dimension of the level cells array must be equal to the max height of the terrain height range
             // in the future, add max platform height or tree height (depending on which is bigger)
-            levelCellsDepth = terrainOptions.getTerrainMaxHeight() + 1;
+            levelCellsDepth = terrainSettings.tMaxHeight + 1;
         }
         else
         // otherwise
         {
             // the z dimension of the level cells array must be equal to the exact height of the terrain
             // in the future, add max platform height or tree height (depending on which is bigger)
-            levelCellsDepth = terrainOptions.getTerrainExactHeight() + 1;
+            levelCellsDepth = terrainSettings.tExactHeight + 1;
         }
 
-        int terrainSize = terrainOptions.getTerrainSize();
 
         // check the terrain shape chosen
-        switch (terrainOptions.getTerrainShape())
+        switch (terrainSettings.tShape)
         {
             // for rectangular shape
             case TerrainGenerator.terrainShape.Rectangle:
                 // 2:1, 3:1, or 4:1 ratio
-                levelCells2DDimensions = getDimensions(terrainSize, UnityEngine.Random.Range(2, 4));
+                levelCells2DDimensions = getDimensions(terrainSettings.tSize, UnityEngine.Random.Range(2, 4));
                 setBoundaryCells(levelCells2DDimensions);
                 levelCells = new LevelManager.levelCellStatus[levelCells2DDimensions.x, levelCells2DDimensions.y, levelCellsDepth];
                 break;
@@ -229,12 +205,12 @@ public class TerrainGenerator
                 // generate a random shape
                 // possibly return some other 2d structure that can grow like a list
                 // convert the 2d list of levelcellstatus to a 3d array 
-                levelCells = randomLevelShape(terrainSize, levelCellsDepth);
+                levelCells = randomLevelShape(terrainSettings.tSize, levelCellsDepth);
                 break;
             // default shape is square 
             default:
 
-                levelCells2DDimensions = getDimensions(terrainSize);
+                levelCells2DDimensions = getDimensions(terrainSettings.tSize);
                 setBoundaryCells(levelCells2DDimensions);
                 levelCells = new LevelManager.levelCellStatus[levelCells2DDimensions.x, levelCells2DDimensions.y, levelCellsDepth];
                 break;
