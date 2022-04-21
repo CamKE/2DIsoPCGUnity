@@ -249,7 +249,6 @@ public class LevelManager : MonoBehaviour
             }
         }
         // set the players intial position on the level
- 
     }
 
     /// <summary>
