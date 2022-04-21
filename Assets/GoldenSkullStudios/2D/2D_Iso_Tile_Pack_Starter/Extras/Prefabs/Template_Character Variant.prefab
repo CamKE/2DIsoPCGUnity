@@ -123,6 +123,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementSpeed: 2
+  playerGridPosition: {x: 0, y: 0}
+  playerWorldPosition: {x: 0, y: 0, z: 0}
 --- !u!114 &6133683682534139356
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -137,4 +139,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 397201525090935537}
   cameraOffset: {x: 0, y: 0, z: 0}
-  cameraSpeed: 0
+  cameraSpeed: 0.1
