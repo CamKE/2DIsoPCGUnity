@@ -15,8 +15,6 @@ public class RiverGenerator
     private readonly string iceTileName = "ISO_Tile_Water_01";
     private readonly string lavaTileName = "ISO_Tile_Lava_01-06";
 
-    private TerrainGenerator.terrainType selectedType;
-
     private int riverMaxCount;
 
     private List<Vector3Int>[] rivers;
@@ -64,7 +62,6 @@ public class RiverGenerator
     public void populateCells(LevelManager.levelCellStatus[,,] levelCells, List<Vector3Int> terrainCellList, List<Vector2Int> boundaryCellList)
     {
         Debug.Log("River generation started");
-        selectedType = riverSettings.tType;
         int levelArea = levelCells.GetLength(0) * levelCells.GetLength(1);
         Debug.Log($"level area is {levelArea}. Used to calc the max rivercount");
 
@@ -293,7 +290,7 @@ public class RiverGenerator
             {
                 Vector3Int newRiverPos = riverPos + Vector3Int.back;
                 positions.Add(newRiverPos);
-                tiles.Add(riverTilesByType[selectedType]);
+                tiles.Add(riverTilesByType[riverSettings.tType]);
             }
         }
 

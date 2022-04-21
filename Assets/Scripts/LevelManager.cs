@@ -84,74 +84,15 @@ public class LevelManager : MonoBehaviour
                 // float playerZValue = calculatePlayerZValue();
 
                 //  playerController.MoveCharacter(playerZValue);
-
-                playerController.moveCharacter();
-                Vector3Int gridpos = grid.WorldToCell(playerController.playerGridPosition);
-                playerController.setStartPosition(riverGenerator.grid[gridpos.x, gridpos.y].position.z);
-
+                Vector3Int gridpos = grid.WorldToCell(playerController.getWorldPosition());
+                playerController.movePlayer(riverGenerator.grid[gridpos.x, gridpos.y].position.z);
             }
             else
             {
-                playerController.MoveCharacter();
+                playerController.movePlayer();
             }
 
         }    
-    }
-
-    // work out what the z value for the player should be based on their current position
-    // to ensure they are ordered correctly relative to the other sprites
-    private float calculatePlayerZValue()
-    {
-        // work out what the player's z value should be
-        Vector3 playerPosition = playerController.getPosition();
-
-        if(!previousPosition.x.Equals(playerPosition.x) && !previousPosition.y.Equals(playerPosition.y))
-        {
-            previousPosition = playerController.getPosition();
-
-            Vector3Int gridCell = grid.WorldToCell(new Vector3(playerPosition.x, playerPosition.y, 0));
-            Debug.Log(gridCell);
-            currentCell = riverGenerator.grid[gridCell.x, gridCell.y].position;
-
-        // the grid cell the player is on 
-        //var cellPos = grid.WorldToCell(new Vector3(playerController.transform.position.x, playerController.transform.position.y,0));
-        int x = Mathf.Clamp(currentCell.x, 0, levelCells.GetLength(0)-1);
-        int y = Mathf.Clamp(currentCell.y, 0, levelCells.GetLength(1)-1);
-
-        for (int z = levelCells.GetLength(2)-1; z > -1; z--)
-        {
-            if (levelCells[x,y,z] == levelCellStatus.terrainCell)
-            {
-                currentCell = new Vector3Int(x, y, z);
-                return z + 0.5f;
-            }
-        }
-
-        }
-        else
-        {
-            return playerPosition.z;
-        }
-        /*
-         
-        // go through and find z value of the tile which exists in the x,y position of the player
-        // can flip the for loop to ensure tile which the highest z is found first
-        for (int terrainZValue = TerrainGenerator.terrainMinHeight; terrainZValue <= TerrainGenerator.terrainMaxHeight; terrainZValue++)
-        {
-            // set the cells z to be the z to be checked
-            cellPos.z = terrainZValue;
-            // if there is a tile at the z to be checked
-            if (terrainTilemap.GetTile(cellPos) != null)
-            {
-                // we have found the z value for the tile the player is on
-                return terrainZValue +0.5f;
-            }
-        }
-
-        */
-
-        // no tile found, return invalid value
-        return -1;
     }
 
     /// <summary>
@@ -297,8 +238,8 @@ public class LevelManager : MonoBehaviour
                     if ((z+1) == levelCells.GetLength(2) || levelCells[cellPosition.x, cellPosition.y, z + 1] == levelCellStatus.validCell)
                     {
                         currentCell = new Vector3Int(cellPosition.x, cellPosition.y, z);
-                        playerController.setInitialGridPosition(grid.CellToWorld(new Vector3Int(1, 0, 0)));
-                        playerController.setStartPosition(riverGenerator.grid[1,0].position.z);
+                        playerController.setWorldPosition(grid.CellToWorld(new Vector3Int(1, 0, 0)));
+                        playerController.updatePlayerPosition(riverGenerator.grid[1,0].position.z);
                         
                         //playerController.setPosition(grid.CellToWorld(currentCell));
                         cellFound = true;

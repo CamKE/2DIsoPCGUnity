@@ -61,8 +61,6 @@ public class TerrainGenerator
 
     Dictionary<terrainType, terrainTiles> terrainTilesByType;
 
-    private terrainType selectedType;
-
     // temporary solution
     public List<Vector3Int> terrainCellList;
 
@@ -466,8 +464,8 @@ public class TerrainGenerator
         List<Vector3Int> positions = new List<Vector3Int>();
         List<TileBase> tiles = new List<TileBase>();
 
-        Tile[] groundTiles = terrainTilesByType[selectedType].groundTiles;
-        Tile[] accessoryTiles = terrainTilesByType[selectedType].accessoryTiles;
+        Tile[] groundTiles = terrainTilesByType[terrainSettings.tType].groundTiles;
+        Tile[] accessoryTiles = terrainTilesByType[terrainSettings.tType].accessoryTiles;
         int groundTilesLength = groundTiles.Length;
         int accessoryTilesLength = accessoryTiles.Length;
 
