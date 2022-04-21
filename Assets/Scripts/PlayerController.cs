@@ -31,6 +31,8 @@ public class PlayerController : MonoBehaviour
 
     private Vector2 playerWorldPosition;
 
+    private const float tileZIncrement = 0.25f;
+
     // start is called before the first frame update when the script is enabled
     private void Start()
     {
@@ -54,7 +56,7 @@ public class PlayerController : MonoBehaviour
         //make character appear as ontop of or behind terrain
         this.transform.Translate(movement.x, movement.y, 0);
 
-        FlipSpriteToMovement();
+        flipSprite();
     }
 
     public void movePlayer(int zValue)
@@ -65,7 +67,7 @@ public class PlayerController : MonoBehaviour
 
         updatePlayerPosition(zValue);
 
-        FlipSpriteToMovement();
+        flipSprite();
     }
 
     private Vector2 getMovement()
@@ -80,19 +82,19 @@ public class PlayerController : MonoBehaviour
         return new Vector2(horizontalMovement, verticalMovement);
     }
 
-    public void updatePlayerPosition(int zval)
+    public void updatePlayerPosition(int zValue)
     {   //zval time tile height difference at each z increment
-        Vector3 newPos = new Vector3(playerWorldPosition.x, playerWorldPosition.y + (zval * 0.25f), zval) + playerZOffset;
+        Vector3 newPos = new Vector3(playerWorldPosition.x, playerWorldPosition.y + (zValue * tileZIncrement), zValue) + playerZOffset;
         this.transform.position = newPos;
     }
 
-    public void setWorldPosition(Vector2 newgridworldpos)
+    public void setWorldPosition(Vector2 newWorldpos)
     {
-        playerWorldPosition = newgridworldpos + tileCenterOffset + pivotOffset;
+        playerWorldPosition = newWorldpos + tileCenterOffset + pivotOffset;
     }
 
     //if the player moves left, flip the sprite, if he moves right, flip it back, stay if no input is made
-    private void FlipSpriteToMovement()
+    private void flipSprite()
     {
         // if there is a player sprite
         if (playerSprite != null)
