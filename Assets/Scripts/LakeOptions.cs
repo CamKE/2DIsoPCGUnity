@@ -7,18 +7,18 @@ using UnityEngine;
 [Serializable]
 public class LakeOptions : Options
 {
-    private enum dropdownName { lakeAmount, lakeMaxSize }
+    private enum LakeDropdownName { LakeAmount, LakeMaxSize }
 
-    private enum toggleOptionName { lakeGeneration }
+    private enum LakeToggleOptionName { LakeGeneration }
 
     public struct LakeSettings
     {
-        readonly public TerrainGenerator.terrainType tType;
+        readonly public TerrainGenerator.TerrainType tType;
         readonly public bool lGenerationEnabled;
-        readonly public LakeGenerator.numLakes lNum;
-        readonly public LakeGenerator.maxLakeSize lMaxSize;
+        readonly public LakeGenerator.NumberOfLakes lNum;
+        readonly public LakeGenerator.MaxLakeSize lMaxSize;
 
-        public LakeSettings(TerrainGenerator.terrainType tType, bool lGenerationEnabled, LakeGenerator.numLakes lNum, LakeGenerator.maxLakeSize lMaxSize)
+        public LakeSettings(TerrainGenerator.TerrainType tType, bool lGenerationEnabled, LakeGenerator.NumberOfLakes lNum, LakeGenerator.MaxLakeSize lMaxSize)
         {
             this.tType = tType;
             this.lGenerationEnabled = lGenerationEnabled;
@@ -30,19 +30,19 @@ public class LakeOptions : Options
     public void setupUIElements()
     {
         // setup dropdowns
-        setupDropdown(dropdowns[((int)dropdownName.lakeAmount)], Enum.GetNames(typeof(LakeGenerator.numLakes)).ToList());
-        setupDropdown(dropdowns[((int)dropdownName.lakeMaxSize)], Enum.GetNames(typeof(LakeGenerator.maxLakeSize)).ToList());
+        setupDropdown(dropdowns[((int)LakeDropdownName.LakeAmount)], Enum.GetNames(typeof(LakeGenerator.NumberOfLakes)).ToList());
+        setupDropdown(dropdowns[((int)LakeDropdownName.LakeMaxSize)], Enum.GetNames(typeof(LakeGenerator.MaxLakeSize)).ToList());
 
         // setup toggle
-        int lakeGenerationEnum = (int)toggleOptionName.lakeGeneration;
+        int lakeGenerationEnum = (int)LakeToggleOptionName.LakeGeneration;
         setupToggle(toggles[lakeGenerationEnum], toggleOptions[lakeGenerationEnum]);
     }
 
     public LakeSettings createUserSettings()
     {
-        bool lGenerationEnabled = toggles[(int)toggleOptionName.lakeGeneration].isOn;
-        LakeGenerator.numLakes lNum = (LakeGenerator.numLakes)dropdowns[(int)dropdownName.lakeAmount].value;
-        LakeGenerator.maxLakeSize lMaxSize = (LakeGenerator.maxLakeSize)dropdowns[(int)dropdownName.lakeMaxSize].value;
+        bool lGenerationEnabled = toggles[(int)LakeToggleOptionName.LakeGeneration].isOn;
+        LakeGenerator.NumberOfLakes lNum = (LakeGenerator.NumberOfLakes)dropdowns[(int)LakeDropdownName.LakeAmount].value;
+        LakeGenerator.MaxLakeSize lMaxSize = (LakeGenerator.MaxLakeSize)dropdowns[(int)LakeDropdownName.LakeMaxSize].value;
 
         return new LakeSettings(terrainType, lGenerationEnabled, lNum, lMaxSize);
     }

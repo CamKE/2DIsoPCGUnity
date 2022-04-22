@@ -15,12 +15,14 @@ public class HoverTipManager : MonoBehaviour
     /// <summary>
     ///  The text to be displayed in the tip window.
     /// </summary>
-    public TextMeshProUGUI tipText;
+    [SerializeField]
+    private TextMeshProUGUI tipText;
 
     /// <summary>
     /// The 'floating' window which holds the tip text.
     /// </summary>
-    public RectTransform tipWindow;
+    [SerializeField]
+    private RectTransform tipWindow;
 
     /// <summary>
     /// Delegate for response to the mouse hover over a element.

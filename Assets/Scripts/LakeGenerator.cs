@@ -5,23 +5,9 @@ using UnityEngine.Tilemaps;
 
 public class LakeGenerator
 {
-    public struct LakeUserSettings
-    {
-        readonly public bool generationEnabled;
-        readonly public numLakes lNum;
-        readonly public maxLakeSize lMaxSize;
+    public enum NumberOfLakes { Low, Medium, High }
 
-        public LakeUserSettings(bool generationEnabled, numLakes lNum, maxLakeSize lMaxSize)
-        {
-            this.generationEnabled = generationEnabled;
-            this.lNum = lNum;
-            this.lMaxSize = lMaxSize;
-        }
-    }
-
-    public enum numLakes { Low, Medium, High }
-
-    public enum maxLakeSize { Small, Medium, Large }
+    public enum MaxLakeSize { Small, Medium, Large }
 
     LakeOptions.LakeSettings lakeSettings;
 

@@ -69,7 +69,7 @@ public class UIManager : MonoBehaviour
         }
 
         // if the level is generated and the mouse is not over any ui element
-        if (levelManager.levelisGenerated && !IsPointerOverUIElement())
+        if (levelManager.levelisGenerated && !isPointerOverUIElement())
         {
             // use the click and drag functionality
             levelCameraController.clickAndDrag();
@@ -201,19 +201,19 @@ public class UIManager : MonoBehaviour
     */
 
     //Returns 'true' if we touched or hovering on Unity UI element.
-    private bool IsPointerOverUIElement()
+    private bool isPointerOverUIElement()
     {
-        return IsPointerOverUIElement(GetEventSystemRaycastResults());
+        return isPointerOverUIElement(getEventSystemRaycastResults());
     }
 
 
     //Returns 'true' if we touched or hovering on Unity UI element.
-    private bool IsPointerOverUIElement(List<RaycastResult> eventSystemRaysastResults)
+    private bool isPointerOverUIElement(List<RaycastResult> eventSystemRaycastResults)
     {
-        for (int index = 0; index < eventSystemRaysastResults.Count; index++)
+        for (int index = 0; index < eventSystemRaycastResults.Count; index++)
         {
-            RaycastResult curRaysastResult = eventSystemRaysastResults[index];
-            if (curRaysastResult.gameObject.layer == uiLayer)
+            RaycastResult curRaycastResult = eventSystemRaycastResults[index];
+            if (curRaycastResult.gameObject.layer == uiLayer)
                 return true;
         }
         return false;
@@ -221,7 +221,7 @@ public class UIManager : MonoBehaviour
 
 
     //Gets all event system raycast results of current mouse or touch position.
-    private static List<RaycastResult> GetEventSystemRaycastResults()
+    private static List<RaycastResult> getEventSystemRaycastResults()
     {
         PointerEventData eventData = new PointerEventData(EventSystem.current);
         eventData.position = Input.mousePosition;

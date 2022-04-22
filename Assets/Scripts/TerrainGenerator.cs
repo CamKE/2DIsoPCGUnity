@@ -13,12 +13,12 @@ public class TerrainGenerator
     /// <summary>
     /// The terrain shape options.
     /// </summary>
-    public enum terrainShape { Square, Rectangle, Random };
+    public enum TerrainShape { Square, Rectangle, Random };
 
     /// <summary>
     /// The terrain type options.
     /// </summary>
-    public enum terrainType { Greenery, Dessert, Snow, Lava };
+    public enum TerrainType { Greenery, Dessert, Snow, Lava };
 
     /// <summary>
     /// The minimum size of a level specified by tile count.
@@ -59,7 +59,7 @@ public class TerrainGenerator
 
     private readonly string[] lavaAccessoryTileNames = { "ISO_Tile_LavaCracks_01", "ISO_Tile_LavaCracks_01 1" };
 
-    Dictionary<terrainType, terrainTiles> terrainTilesByType;
+    Dictionary<TerrainType, terrainTiles> terrainTilesByType;
 
     // temporary solution
     public List<Vector3Int> terrainCellList;
@@ -105,19 +105,19 @@ public class TerrainGenerator
 
         terrainTilemapRenderer.mode = TilemapRenderer.Mode.Individual;
 
-        terrainTilesByType = new Dictionary<terrainType, terrainTiles>();
+        terrainTilesByType = new Dictionary<TerrainType, terrainTiles>();
 
         terrainTiles greeneryTiles = new terrainTiles(greeneryGroundTileNames, greeneryAccessoryTileNames, atlas);
-        terrainTilesByType.Add(terrainType.Greenery, greeneryTiles);
+        terrainTilesByType.Add(TerrainType.Greenery, greeneryTiles);
 
         terrainTiles dessertTiles = new terrainTiles(desertGroundTileNames, desertAccessoryTileNames, atlas);
-        terrainTilesByType.Add(terrainType.Dessert, dessertTiles);
+        terrainTilesByType.Add(TerrainType.Dessert, dessertTiles);
 
         terrainTiles snowTiles = new terrainTiles(snowGroundTileNames, snowAccessoryTileNames, atlas);
-        terrainTilesByType.Add(terrainType.Snow, snowTiles);
+        terrainTilesByType.Add(TerrainType.Snow, snowTiles);
 
         terrainTiles lavaTiles = new terrainTiles(lavaGroundTileNames, lavaAccessoryTileNames, atlas);
-        terrainTilesByType.Add(terrainType.Lava, lavaTiles);
+        terrainTilesByType.Add(TerrainType.Lava, lavaTiles);
 
     }
 
@@ -192,14 +192,14 @@ public class TerrainGenerator
         switch (terrainSettings.tShape)
         {
             // for rectangular shape
-            case TerrainGenerator.terrainShape.Rectangle:
+            case TerrainGenerator.TerrainShape.Rectangle:
                 // 2:1, 3:1, or 4:1 ratio
                 levelCells2DDimensions = getDimensions(terrainSettings.tSize, UnityEngine.Random.Range(2, 4));
                 setBoundaryCells(levelCells2DDimensions);
                 levelCells = new LevelManager.levelCellStatus[levelCells2DDimensions.x, levelCells2DDimensions.y, levelCellsDepth];
                 break;
             // for random shape
-            case TerrainGenerator.terrainShape.Random:
+            case TerrainGenerator.TerrainShape.Random:
                 // generate a random shape
                 // possibly return some other 2d structure that can grow like a list
                 // convert the 2d list of levelcellstatus to a 3d array 

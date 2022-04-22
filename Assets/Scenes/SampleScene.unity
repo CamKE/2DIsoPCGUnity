@@ -1306,8 +1306,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   grid: {fileID: 1469670999}
   player: {fileID: 397201525090935536, guid: 31aac78f9ae5d844e81934a1a6e4c2c6, type: 3}
-  levelCameraController: {fileID: 226959664}
   atlas: {fileID: 4343727234628468602, guid: 56d9446267c095048b35f04a22590c7d, type: 2}
+  level: {fileID: 1469671001}
 --- !u!4 &233506742
 Transform:
   m_ObjectHideFlags: 0
@@ -10869,6 +10869,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1469671000}
   - component: {fileID: 1469670999}
+  - component: {fileID: 1469671001}
   m_Layer: 0
   m_Name: Level
   m_TagString: Untagged
@@ -10903,6 +10904,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1469671001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1469670998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adf9c9a7e2d0bbd428e32ad15ec7353d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  atlas: {fileID: 4343727234628468602, guid: 56d9446267c095048b35f04a22590c7d, type: 2}
 --- !u!1 &1472975211
 GameObject:
   m_ObjectHideFlags: 0

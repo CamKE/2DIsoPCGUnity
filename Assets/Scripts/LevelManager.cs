@@ -21,19 +21,18 @@ public class LevelManager : MonoBehaviour
     [SerializeField]
     private GameObject player;
 
-    // the levelCameraController component of the player
-    [SerializeField]
+    // the levelCameraController component
     private LevelCameraController levelCameraController;
 
     // sprites packed for more efficient use
     [SerializeField]
     private SpriteAtlas atlas;
 
+    [SerializeField]
+    private Level level;
+
     // the playerController component of the player
     private PlayerController playerController;
-
-    // whether or not the player character has been instantiated
-    private bool playerIsInstantiated;
 
     private TerrainGenerator terrainGenerator;
 
@@ -42,15 +41,13 @@ public class LevelManager : MonoBehaviour
     private LakeGenerator lakeGenerator;
 
     private bool rangeHeightEnabled;
+    private bool demoModeEnabled;
 
     // the status of each cell in a grid of cells
     public enum levelCellStatus { validCell, invalidCell, terrainCell, lakeCell, riverCell, outOfBounds }
 
     // a 3-dimensional array of cells in the level, denoting the status of each cell
     private levelCellStatus[,,] levelCells;
-
-    private Vector3Int currentCell;
-    private Vector3 previousPosition;
 
     /// <summary>
     ///  whether or not a level is generated
@@ -63,12 +60,12 @@ public class LevelManager : MonoBehaviour
         // set the offset of the tile center to a value relative to the center position of the sprites (0.205)
         // , given sprite sizes are normalised to 1x1
 
-        // ensure the playerIsInstantiated bool to false by default
-        playerIsInstantiated = false;
         // ensure the isGenerated bool is false by default
         levelisGenerated = false;
+        demoModeEnabled = false;
 
-        currentCell = Vector3Int.zero;
+        levelCameraController = level.transform.GetChild(0).GetComponent<LevelCameraController>();
+
         initialSetup();
     }
 
@@ -76,7 +73,7 @@ public class LevelManager : MonoBehaviour
     private void Update()
     {
         // if there is a player character
-        if (playerIsInstantiated)
+        if (demoModeEnabled && isPlayerInstatiated())
         {
             if(rangeHeightEnabled)
             {
@@ -204,6 +201,16 @@ public class LevelManager : MonoBehaviour
         //setupPlayer(terrainTilemap.GetCellCenterWorld(Vector3Int.zero) + tileCenterOffset);
     }
 
+    // whether or not the player character has been instantiated
+    // had a bool var before, but this seems to make more sense, as we cannot
+    // store the playercontroller before instatiation as the instance controller 
+    // will be different from the one before instantiation, therefore by default
+    // we know the player is instantiated if its playercontroller var is set
+    private bool isPlayerInstatiated()
+    {
+        return playerController != null ? true : false;
+    }
+
     /// <summary>
     /// Create the player and put them into the level at the given position.
     /// </summary>
@@ -211,20 +218,19 @@ public class LevelManager : MonoBehaviour
     public void setupPlayer()
     {
         // if the player is not instantiated
-        if (!playerIsInstantiated)
+        if (!isPlayerInstatiated())
         {
             // Instatiate the player
             player = Instantiate(player, new Vector3(2, 2, 3.01f), Quaternion.identity);
+
             // store the ref to the player component playerController
             playerController = player.GetComponent<PlayerController>();
-            // player is now instantiated, set the bool to true
-            playerIsInstantiated = true;
-        } else
-        // otherwise
-        {
-            // player is instantiated, so enable the player object
-            player.SetActive(true);
+            Debug.Log(isPlayerInstatiated());
+
         }
+
+        // make sure the player object is enabled
+        setPlayerActive(true);
 
         bool cellFound = false;
         while (!cellFound)
@@ -237,8 +243,7 @@ public class LevelManager : MonoBehaviour
                 {
                     if ((z+1) == levelCells.GetLength(2) || levelCells[cellPosition.x, cellPosition.y, z + 1] == levelCellStatus.validCell)
                     {
-                        currentCell = new Vector3Int(cellPosition.x, cellPosition.y, z);
-                        playerController.setWorldPosition(grid.CellToWorld(new Vector3Int(1, 0, 0)));
+                        playerController.setWorldPosition(grid.CellToWorld(new Vector3Int(cellPosition.x, cellPosition.y, z)));
                         playerController.updatePlayerPosition(riverGenerator.grid[1,0].position.z);
                         
                         //playerController.setPosition(grid.CellToWorld(currentCell));
@@ -272,6 +277,7 @@ public class LevelManager : MonoBehaviour
     {
         // set the player's active status to the given value
         player.SetActive(value);
+        demoModeEnabled = value;
     }
 
     // runs before the application is quit 
@@ -279,7 +285,7 @@ public class LevelManager : MonoBehaviour
     {
 
         // if the player exists
-        if (playerIsInstantiated)
+        if (isPlayerInstatiated())
         {
             // delete the player
             Destroy(player);

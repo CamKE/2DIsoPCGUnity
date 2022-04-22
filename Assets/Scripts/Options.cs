@@ -24,7 +24,7 @@ public class Options
     protected List<GameObject> toggleOptions;
 
     // all generators need the type of terrain
-    protected static TerrainGenerator.terrainType terrainType;
+    protected static TerrainGenerator.TerrainType terrainType;
 
     // common setup tasks to be done for sliders
     protected void setupSlider(Slider slider, InputField input, int minValue, int maxValue)
@@ -35,8 +35,8 @@ public class Options
         // set the input field to be equal to the sliders value
         input.text = slider.value.ToString("0");
 
-        slider.onValueChanged.AddListener(delegate { updateSliderField(slider, input); });
-        input.onEndEdit.AddListener(delegate { checkInputField(input, slider, minValue, maxValue); });
+        slider.onValueChanged.AddListener(delegate { updateInputField(slider, input); });
+        input.onEndEdit.AddListener(delegate { updateSlider(input, slider, minValue, maxValue); });
     }
 
     // common setup tasks to be done for dropdowns
@@ -48,7 +48,7 @@ public class Options
         dropdown.AddOptions(options);
     }
 
-    public void updateSliderField(Slider slider, InputField input)
+    public void updateInputField(Slider slider, InputField input)
     {
         if (slider.value != float.Parse(input.text))
         {
@@ -60,7 +60,7 @@ public class Options
     /// Called anytime an input field has been edited to ensure the input is valid and the 
     /// slider is updated to reflect the input field.
     /// </summary>
-    public void checkInputField(InputField input, Slider slider, int minValue, int maxValue)
+    public void updateSlider(InputField input, Slider slider, int minValue, int maxValue)
     {
         if (input.text.Length != 0)
         {
@@ -89,10 +89,5 @@ public class Options
     public void toggleOption(Toggle toggle, GameObject option)
     {
         option.SetActive(toggle.isOn ? true : false);
-    }
-
-    public TerrainGenerator.terrainType getTerrainType()
-    {
-        return terrainType;
     }
 }

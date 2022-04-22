@@ -8,24 +8,24 @@ using UnityEngine.UI;
 [Serializable]
 public class TerrainOptions : Options
 {
-    private enum sliderInputName { terrainSize, terrainExactHeight, terrainRangeHeightMin, terrainRangeHeightMax }
+    private enum TerrainSliderInputName { TerrainSize, TerrainExactHeight, TerrainRangeHeightMin, TerrainRangeHeightMax }
 
-    private enum dropdownName { terrainType, terrainShape }
+    private enum TerrainDropdownName { TerrainType, TerrainShape }
 
-    private enum toggleOptionName { terrainExactHeight, terrainRangeHeight }
+    private enum TerrainToggleOptionName { TerrainExactHeight, TerrainRangeHeight }
 
-    private bool rangeHeightEnabled;
+    private bool heightRangedEnabled;
 
     public struct TerrainSettings
     {
-        readonly public TerrainGenerator.terrainType tType;
+        readonly public TerrainGenerator.TerrainType tType;
         readonly public int tSize;
         readonly public int tMinHeight, tMaxHeight;
         readonly public int tExactHeight;
-        readonly public TerrainGenerator.terrainShape tShape;
+        readonly public TerrainGenerator.TerrainShape tShape;
         readonly public bool heightRangedEnabled;
 
-        public TerrainSettings(int tSize, TerrainGenerator.terrainType tType, int tMinHeight, int tMaxHeight, TerrainGenerator.terrainShape tShape)
+        public TerrainSettings(int tSize, TerrainGenerator.TerrainType tType, int tMinHeight, int tMaxHeight, TerrainGenerator.TerrainShape tShape)
         {
             this.tSize = tSize;
             this.tType = tType;
@@ -36,7 +36,7 @@ public class TerrainOptions : Options
             heightRangedEnabled = true;
         }
 
-        public TerrainSettings(int tSize, TerrainGenerator.terrainType tType, int tExactHeight, TerrainGenerator.terrainShape tShape)
+        public TerrainSettings(int tSize, TerrainGenerator.TerrainType tType, int tExactHeight, TerrainGenerator.TerrainShape tShape)
         {
             this.tSize = tSize;
             this.tType = tType;
@@ -51,18 +51,18 @@ public class TerrainOptions : Options
     public void setupUIElements()
     {
         // setup sliders
-        int terrainSizeEnum = ((int)sliderInputName.terrainSize);
+        int terrainSizeEnum = ((int)TerrainSliderInputName.TerrainSize);
         setupSlider(sliders[terrainSizeEnum], inputFields[terrainSizeEnum], TerrainGenerator.terrainMinSize, TerrainGenerator.terrainMaxSize);
 
-        int terrainExactHeightEnum = ((int)sliderInputName.terrainExactHeight);
+        int terrainExactHeightEnum = ((int)TerrainSliderInputName.TerrainExactHeight);
         for (int i = terrainExactHeightEnum; i < sliders.Count; i++)
         {
             setupSlider(sliders[i], inputFields[i], TerrainGenerator.terrainMinHeight, TerrainGenerator.terrainMaxHeight);
         }
 
         // setup dropdowns
-        setupDropdown(dropdowns[((int)dropdownName.terrainType)], Enum.GetNames(typeof(TerrainGenerator.terrainType)).ToList());
-        setupDropdown(dropdowns[((int)dropdownName.terrainShape)], Enum.GetNames(typeof(TerrainGenerator.terrainShape)).ToList());
+        setupDropdown(dropdowns[((int)TerrainDropdownName.TerrainType)], Enum.GetNames(typeof(TerrainGenerator.TerrainType)).ToList());
+        setupDropdown(dropdowns[((int)TerrainDropdownName.TerrainShape)], Enum.GetNames(typeof(TerrainGenerator.TerrainShape)).ToList());
 
         // setup toggles
         for (int i = 0; i < toggles.Count; i++)
@@ -74,29 +74,34 @@ public class TerrainOptions : Options
 
     public TerrainSettings createUserSettings()
     {
-        int tSize = int.Parse(inputFields[((int)sliderInputName.terrainSize)].text);
-        TerrainGenerator.terrainShape tShape = (TerrainGenerator.terrainShape)dropdowns[((int)dropdownName.terrainShape)].value;
+        int tSize = int.Parse(inputFields[((int)TerrainSliderInputName.TerrainSize)].text);
+        TerrainGenerator.TerrainShape tShape = (TerrainGenerator.TerrainShape)dropdowns[((int)TerrainDropdownName.TerrainShape)].value;
 
-        if (rangeHeightEnabled)
+        if (heightRangedEnabled)
         {
-            int tMinHeight = int.Parse(inputFields[((int)sliderInputName.terrainRangeHeightMin)].text);
-            int tMaxHeight = int.Parse(inputFields[((int)sliderInputName.terrainRangeHeightMax)].text);
+            int tMinHeight = int.Parse(inputFields[((int)TerrainSliderInputName.TerrainRangeHeightMin)].text);
+            int tMaxHeight = int.Parse(inputFields[((int)TerrainSliderInputName.TerrainRangeHeightMax)].text);
 
             return new TerrainSettings(tSize, terrainType, tMinHeight, tMaxHeight, tShape);
         }
         else
         {
-            int tExactHeight = int.Parse(inputFields[((int)sliderInputName.terrainExactHeight)].text);
+            int tExactHeight = int.Parse(inputFields[((int)TerrainSliderInputName.TerrainExactHeight)].text);
 
             return new TerrainSettings(tSize, terrainType, tExactHeight, tShape);
         }
     }
 
+    public TerrainSettings createRandomisedSettings()
+    {
+        return default;
+    }
+
     public bool heightRangeIsOnAndInvalid()
     {
         // variables set here as this method is always called after submission of the options
-        terrainType = (TerrainGenerator.terrainType)dropdowns[((int)dropdownName.terrainType)].value;
-        rangeHeightEnabled = toggles[(int)toggleOptionName.terrainRangeHeight].isOn;
-        return rangeHeightEnabled && (int.Parse(inputFields[((int)sliderInputName.terrainRangeHeightMin)].text) > int.Parse(inputFields[((int)sliderInputName.terrainRangeHeightMax)].text));
+        terrainType = (TerrainGenerator.TerrainType)dropdowns[((int)TerrainDropdownName.TerrainType)].value;
+        heightRangedEnabled = toggles[(int)TerrainToggleOptionName.TerrainRangeHeight].isOn;
+        return heightRangedEnabled && (int.Parse(inputFields[((int)TerrainSliderInputName.TerrainRangeHeightMin)].text) > int.Parse(inputFields[((int)TerrainSliderInputName.TerrainRangeHeightMax)].text));
     }
 }

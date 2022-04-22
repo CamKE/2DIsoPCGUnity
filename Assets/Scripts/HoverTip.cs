@@ -23,7 +23,7 @@ public class HoverTip : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     /// </summary>
     public string tipToShow;
     // how long to wait before displaying the tip (after mouse hover registered)
-    private float timeToWait = 0.5f;
+    private const float timeToWait = 0.5f;
 
     /// <summary>
     /// Called when the associated gameobject is entered.

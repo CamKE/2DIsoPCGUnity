@@ -7,19 +7,19 @@ using UnityEngine;
 [Serializable]
 public class RiverOptions : Options
 {
-    private enum dropdownName { riverAmount }
+    private enum RiverDropdownName { RiverAmount }
 
-    private enum toggleOptionName { riverGeneration, riverIntersection, riverBridges }
+    private enum RiverToggleOptionName { RiverGeneration, RiverIntersection, RiverBridges }
 
     public struct RiverSettings
     {
-        readonly public TerrainGenerator.terrainType tType;
+        readonly public TerrainGenerator.TerrainType tType;
         readonly public bool rGenerationEnabled;
-        readonly public RiverGenerator.numRivers rNum;
+        readonly public RiverGenerator.NumberOfRivers rNum;
         readonly public bool intersectionsEnabled;
         readonly public bool bridgesEnabled;
 
-        public RiverSettings(TerrainGenerator.terrainType tType, bool rGenerationEnabled, RiverGenerator.numRivers rNum, bool intersectionsEnabled, bool bridgesEnabled)
+        public RiverSettings(TerrainGenerator.TerrainType tType, bool rGenerationEnabled, RiverGenerator.NumberOfRivers rNum, bool intersectionsEnabled, bool bridgesEnabled)
         {
             this.tType = tType;
             this.rGenerationEnabled = rGenerationEnabled;
@@ -32,19 +32,19 @@ public class RiverOptions : Options
     public void setupUIElements()
     {
         // setup dropdown
-        setupDropdown(dropdowns[((int)dropdownName.riverAmount)], Enum.GetNames(typeof(RiverGenerator.numRivers)).ToList());
+        setupDropdown(dropdowns[((int)RiverDropdownName.RiverAmount)], Enum.GetNames(typeof(RiverGenerator.NumberOfRivers)).ToList());
 
         // setup river generation toggle
-        int riverGenerationEnum = (int)toggleOptionName.riverGeneration;
+        int riverGenerationEnum = (int)RiverToggleOptionName.RiverGeneration;
         setupToggle(toggles[riverGenerationEnum], toggleOptions[riverGenerationEnum]);
     }
 
     public RiverSettings createUserSettings()
     {
-        bool rGenerationEnabled = toggles[(int)toggleOptionName.riverGeneration].isOn;
-        RiverGenerator.numRivers rNum = (RiverGenerator.numRivers)dropdowns[(int)dropdownName.riverAmount].value;
-        bool intersectionsEnabled = toggles[(int)toggleOptionName.riverIntersection].isOn;
-        bool bridgesEnabled = toggles[(int)toggleOptionName.riverBridges].isOn;
+        bool rGenerationEnabled = toggles[(int)RiverToggleOptionName.RiverGeneration].isOn;
+        RiverGenerator.NumberOfRivers rNum = (RiverGenerator.NumberOfRivers)dropdowns[(int)RiverDropdownName.RiverAmount].value;
+        bool intersectionsEnabled = toggles[(int)RiverToggleOptionName.RiverIntersection].isOn;
+        bool bridgesEnabled = toggles[(int)RiverToggleOptionName.RiverBridges].isOn;
 
         return new RiverSettings(terrainType, rGenerationEnabled, rNum, intersectionsEnabled, bridgesEnabled);
     }

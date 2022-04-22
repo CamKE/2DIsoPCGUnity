@@ -9,7 +9,7 @@ public class RiverGenerator
 {
     private Tilemap riverTilemap;
 
-    Dictionary<TerrainGenerator.terrainType, Tile> riverTilesByType;
+    Dictionary<TerrainGenerator.TerrainType, Tile> riverTilesByType;
 
     private readonly string waterTileName = "ISO_Tile_Water_01";
     private readonly string iceTileName = "ISO_Tile_Water_01";
@@ -19,9 +19,9 @@ public class RiverGenerator
 
     private List<Vector3Int>[] rivers;
 
-    public enum numRivers { Low, Medium, High }
+    public enum NumberOfRivers { Low, Medium, High }
 
-    public Node[,] grid;
+    public Cell[,] grid;
 
     RiverOptions.RiverSettings riverSettings;
 
@@ -39,19 +39,19 @@ public class RiverGenerator
 
         terrainTilemapRenderer.mode = TilemapRenderer.Mode.Individual;
 
-        riverTilesByType = new Dictionary<TerrainGenerator.terrainType, Tile>();
+        riverTilesByType = new Dictionary<TerrainGenerator.TerrainType, Tile>();
 
         Tile waterTile = ScriptableObject.CreateInstance<Tile>();
         waterTile.sprite = atlas.GetSprite(waterTileName);
 
-        riverTilesByType.Add(TerrainGenerator.terrainType.Greenery, waterTile);
-        riverTilesByType.Add(TerrainGenerator.terrainType.Dessert, waterTile);
+        riverTilesByType.Add(TerrainGenerator.TerrainType.Greenery, waterTile);
+        riverTilesByType.Add(TerrainGenerator.TerrainType.Dessert, waterTile);
 
-        riverTilesByType.Add(TerrainGenerator.terrainType.Lava, ScriptableObject.CreateInstance<Tile>());
-        riverTilesByType[TerrainGenerator.terrainType.Lava].sprite = atlas.GetSprite(lavaTileName);
+        riverTilesByType.Add(TerrainGenerator.TerrainType.Lava, ScriptableObject.CreateInstance<Tile>());
+        riverTilesByType[TerrainGenerator.TerrainType.Lava].sprite = atlas.GetSprite(lavaTileName);
 
-        riverTilesByType.Add(TerrainGenerator.terrainType.Snow, ScriptableObject.CreateInstance<Tile>());
-        riverTilesByType[TerrainGenerator.terrainType.Snow].sprite = atlas.GetSprite(iceTileName);
+        riverTilesByType.Add(TerrainGenerator.TerrainType.Snow, ScriptableObject.CreateInstance<Tile>());
+        riverTilesByType[TerrainGenerator.TerrainType.Snow].sprite = atlas.GetSprite(iceTileName);
     }
 
     public void setRiverSettings(RiverOptions.RiverSettings riverSettings)
@@ -85,7 +85,7 @@ public class RiverGenerator
 
             boundaryCellList.Remove(boundaryCellXYPosition);
             Debug.Log("set the start node to that boundary cell by using the xy from the list");
-            Node startNode = grid[boundaryCellXYPosition.x, boundaryCellXYPosition.y];
+            Cell startNode = grid[boundaryCellXYPosition.x, boundaryCellXYPosition.y];
             Debug.Log($"to confirm, {startNode.position} and {boundaryCellXYPosition} should have the same xy positions");
 
             Debug.Log("get random boundary cells xy pos from the boundary cell xy list to set an end node");
@@ -95,7 +95,7 @@ public class RiverGenerator
             boundaryCellList.Remove(boundaryCellXYPosition);
 
             Debug.Log("set the end node to that boundary cell by using the xy from the list");
-            Node endNode = grid[boundaryCellXYPosition.x, boundaryCellXYPosition.y];
+            Cell endNode = grid[boundaryCellXYPosition.x, boundaryCellXYPosition.y];
             Debug.Log($"to confirm, {endNode.position} and {boundaryCellXYPosition} should have the same xy positions");
 
             Debug.Log($"find the shortest path between the start and end nodes: {startNode.position} and {endNode.position}");
@@ -104,28 +104,28 @@ public class RiverGenerator
 
     }
 
-    private Node[,] createGrid(LevelManager.levelCellStatus[,,] levelCells, List<Vector3Int> terrainCellList)
+    private Cell[,] createGrid(LevelManager.levelCellStatus[,,] levelCells, List<Vector3Int> terrainCellList)
     {
 
         Debug.Log($"New node grid of dimension {levelCells.GetLength(0)} by {levelCells.GetLength(0)}");
-        Node[,] grid = new Node[levelCells.GetLength(0), levelCells.GetLength(1)];
+        Cell[,] grid = new Cell[levelCells.GetLength(0), levelCells.GetLength(1)];
 
         Debug.Log("foreach terraincell position in terrain cell list...");
         foreach (Vector3Int terrainCellPosition in terrainCellList)
         {
             Debug.Log($"position {terrainCellPosition} added to node grid");
-            grid[terrainCellPosition.x, terrainCellPosition.y] = new Node(terrainCellPosition, true);
+            grid[terrainCellPosition.x, terrainCellPosition.y] = new Cell(terrainCellPosition, true);
         }
 
         Debug.Log("return the grid");
         return grid;
     }
  
-    private List<Vector3Int> findAStarPath(Node[,] grid, Node startNode, Node endNode, LevelManager.levelCellStatus[,,] levelCells)
+    private List<Vector3Int> findAStarPath(Cell[,] grid, Cell startNode, Cell endNode, LevelManager.levelCellStatus[,,] levelCells)
     {
-        List<Node> openList = new List<Node>();
-        HashSet<Node> closedList = new HashSet<Node>();
-        Node currentNode;
+        List<Cell> openList = new List<Cell>();
+        HashSet<Cell> closedList = new HashSet<Cell>();
+        Cell currentNode;
 
         Debug.Log("Add the start node to the openlist");
         openList.Add(startNode);
@@ -192,7 +192,7 @@ public class RiverGenerator
             }
 
             Debug.Log($"for each neighbour of the current node: {currentNode.position}...");
-            foreach (Node neighbourNode in getNeighbours(grid, currentNode))
+            foreach (Cell neighbourNode in getNeighbours(grid, currentNode))
             {
                 Debug.Log($"At neighbour: {neighbourNode.position}");
 
@@ -233,7 +233,7 @@ public class RiverGenerator
         return null;
     }
 
-    private int GetDistance(Node startNode, Node endNode)
+    private int GetDistance(Cell startNode, Cell endNode)
     {
         int xDistance = Mathf.Abs(startNode.position.x - endNode.position.x);
         int yDistance = Mathf.Abs(startNode.position.y - endNode.position.y);
@@ -241,9 +241,9 @@ public class RiverGenerator
         return 10 * xDistance + 10 * (yDistance - xDistance);
     }
 
-    private List<Node> getNeighbours(Node[,] grid, Node currentNode)
+    private List<Cell> getNeighbours(Cell[,] grid, Cell currentNode)
     {
-        List<Node> neighbours = new List<Node>();
+        List<Cell> neighbours = new List<Cell>();
         int width = grid.GetLength(0);
         int height = grid.GetLength(1);
 
