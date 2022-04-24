@@ -133,7 +133,7 @@ public class TerrainGenerator
 
     public void populateCells(LevelManager.levelCellStatus[,,] levelCells)
     {
-        
+
         // define all the terrain cells
 
         // get width and height of the array
@@ -189,14 +189,14 @@ public class TerrainGenerator
                 // 2:1, 3:1, or 4:1 ratio
                 mapDimensions = getDimensions(terrainSettings.tSize, UnityEngine.Random.Range(2, 4));
                 setBoundaryCells(mapDimensions);
-                map = new Cell[mapDimensions.x, mapDimensions.y]; 
+                map = new Cell[mapDimensions.x, mapDimensions.y];
                 for (int x = 0; x < mapDimensions.x; x++)
                 {
                     for (int y = 0; y < mapDimensions.y; y++)
                     {
-                        map[x, y] = new Cell(new Vector3Int(x,y,0), true);
+                        map[x, y] = new Cell(new Vector3Int(x, y, 0), true);
                     }
-                }    
+                }
                 break;
             // for random shape
             case TerrainGenerator.TerrainShape.Random:
@@ -296,16 +296,16 @@ public class TerrainGenerator
         int width = levelCells2DDimensions.x;
         int height = levelCells2DDimensions.y;
 
-        boundaryCellList.Add(new Vector2Int(0,0));
-        boundaryCellList.Add(new Vector2Int(width-1, 0));
-        boundaryCellList.Add(new Vector2Int(0, height-1));
-        boundaryCellList.Add(new Vector2Int(width-1, height-1));
+        boundaryCellList.Add(new Vector2Int(0, 0));
+        boundaryCellList.Add(new Vector2Int(width - 1, 0));
+        boundaryCellList.Add(new Vector2Int(0, height - 1));
+        boundaryCellList.Add(new Vector2Int(width - 1, height - 1));
 
         Debug.Log($"width is {width} and height is {height}");
 
         for (int x = 0; x < width; x += (width - 1))
         {
-            for (int y = 1; y < height-1; y ++)
+            for (int y = 1; y < height - 1; y++)
             {
                 Debug.Log($"point {x},{y}");
                 boundaryCellList.Add(new Vector2Int(x, y));
@@ -313,7 +313,7 @@ public class TerrainGenerator
         }
         for (int y = 0; y < height; y += (height - 1))
         {
-            for (int x = 1; x < width-1; x++)
+            for (int x = 1; x < width - 1; x++)
             {
                 Debug.Log($"point {x},{y}");
                 boundaryCellList.Add(new Vector2Int(x, y));
@@ -365,14 +365,14 @@ public class TerrainGenerator
         {
             for (int y = 0; y < terrainLength; y++)
             {
-                newLevelShape[x, y] = new Cell(new Vector3Int(x,y,0), false);
-                newLevelShape[x, y].status = Cell.CellStatus.InvalidCell;
+                newLevelShape[x, y] = new Cell(new Vector3Int(x, y, 0), false);
+                newLevelShape[x, y].setCellStatus(Cell.CellStatus.InvalidCell);
             }
         }
 
         Vector2Int centerCell = new Vector2Int(terrainLength / 2, terrainLength / 2);
 
-        newLevelShape[centerCell.x, centerCell.y].status = Cell.CellStatus.ValidCell;
+        newLevelShape[centerCell.x, centerCell.y].setCellStatus(Cell.CellStatus.ValidCell);
 
         Queue<Vector2Int> neighbourCellPositions = new Queue<Vector2Int>();
         HashSet<Vector2Int> visitedPositions = new HashSet<Vector2Int>();
@@ -391,7 +391,7 @@ public class TerrainGenerator
             //make valid based on random prob
             if (neighbourCellPositions.Count != 0 && UnityEngine.Random.value < validTileChance)
             {
-                newLevelShape[currentCellPosition.x, currentCellPosition.y].status = Cell.CellStatus.ValidCell;
+                newLevelShape[currentCellPosition.x, currentCellPosition.y].setCellStatus(Cell.CellStatus.ValidCell);
                 validTileChance -= (chanceFalloffRate / (float)terrainSize);
             }
 
@@ -458,8 +458,8 @@ public class TerrainGenerator
             {
                 newLevelShape[currentCellPosition.x, currentCellPosition.y] = LevelManager.levelCellStatus.validCell;
                 validTileChance -= (chanceFalloffRate / (float)terrainSize);
-            } 
-            
+            }
+
             if (!visitedPositions.Contains(currentCellPosition) && newLevelShape[currentCellPosition.x, currentCellPosition.y] == LevelManager.levelCellStatus.validCell)
             {
                 for (int i = -1; i <= 1; i += 2)
@@ -556,7 +556,7 @@ public class TerrainGenerator
 
                     // mark the cell as a terrain cell
                     map[x, y].status = Cell.CellStatus.TerrainCell;
-                    map[x, y].position = new Vector3Int(x,y, zValue);
+                    map[x, y].position = new Vector3Int(x, y, zValue);
                     // an implementation which will need to be refactored.
                     // when path gen is done, we will need to refactor.
                     terrainCellList.Add(map[x, y].position);
@@ -692,14 +692,26 @@ public class TerrainGenerator
         {
             for (int y = 0; y < map.GetLength(1); y++)
             {
-                    if (map[x, y].status == Cell.CellStatus.TerrainCell)
+                if (map[x, y].status == Cell.CellStatus.TerrainCell)
+                {
+                    positions.Add(map[x, y].position);
+                    // select random accessory tile at 30% chance
+                    tiles.Add(UnityEngine.Random.Range(0.0f, 10.0f) > 3.0f ? groundTiles[map[x, y].position.z % groundTilesLength] : accessoryTiles[map[x, y].position.z % accessoryTilesLength]);
+
+                    // add the cells below ground level at the boundary
+                    // if its a cell at the boundary towards the camera
+                    if (x == 0 || y == 0)
                     {
-                        positions.Add(map[x, y].position);
-                        // select random accessory tile at 30% chance
-                        tiles.Add(UnityEngine.Random.Range(0.0f, 10.0f) > 3.0f ? groundTiles[map[x, y].position.z % groundTilesLength] : accessoryTiles[map[x, y].position.z % accessoryTilesLength]);
+                        for (int z = map[x, y].position.z - 1; z >= 0; z--)
+                        {
+                            positions.Add(new Vector3Int(map[x, y].position.x, map[x, y].position.y, z));
+                            tiles.Add(groundTiles[0]);
+                        }
                     }
+                }
             }
         }
+
         terrainTilemap.SetTiles(positions.ToArray(), tiles.ToArray());
     }
 

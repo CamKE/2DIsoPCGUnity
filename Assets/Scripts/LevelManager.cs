@@ -132,7 +132,10 @@ public class LevelManager : MonoBehaviour
             lakeGenerator.generate(levelCells);
         }
        */
+        rangeHeightEnabled = terrainSettings.heightRangedEnabled;
+
         level.generate(terrainSettings, riverSettings, lakeSettings);
+
         updateLevelCamera(level.getTerrainBounds());
     }
 

@@ -64,10 +64,24 @@ public class Level : MonoBehaviour
 
         map = terrainGenerator.createMap();
 
+        if (riverSettings.rGenerationEnabled)
+        {
+            riverGenerator.setRiverSettings(riverSettings);
+            // populate the levelCells 3d array with the river cells
+            riverGenerator.populateCells(map, terrainGenerator.terrainCellList, terrainGenerator.boundaryCellList);
+        }
+
         terrainGenerator.populateCells(map);
 
         // generate the terrain based on the current state of the levelCells array
         terrainGenerator.generate(map);
+
+        // if river generation is enabled
+        if (riverSettings.rGenerationEnabled)
+        {
+            // populate the levelCells 3d array with the river cells
+            riverGenerator.generate(map);
+        }
 
         isGenerated = true;
         // enable the controller now that a level is generated

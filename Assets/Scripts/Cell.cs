@@ -13,6 +13,24 @@ public class Cell
     public enum CellStatus { ValidCell, InvalidCell, TerrainCell, LakeCell, RiverCell, OutOfBounds }
     public CellStatus status;
 
+    
+    // update bool based on cell status
+    public void setCellStatus(CellStatus newStatus)
+    {
+        status = newStatus;
+        switch (newStatus)
+        {
+            case CellStatus.ValidCell:
+            case CellStatus.TerrainCell:
+                isTraversable = true;
+                break;
+            default:
+                isTraversable = false;
+                break;
+        }
+    }
+    
+
     public Cell(Vector3Int position, bool isTraversable)
     {
         this.position = position;
