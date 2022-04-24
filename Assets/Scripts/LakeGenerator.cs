@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.U2D;
 
 public class LakeGenerator
 {
@@ -11,7 +12,7 @@ public class LakeGenerator
 
     LakeOptions.LakeSettings lakeSettings;
 
-    public LakeGenerator()
+    public LakeGenerator(Grid grid, SpriteAtlas atlas)
     {
 
     }
@@ -48,6 +49,11 @@ public class LakeGenerator
             }
         }
         //terrainTilemap.SetTiles(positions.ToArray(), tiles.ToArray());
+    }
+
+    public void clearTilemap()
+    {
+
     }
 
     public void randomlyGenerate()

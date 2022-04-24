@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -33,7 +34,11 @@ public class PlayerController : MonoBehaviour
 
     private const float tileZIncrement = 0.25f;
 
- 
+    // needs ref to level manager for movement calculations
+    private LevelManager levelManager;
+
+    private static Action doMovement;
+
 
     // start is called before the first frame update when the script is enabled
     private void Start()
@@ -46,12 +51,32 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    public Vector2 getWorldPosition()
+    // update is called every frame when the script is enabled
+    private void Update()
     {
-        return playerWorldPosition;
+        doMovement();
     }
 
-    public void movePlayer()
+    public void setDoMovement(bool rangeHeightEnabled)
+    {
+        if (rangeHeightEnabled)
+        {
+            doMovement -= movePlayer;
+            doMovement += movePlayerWithHeightVariation;
+        } 
+        else
+        {
+            doMovement -= movePlayerWithHeightVariation;
+            doMovement += movePlayer;
+        }
+    }
+
+    public void setLevelManager(LevelManager levelManager)
+    {
+        this.levelManager = levelManager;
+    }
+
+    private void movePlayer()
     {
         Vector2 movement = getMovement();
 
@@ -61,13 +86,15 @@ public class PlayerController : MonoBehaviour
         flipSprite();
     }
 
-    public void movePlayer(int zValue)
+    private void movePlayerWithHeightVariation()
     {
         Vector2 movement = getMovement();
 
         playerWorldPosition += movement;
 
-        updatePlayerPosition(zValue);
+        int currentCellZValue = levelManager.getCellZPosition(playerWorldPosition);
+
+        updatePlayerPosition(currentCellZValue);
 
         flipSprite();
     }
@@ -84,6 +111,7 @@ public class PlayerController : MonoBehaviour
         return new Vector2(horizontalMovement, verticalMovement);
     }
 
+    // update the players position at the height given based on the world pos
     public void updatePlayerPosition(int zValue)
     {   //zval time tile height difference at each z increment
         Vector3 newPos = new Vector3(playerWorldPosition.x, playerWorldPosition.y + (zValue * tileZIncrement), zValue) + playerZOffset;

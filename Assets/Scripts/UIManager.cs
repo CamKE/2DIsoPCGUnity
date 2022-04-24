@@ -22,9 +22,6 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private LevelCameraController levelCameraController;
 
-    // layer value for ui elements
-    private int uiLayer;
-
     // the parent object of all level generation ui options
     [SerializeField]
     private GameObject levelGenUI;
@@ -46,49 +43,32 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private LakeOptions lakeOptions;
 
+    [SerializeField]
+    private List<Button> levelInteractionButtons;
+
     // start is called before the first frame update when the script is enabled
     private void Start()
     {
-        // get the layer value for ui elements
-        uiLayer = LayerMask.NameToLayer("UI");
 
         // do the user interface setup
         terrainOptions.setupUIElements();
         riverOptions.setupUIElements();
         lakeOptions.setupUIElements();
-    }
 
-    // late update is called every frame when the script is enabled, after update
-    private void LateUpdate()
-    {
-        // if the left mousebutton is pressed
-        if (Input.GetMouseButtonDown(0))
+        foreach (Button button in levelInteractionButtons)
         {
-            // set the original mouse down position to be the world position of where the left mouse button was pressed
-            levelCameraController.setOriginalMouseDownPosition();
-        }
-
-        // if the level is generated and the mouse is not over any ui element
-        if (levelManager.levelisGenerated && !isPointerOverUIElement())
-        {
-            // use the click and drag functionality
-            levelCameraController.clickAndDrag();
-            // use the scroll to zoom functionality
-            levelCameraController.scrollZoom();
+            button.interactable = false;
         }
     }
+
 
     /// <summary>
     /// Tell the level camera to recenter around the level.
     /// </summary>
     public void recenterCamera()
     {
-        // if the level is generated 
-        if (levelManager.levelisGenerated)
-        {
             // recenter the camera around the level
             levelCameraController.recenterCamera();
-        }
     }
 
     /// <summary>
@@ -96,12 +76,8 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public void zoomIn()
     {
-        // if the level is generated 
-        if (levelManager.levelisGenerated)
-        {
             // zoom into the level
             levelCameraController.zoomIn();
-        }
     }
 
     /// <summary>
@@ -109,12 +85,8 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public void zoomOut()
     {
-        // if the level is generated 
-        if (levelManager.levelisGenerated)
-        {
             // zoom out of the level
             levelCameraController.zoomOut();
-        }
     }
 
     /// <summary>
@@ -134,6 +106,11 @@ public class UIManager : MonoBehaviour
 
         // generate the level
         levelManager.generate(terrainSettings, riverSettings, lakeSettings);
+
+        foreach (Button button in levelInteractionButtons)
+        {
+            button.interactable = true;
+        }
     }
 
     /// <summary>
@@ -149,9 +126,6 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public void demoLevel()
     {
-        // if the level is generated
-        if (levelManager.levelisGenerated)
-        {
             // disable the level generation ui
             levelGenUI.SetActive(false);
             // enable the demo mode ui
@@ -160,15 +134,7 @@ public class UIManager : MonoBehaviour
             // setup the player. temp initial position. position setting will be more complicated
             levelManager.setupPlayer();
             // disable the level camera
-            levelManager.setLevelCameraActive(false);
-        } else
-        // otherwise
-        {
-            // Show a popup message to the user
-            popupManager.showPopup("No Level Exists", "There is no level to be demoed.");
-        }
-     
-
+            levelManager.setLevelCameraActive(false); 
     }
 
     /// <summary>
@@ -194,39 +160,5 @@ public class UIManager : MonoBehaviour
     {
         // tell the popup manager to hide the popup.
         popupManager.hidePopup();
-    }
-
-    /*
-    * code below from https://forum.unity.com/threads/how-to-detect-if-mouse-is-over-ui.1025533/
-    */
-
-    //Returns 'true' if we touched or hovering on Unity UI element.
-    private bool isPointerOverUIElement()
-    {
-        return isPointerOverUIElement(getEventSystemRaycastResults());
-    }
-
-
-    //Returns 'true' if we touched or hovering on Unity UI element.
-    private bool isPointerOverUIElement(List<RaycastResult> eventSystemRaycastResults)
-    {
-        for (int index = 0; index < eventSystemRaycastResults.Count; index++)
-        {
-            RaycastResult curRaycastResult = eventSystemRaycastResults[index];
-            if (curRaycastResult.gameObject.layer == uiLayer)
-                return true;
-        }
-        return false;
-    }
-
-
-    //Gets all event system raycast results of current mouse or touch position.
-    private static List<RaycastResult> getEventSystemRaycastResults()
-    {
-        PointerEventData eventData = new PointerEventData(EventSystem.current);
-        eventData.position = Input.mousePosition;
-        List<RaycastResult> raysastResults = new List<RaycastResult>();
-        EventSystem.current.RaycastAll(eventData, raysastResults);
-        return raysastResults;
     }
 }

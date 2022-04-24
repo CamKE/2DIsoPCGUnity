@@ -21,9 +21,6 @@ public class LevelManager : MonoBehaviour
     [SerializeField]
     private GameObject player;
 
-    // the levelCameraController component
-    private LevelCameraController levelCameraController;
-
     // sprites packed for more efficient use
     [SerializeField]
     private SpriteAtlas atlas;
@@ -40,19 +37,13 @@ public class LevelManager : MonoBehaviour
 
     private LakeGenerator lakeGenerator;
 
-    private bool rangeHeightEnabled;
-    private bool demoModeEnabled;
+    public bool rangeHeightEnabled;
 
     // the status of each cell in a grid of cells
     public enum levelCellStatus { validCell, invalidCell, terrainCell, lakeCell, riverCell, outOfBounds }
 
     // a 3-dimensional array of cells in the level, denoting the status of each cell
     private levelCellStatus[,,] levelCells;
-
-    /// <summary>
-    ///  whether or not a level is generated
-    /// </summary>
-    public bool levelisGenerated { get; private set; }
     
     // start is called before the first frame update when the script is enabled
     private void Start()
@@ -60,36 +51,16 @@ public class LevelManager : MonoBehaviour
         // set the offset of the tile center to a value relative to the center position of the sprites (0.205)
         // , given sprite sizes are normalised to 1x1
 
-        // ensure the isGenerated bool is false by default
-        levelisGenerated = false;
-        demoModeEnabled = false;
-
-        levelCameraController = level.transform.GetChild(0).GetComponent<LevelCameraController>();
-
         initialSetup();
     }
 
-    // update is called every frame when the script is enabled
-    private void Update()
+    public int getCellZPosition(Vector2 worldPos)
     {
-        // if there is a player character
-        if (demoModeEnabled && isPlayerInstatiated())
-        {
-            if(rangeHeightEnabled)
-            {
+        Vector3Int gridpos = grid.WorldToCell(worldPos);
 
-                // float playerZValue = calculatePlayerZValue();
+        return riverGenerator.grid[gridpos.x, gridpos.y].position.z;
 
-                //  playerController.MoveCharacter(playerZValue);
-                Vector3Int gridpos = grid.WorldToCell(playerController.getWorldPosition());
-                playerController.movePlayer(riverGenerator.grid[gridpos.x, gridpos.y].position.z);
-            }
-            else
-            {
-                playerController.movePlayer();
-            }
-
-        }    
+        //return level.getCellZPosition(worldPos);
     }
 
     /// <summary>
@@ -105,8 +76,7 @@ public class LevelManager : MonoBehaviour
         //terrainTilemap.ClearAllTiles();
         terrainGenerator.clearTilemap();
         riverGenerator.clearTilemap();
-        // set is generated to be false
-        levelisGenerated = false;
+
     }
 
     
@@ -116,6 +86,7 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     public void generate(TerrainOptions.TerrainSettings terrainSettings, RiverOptions.RiverSettings riverSettings, LakeOptions.LakeSettings lakeSettings)
     {
+        /*
         // clear the level tilemaps
         clearLevel();
 
@@ -160,9 +131,9 @@ public class LevelManager : MonoBehaviour
             // populate the levelCells 3d array with the lake cells
             lakeGenerator.generate(levelCells);
         }
-
-        updateLevelCamera(terrainGenerator.getTilemapBounds());
-        levelisGenerated = true;
+       */
+        level.generate(terrainSettings, riverSettings, lakeSettings);
+        updateLevelCamera(level.getTerrainBounds());
     }
 
     // gives the camera the new center of the level and the new orthographic size
@@ -187,7 +158,7 @@ public class LevelManager : MonoBehaviour
         float newOrthoSize = 0.4f * maxDimension;
 
         // update the camera with the new values
-        levelCameraController.updateCamera(levelCenter, newOrthoSize);
+        level.updateCamera(levelCenter, newOrthoSize);
     }
 
     // the initial setup for the level. temporary setup
@@ -197,7 +168,7 @@ public class LevelManager : MonoBehaviour
 
         riverGenerator = new RiverGenerator(grid, atlas);
 
-        lakeGenerator = new LakeGenerator();
+        lakeGenerator = new LakeGenerator(grid, atlas);
         //setupPlayer(terrainTilemap.GetCellCenterWorld(Vector3Int.zero) + tileCenterOffset);
     }
 
@@ -225,10 +196,14 @@ public class LevelManager : MonoBehaviour
 
             // store the ref to the player component playerController
             playerController = player.GetComponent<PlayerController>();
+
+            playerController.setLevelManager(this);
+
             Debug.Log(isPlayerInstatiated());
 
         }
 
+        playerController.setDoMovement(rangeHeightEnabled);
         // make sure the player object is enabled
         setPlayerActive(true);
 
@@ -265,7 +240,7 @@ public class LevelManager : MonoBehaviour
     public void setLevelCameraActive(bool value)
     {
         // set the level camera's active status to the given value
-        levelCameraController.gameObject.SetActive(value);
+        level.setCameraActive(value);
     }
 
     /// <summary>
@@ -277,7 +252,6 @@ public class LevelManager : MonoBehaviour
     {
         // set the player's active status to the given value
         player.SetActive(value);
-        demoModeEnabled = value;
     }
 
     // runs before the application is quit 

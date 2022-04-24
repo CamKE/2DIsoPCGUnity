@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// Controls the level camera's functionality that is used in the user interface.
@@ -39,11 +40,37 @@ public class LevelCameraController : MonoBehaviour
     // the original point at which the left mouse button was pressed
     private Vector3 originalMouseDownPosition;
 
+    // layer value for ui elements
+    private int uiLayer;
+
     // start is called before the first frame update when the script is enabled
     private void Start()
     {
+        // get the layer value for ui elements
+        uiLayer = LayerMask.NameToLayer("UI");
         // set the ref to the camera component
         levelCamera = GetComponent<Camera>();
+    }
+
+
+    // late update is called every frame when the script is enabled, after update
+    private void LateUpdate()
+    {
+        // if the left mousebutton is pressed
+        if (Input.GetMouseButtonDown(0))
+        {
+            // set the original mouse down position to be the world position of where the left mouse button was pressed
+            setOriginalMouseDownPosition();
+        }
+
+        // if the level is generated and the mouse is not over any ui element
+        if (!isPointerOverUIElement())
+        {
+            // use the click and drag functionality
+            clickAndDrag();
+            // use the scroll to zoom functionality
+            scrollZoom();
+        }
     }
 
     /// <summary>
@@ -168,5 +195,39 @@ public class LevelCameraController : MonoBehaviour
             // reduce the orthographic size by the zoom speed in the direction denoted by the vertical(y) mouse scroll delta
             levelCamera.orthographicSize -= Input.mouseScrollDelta.y * zoomSpeed;
         }
+    }
+
+    /*
+    * code below from https://forum.unity.com/threads/how-to-detect-if-mouse-is-over-ui.1025533/
+    */
+
+    //Returns 'true' if we touched or hovering on Unity UI element.
+    private bool isPointerOverUIElement()
+    {
+        return isPointerOverUIElement(getEventSystemRaycastResults());
+    }
+
+
+    //Returns 'true' if we touched or hovering on Unity UI element.
+    private bool isPointerOverUIElement(List<RaycastResult> eventSystemRaycastResults)
+    {
+        for (int index = 0; index < eventSystemRaycastResults.Count; index++)
+        {
+            RaycastResult curRaycastResult = eventSystemRaycastResults[index];
+            if (curRaycastResult.gameObject.layer == uiLayer)
+                return true;
+        }
+        return false;
+    }
+
+
+    //Gets all event system raycast results of current mouse or touch position.
+    private static List<RaycastResult> getEventSystemRaycastResults()
+    {
+        PointerEventData eventData = new PointerEventData(EventSystem.current);
+        eventData.position = Input.mousePosition;
+        List<RaycastResult> raysastResults = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventData, raysastResults);
+        return raysastResults;
     }
 }
