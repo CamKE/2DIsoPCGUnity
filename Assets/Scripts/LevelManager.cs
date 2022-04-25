@@ -13,17 +13,9 @@ public class LevelManager : MonoBehaviour
 {
     // '[SerializeField] private' show up in the inspector but are not accessible by other scripts
 
-    // gameobject with grid component for aligning tiles
-    [SerializeField]
-    private Grid grid;
-
     // player character to be used in demo mode
     [SerializeField]
     private GameObject player;
-
-    // sprites packed for more efficient use
-    [SerializeField]
-    private SpriteAtlas atlas;
 
     [SerializeField]
     private Level level;
@@ -31,148 +23,21 @@ public class LevelManager : MonoBehaviour
     // the playerController component of the player
     private PlayerController playerController;
 
-    private TerrainGenerator terrainGenerator;
-
-    private RiverGenerator riverGenerator;
-
-    private LakeGenerator lakeGenerator;
-
     public bool rangeHeightEnabled;
-
-    // the status of each cell in a grid of cells
-    public enum levelCellStatus { validCell, invalidCell, terrainCell, lakeCell, riverCell, outOfBounds }
-
-    // a 3-dimensional array of cells in the level, denoting the status of each cell
-    private levelCellStatus[,,] levelCells;
-    
-    // start is called before the first frame update when the script is enabled
-    private void Start()
-    {
-        // set the offset of the tile center to a value relative to the center position of the sprites (0.205)
-        // , given sprite sizes are normalised to 1x1
-
-        initialSetup();
-    }
 
     public int getCellZPosition(Vector2 worldPos)
     {
-        Vector3Int gridpos = grid.WorldToCell(worldPos);
-
-        return riverGenerator.grid[gridpos.x, gridpos.y].position.z;
-
-        //return level.getCellZPosition(worldPos);
+        return level.getCellZPosition(worldPos);
     }
-
-    /// <summary>
-    /// Clear the tiles in all terrainTilemaps in the level.
-    /// </summary>
-    public void clearLevel()
-    {
-        // terrainTilemaps are not deleted even if they are not used, as it
-        // is more efficient to keep them instead of continuously creating
-        // and deleting them
-
-        // clear the current terrainTilemap (temporary setup)
-        //terrainTilemap.ClearAllTiles();
-        terrainGenerator.clearTilemap();
-        riverGenerator.clearTilemap();
-
-    }
-
-    
 
     /// <summary>
     /// Generate the level. temporary setup.
     /// </summary>
     public void generate(TerrainOptions.TerrainSettings terrainSettings, RiverOptions.RiverSettings riverSettings, LakeOptions.LakeSettings lakeSettings)
     {
-        /*
-        // clear the level tilemaps
-        clearLevel();
-
-        rangeHeightEnabled = terrainSettings.heightRangedEnabled;
-
-        terrainGenerator.setTerrainSettings(terrainSettings);
-
-        levelCells = terrainGenerator.createLevelCells();
-
-        // populate the levelCells 3d array with the terrain cells
-        terrainGenerator.populateCells(levelCells);
-
-        // if river generation is enabled
-        if (riverSettings.rGenerationEnabled)
-        {
-            riverGenerator.setRiverSettings(riverSettings);
-            // populate the levelCells 3d array with the river cells
-            riverGenerator.populateCells(levelCells, terrainGenerator.terrainCellList, terrainGenerator.boundaryCellList);
-        }
-
-        // if lake generation is enabled
-        if (lakeSettings.lGenerationEnabled)
-        {
-            lakeGenerator.setLakeSettings(lakeSettings);
-            // populate the levelCells 3d array with the lake cells
-            lakeGenerator.populateCells(levelCells);
-        }
-
-        // generate the terrain based on the current state of the levelCells array
-        terrainGenerator.generate(levelCells);
-
-        // if river generation is enabled
-        if (riverSettings.rGenerationEnabled)
-        {
-            // populate the levelCells 3d array with the river cells
-            riverGenerator.generate(levelCells);
-        }
-
-        // if lake generation is enabled
-        if (lakeSettings.lGenerationEnabled)
-        {
-            // populate the levelCells 3d array with the lake cells
-            lakeGenerator.generate(levelCells);
-        }
-       */
         rangeHeightEnabled = terrainSettings.heightRangedEnabled;
 
         level.generate(terrainSettings, riverSettings, lakeSettings);
-
-        updateLevelCamera(level.getTerrainBounds());
-    }
-
-    // gives the camera the new center of the level and the new orthographic size
-    private void updateLevelCamera(BoundsInt tilemapBounds)
-    {
-        // get the boundary information of the terrain terrainTilemap
-        BoundsInt terrainBounds = tilemapBounds;
-        
-        // find the local position of the cell on the grid at the x most tile value and the 
-        // y most tile value
-        Vector3 mapLocalDimension = grid.CellToLocal(new Vector3Int(terrainBounds.xMax, terrainBounds.yMax, 0));
-
-        // find the world position of the center of the level
-        Vector3 levelCenter = grid.LocalToWorld(mapLocalDimension / 2.0f);
-        // set the z value to ensure the level is always in view
-        levelCenter.z = -50.0f;
-
-        // set the max dimension to be the largest dimension of the terrain
-        int maxDimension = terrainBounds.xMax > terrainBounds.yMax ? terrainBounds.xMax : terrainBounds.yMax;
-     
-        // set the new camera orthographic size to be 40% of the maximum terrain dimension
-        float newOrthoSize = 0.4f * maxDimension;
-
-        // update the camera with the new values
-        level.updateCamera(levelCenter, newOrthoSize);
-    }
-
-    // the initial setup for the level. temporary setup
-    private void initialSetup()
-    {
-        terrainGenerator = new TerrainGenerator(grid, atlas);
-
-        riverGenerator = new RiverGenerator(grid, atlas);
-
-        lakeGenerator = new LakeGenerator(grid, atlas);
-        //setupPlayer(terrainTilemap.GetCellCenterWorld(Vector3Int.zero) + tileCenterOffset);
     }
 
     // whether or not the player character has been instantiated
@@ -203,35 +68,16 @@ public class LevelManager : MonoBehaviour
             playerController.setLevelManager(this);
 
             Debug.Log(isPlayerInstatiated());
-
         }
 
         playerController.setDoMovement(rangeHeightEnabled);
         // make sure the player object is enabled
         setPlayerActive(true);
 
-        bool cellFound = false;
-        while (!cellFound)
-        {
-            Vector2Int cellPosition = new Vector2Int(UnityEngine.Random.Range(0, levelCells.GetLength(0)), UnityEngine.Random.Range(0, levelCells.GetLength(1)));
-            
-            for (int z = 0; z < levelCells.GetLength(2); z++)
-            {
-                if (levelCells[cellPosition.x,cellPosition.y,z] == levelCellStatus.terrainCell)
-                {
-                    if ((z+1) == levelCells.GetLength(2) || levelCells[cellPosition.x, cellPosition.y, z + 1] == levelCellStatus.validCell)
-                    {
-                        playerController.setWorldPosition(grid.CellToWorld(new Vector3Int(cellPosition.x, cellPosition.y, z)));
-                        playerController.updatePlayerPosition(riverGenerator.grid[1,0].position.z);
-                        
-                        //playerController.setPosition(grid.CellToWorld(currentCell));
-                        cellFound = true;
-                    }
-                    break;
-                }
-            }
-        }
-        // set the players intial position on the level
+        Vector3Int randomCell = level.getRandomCell();
+
+        playerController.setWorldPosition(level.getGridPosition(((Vector2Int)randomCell)));
+        playerController.updatePlayerPosition(randomCell.z);
  
     }
 
@@ -255,6 +101,11 @@ public class LevelManager : MonoBehaviour
     {
         // set the player's active status to the given value
         player.SetActive(value);
+        
+        if (!value)
+        {
+            playerController.clearDoMovement();
+        }
     }
 
     // runs before the application is quit 

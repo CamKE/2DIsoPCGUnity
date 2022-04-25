@@ -46,11 +46,6 @@ public class Level : MonoBehaviour
         cameraController.enabled = false;
     }
 
-    public void updateCamera(Vector3 newlevelCenter, float newOrthoSize)
-    {
-        cameraController.updateCamera(newlevelCenter, newOrthoSize);
-    }
-
     public void setCameraActive(bool value)
     {
         cameraController.gameObject.SetActive(value);
@@ -64,6 +59,8 @@ public class Level : MonoBehaviour
 
         map = terrainGenerator.createMap();
 
+        terrainGenerator.populateCells(map);
+
         if (riverSettings.rGenerationEnabled)
         {
             riverGenerator.setRiverSettings(riverSettings);
@@ -71,7 +68,13 @@ public class Level : MonoBehaviour
             riverGenerator.populateCells(map, terrainGenerator.terrainCellList, terrainGenerator.boundaryCellList);
         }
 
-        terrainGenerator.populateCells(map);
+        // if lake generation is enabled
+        if (lakeSettings.lGenerationEnabled)
+        {
+            lakeGenerator.setLakeSettings(lakeSettings);
+            // populate the levelCells 3d array with the lake cells
+            lakeGenerator.populateCells(map);
+        }
 
         // generate the terrain based on the current state of the levelCells array
         terrainGenerator.generate(map);
@@ -83,14 +86,64 @@ public class Level : MonoBehaviour
             riverGenerator.generate(map);
         }
 
+        // if lake generation is enabled
+        if (lakeSettings.lGenerationEnabled)
+        {
+            // populate the levelCells 3d array with the lake cells
+            lakeGenerator.generate(map);
+        }
+
         isGenerated = true;
-        // enable the controller now that a level is generated
-        cameraController.enabled = true;
+
+        updateCamera();
     }
 
-    public BoundsInt getTerrainBounds()
+    // gives the camera the new center of the level and the new orthographic size
+    private void updateCamera()
     {
-        return terrainGenerator.getTilemapBounds();
+        // enable the controller now that a level is generated
+        cameraController.enabled = true;
+
+        BoundsInt terrainBounds = terrainGenerator.getTilemapBounds();
+
+        // find the local position of the cell on the grid at the x most tile value and the 
+        // y most tile value
+        Vector3 mapLocalDimension = grid.CellToLocal(new Vector3Int(terrainBounds.xMax, terrainBounds.yMax, 0));
+
+        // find the world position of the center of the level
+        Vector3 levelCenter = grid.LocalToWorld(mapLocalDimension / 2.0f);
+        // set the z value to ensure the level is always in view
+        levelCenter.z = -50.0f;
+
+        // set the max dimension to be the largest dimension of the terrain
+        int maxDimension = terrainBounds.xMax > terrainBounds.yMax ? terrainBounds.xMax : terrainBounds.yMax;
+
+        // set the new camera orthographic size to be 40% of the maximum terrain dimension
+        float newOrthoSize = 0.4f * maxDimension;
+
+        cameraController.updateCamera(levelCenter, newOrthoSize);
+    }
+
+    public Vector3Int getRandomCell()
+    {
+        bool cellFound = false;
+        while (!cellFound)
+        {
+            Vector2Int cellPosition = new Vector2Int(UnityEngine.Random.Range(0, map.GetLength(0)-1), UnityEngine.Random.Range(0, map.GetLength(1)-1));
+
+            if (map[cellPosition.x, cellPosition.y].status == Cell.CellStatus.TerrainCell)
+            {
+                cellFound = true;
+                return map[cellPosition.x, cellPosition.y].position;
+            }
+        }
+
+        return default;
+    }
+
+    public Vector2 getGridPosition(Vector2Int cellPosition)
+    {
+        return grid.CellToWorld((Vector3Int)cellPosition);
     }
 
 

@@ -61,14 +61,17 @@ public class PlayerController : MonoBehaviour
     {
         if (rangeHeightEnabled)
         {
-            doMovement -= movePlayer;
             doMovement += movePlayerWithHeightVariation;
         } 
         else
         {
-            doMovement -= movePlayerWithHeightVariation;
             doMovement += movePlayer;
         }
+    }
+
+    public void clearDoMovement()
+    {
+        doMovement = null;
     }
 
     public void setLevelManager(LevelManager levelManager)
