@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Cell
+public class Cell : IHeapItem<Cell>
 {
 
     public Vector3Int position;
@@ -12,7 +12,7 @@ public class Cell
     public bool isTraversable;
     public enum CellStatus { ValidCell, InvalidCell, TerrainCell, LakeCell, RiverCell, OutOfBounds }
     public CellStatus status;
-
+    int heapIndex;
     
     // update bool based on cell status
     public void setCellStatus(CellStatus newStatus)
@@ -40,5 +40,31 @@ public class Cell
     public int fCost()
     {
         return gCost + hCost;
+    }
+
+    public int HeapIndex
+    {
+        get
+        {
+            return heapIndex;
+        }
+        set
+        {
+            heapIndex = value;
+        }
+    }
+
+   
+    public int CompareTo(Cell otherCell)
+    {
+        int compare = fCost().CompareTo(otherCell.fCost());
+        if (compare == 0)
+        {
+            compare = hCost.CompareTo(otherCell.hCost);
+        }
+        // we want items with higher priority (larger values) to 
+        // go lower down the tree and vice versa, so we return 
+        // the inverse
+        return -compare;
     }
 }
