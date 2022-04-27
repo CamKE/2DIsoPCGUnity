@@ -39,6 +39,7 @@ public class TerrainGenerator
     private const float perlinScale = 3.0f;
 
     public Tilemap terrainTilemap;
+    public Tilemap terrainTilemap2;
 
     private readonly string[] greeneryGroundTileNames = { "ISO_Tile_Dirt_01_Grass_01", "ISO_Tile_Dirt_01_Grass_02" };
 
@@ -58,6 +59,8 @@ public class TerrainGenerator
     private readonly string[] lavaGroundTileNames = { "ISO_Tile_LavaStone_01", "ISO_Tile_Tar_01" };
 
     private readonly string[] lavaAccessoryTileNames = { "ISO_Tile_LavaCracks_01", "ISO_Tile_LavaCracks_01 1" };
+
+    Tile test;
 
     Dictionary<TerrainType, terrainTiles> terrainTilesByType;
 
@@ -94,6 +97,9 @@ public class TerrainGenerator
 
     public TerrainGenerator(Grid grid, SpriteAtlas atlas)
     {
+        test = ScriptableObject.CreateInstance<Tile>();
+        test.sprite = atlas.GetSprite("ISO_Tile_Flesh_01");
+
         terrainTilemap = new GameObject("Terrain").AddComponent<Tilemap>();
 
         terrainTilemap.gameObject.AddComponent<TilemapRenderer>();
@@ -102,6 +108,18 @@ public class TerrainGenerator
         terrainTilemap.tileAnchor = new Vector3(0, 0, -2);
 
         var terrainTilemapRenderer = terrainTilemap.GetComponent<TilemapRenderer>();
+
+        terrainTilemapRenderer.mode = TilemapRenderer.Mode.Individual;
+
+
+        terrainTilemap2 = new GameObject("Terrain2").AddComponent<Tilemap>();
+
+        terrainTilemap2.gameObject.AddComponent<TilemapRenderer>();
+        terrainTilemap2.transform.SetParent(grid.gameObject.transform);
+        // move tile anchor from the button of the tile, to the front point of the tile (in the z)
+        terrainTilemap2.tileAnchor = new Vector3(0, 0, -2);
+
+        terrainTilemapRenderer = terrainTilemap2.GetComponent<TilemapRenderer>();
 
         terrainTilemapRenderer.mode = TilemapRenderer.Mode.Individual;
 
@@ -158,7 +176,6 @@ public class TerrainGenerator
         Cell[,] map;
         boundaryCellList = new List<Vector2Int>();
 
-
         // check the terrain shape chosen
         switch (terrainSettings.tShape)
         {
@@ -182,13 +199,16 @@ public class TerrainGenerator
                 // possibly return some other 2d structure that can grow like a list
                 // convert the 2d list of levelcellstatus to a 3d array 
                 map = createRandomLevelShapeBFS(terrainSettings.tSize);
+
                 break;
             // default shape is square 
             default:
-
                 mapDimensions = getDimensions(terrainSettings.tSize);
+
                 setBoundaryCells(mapDimensions);
+
                 map = new Cell[mapDimensions.x, mapDimensions.y];
+
                 for (int x = 0; x < mapDimensions.x; x++)
                 {
                     for (int y = 0; y < mapDimensions.y; y++)
@@ -213,13 +233,10 @@ public class TerrainGenerator
         boundaryCellList.Add(new Vector2Int(0, height - 1));
         boundaryCellList.Add(new Vector2Int(width - 1, height - 1));
 
-        Debug.Log($"width is {width} and height is {height}");
-
         for (int x = 0; x < width; x += (width - 1))
         {
             for (int y = 1; y < height - 1; y++)
             {
-                Debug.Log($"point {x},{y}");
                 boundaryCellList.Add(new Vector2Int(x, y));
             }
         }
@@ -227,7 +244,6 @@ public class TerrainGenerator
         {
             for (int x = 1; x < width - 1; x++)
             {
-                Debug.Log($"point {x},{y}");
                 boundaryCellList.Add(new Vector2Int(x, y));
             }
         }
@@ -256,51 +272,140 @@ public class TerrainGenerator
 
         newLevelShape[centerCell.x, centerCell.y].setCellStatus(Cell.CellStatus.ValidCell);
 
-        Queue<Vector2Int> neighbourCellPositions = new Queue<Vector2Int>();
-        HashSet<Vector2Int> visitedPositions = new HashSet<Vector2Int>();
-        neighbourCellPositions.Enqueue(centerCell);
+        Queue<Vector2Int> openSetPositions = new Queue<Vector2Int>();
+        HashSet<Vector2Int> closedSetPositions = new HashSet<Vector2Int>();
+
+        foreach (Vector2Int neighbour in getNeighbours(centerCell, dimensions))
+        {
+            openSetPositions.Enqueue(neighbour);
+        }
+
+        closedSetPositions.Add(centerCell);
 
         Vector2Int currentCellPosition;
 
         float validTileChance = 1.0f;
         // the rate at which each additional tile reduces the valid tile chance 
-        float chanceFalloffRate = 0.5f;
+        float chanceFalloffRate = 0.1f;
 
-        while (neighbourCellPositions.Count != 0)
+        while (openSetPositions.Count > 0)
         {
-            currentCellPosition = neighbourCellPositions.Dequeue();
+            currentCellPosition = openSetPositions.Dequeue();
+
+            List<Vector2Int> neighbours = getNeighbours(currentCellPosition, dimensions);
+            int invalidTileCount = 0;
+            int validTileCount = 0;
+
+            foreach (Vector2Int neighbour in neighbours)
+            {
+                switch (newLevelShape[neighbour.x, neighbour.y].status)
+                {
+                    case Cell.CellStatus.ValidCell:
+                        validTileCount++;
+                        break;
+                    //invalid
+                    default:
+                        if (closedSetPositions.Contains(neighbour))
+                        {
+                            invalidTileCount++;
+                        }
+                        break;
+                }
+            }
 
             //make valid based on random prob
-            if (neighbourCellPositions.Count != 0 && UnityEngine.Random.value < validTileChance)
+            if (UnityEngine.Random.value < validTileChance && (validTileCount > 0 && invalidTileCount == 0 ))                                                                                                                                                                                                                                                                                                                                                   
             {
                 newLevelShape[currentCellPosition.x, currentCellPosition.y].setCellStatus(Cell.CellStatus.ValidCell);
                 validTileChance -= (chanceFalloffRate / (float)terrainSize);
+
             }
 
-            if (!visitedPositions.Contains(currentCellPosition) && newLevelShape[currentCellPosition.x, currentCellPosition.y].status == Cell.CellStatus.ValidCell)
+
+            if (newLevelShape[currentCellPosition.x, currentCellPosition.y].status == Cell.CellStatus.ValidCell)
             {
-                for (int i = -1; i <= 1; i += 2)
+
+                foreach (Vector2Int neighbour in neighbours)
                 {
-                    int xPos = currentCellPosition.x + i;
-                    Vector2Int adjacentXCellPosition = new Vector2Int(xPos, currentCellPosition.y);
-                    if ((xPos >= 0 && xPos < terrainLength))
+                    if (!openSetPositions.Contains(neighbour) && !closedSetPositions.Contains(neighbour))
                     {
-                        neighbourCellPositions.Enqueue(adjacentXCellPosition);
-                    }
-                    int yPos = currentCellPosition.y + i;
-                    Vector2Int adjacentYCellPosition = new Vector2Int(currentCellPosition.x, yPos);
-                    if ((yPos >= 0 && yPos < terrainLength))
-                    {
-                        neighbourCellPositions.Enqueue(adjacentYCellPosition);
+                        openSetPositions.Enqueue(neighbour);
                     }
                 }
 
-                visitedPositions.Add(currentCellPosition);
             }
+
+            closedSetPositions.Add(currentCellPosition);
 
         }
 
+        // set the boundary cells
+        foreach (Cell cell in newLevelShape)
+        {
+            if (cell.status == Cell.CellStatus.ValidCell)
+            {
+                int invalidTileCount = 0;
+                int validTileCount = 0;
+                int neighbourCount = 0;
+
+                foreach (Vector2Int neighbour in getNeighbours((Vector2Int)cell.position, dimensions))
+                {
+
+                    switch (newLevelShape[neighbour.x, neighbour.y].status)
+                    {
+                        case Cell.CellStatus.ValidCell:
+                            validTileCount++;
+                            break;
+                        //invalid
+                        default:
+                            if (closedSetPositions.Contains(neighbour))
+                            {
+                                invalidTileCount++;
+                            }
+                            break;
+                    }
+                    neighbourCount++;
+                }
+                if (validTileCount > 0 && invalidTileCount > 0 || neighbourCount < 4)
+                {
+                    // its a boundary tile
+                    boundaryCellList.Add((Vector2Int)cell.position);
+                }
+            }
+        }
+
         return newLevelShape;
+    }
+
+    private List<Vector2Int> getNeighbours(Vector2Int currentPosition, Vector2Int mapDimensions)
+    {
+        List<Vector2Int> neighbours = new List<Vector2Int>();
+
+        // left
+        if (currentPosition.x > 0)
+        {
+            neighbours.Add(currentPosition + Vector2Int.left);
+        }
+
+        // right
+        if (currentPosition.x < mapDimensions.x - 1)
+        {
+            neighbours.Add(currentPosition + Vector2Int.right);
+        }
+
+        // top
+        if (currentPosition.y < mapDimensions.y - 1)
+        {
+            neighbours.Add(currentPosition + Vector2Int.up);
+        }
+
+        // bottom
+        if (currentPosition.y > 0)
+        {
+            neighbours.Add(currentPosition + Vector2Int.down);
+        }
+
+        return neighbours;
     }
 
     // calculates the square for 1:1 length to width ratio.
@@ -386,8 +491,6 @@ public class TerrainGenerator
         // change the value range of the perlin noise value from 0.0-1.0 to an integer between terrainMinHeight and terrainMaxHeight
         int zValue = (int)Math.Round((perlinNoiseValue * (maxCellDepth - minCellDepth)) + minCellDepth, MidpointRounding.AwayFromZero);
 
-        Debug.Log($"max cell depth {maxCellDepth}, min cell depth {minCellDepth}");
-        Debug.Log($"xpos {xPos}, ypos {yPos}, perlin noise value {perlinNoiseValue}, z value {zValue}");
         return zValue;
     }
 
@@ -430,12 +533,24 @@ public class TerrainGenerator
             }
         }
 
+        List<Vector3Int> positions2 = new List<Vector3Int>();
+        List<TileBase> tiles2 = new List<TileBase>();
+
+        foreach (Vector2Int boundarycell in boundaryCellList)
+        {
+            positions2.Add(new Vector3Int(map[boundarycell.x, boundarycell.y].position.x, map[boundarycell.x, boundarycell.y].position.y, 0));
+            tiles2.Add(test);
+        }
+
+        //terrainTilemap2.SetTiles(positions2.ToArray(), tiles2.ToArray());
+
         terrainTilemap.SetTiles(positions.ToArray(), tiles.ToArray());
     }
 
     public void clearTilemap()
     {
         terrainTilemap.ClearAllTiles();
+        //terrainTilemap2.ClearAllTiles();
     }
 
     public void randomlyGenerate()

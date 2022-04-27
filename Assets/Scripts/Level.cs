@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.U2D;
+using System.Diagnostics;
+using Debug = UnityEngine.Debug;
 
 public class Level : MonoBehaviour
 {
@@ -55,6 +57,10 @@ public class Level : MonoBehaviour
     {
         clear();
 
+        Stopwatch sw = new Stopwatch();
+
+        sw.Start();
+
         terrainGenerator.setTerrainSettings(terrainSettings);
 
         map = terrainGenerator.createMap();
@@ -93,9 +99,15 @@ public class Level : MonoBehaviour
             lakeGenerator.generate(map);
         }
 
+
+        sw.Stop();
+        Debug.Log($"level generated: {sw.ElapsedMilliseconds} ms");
+
         isGenerated = true;
 
         updateCamera();
+
+
     }
 
     // gives the camera the new center of the level and the new orthographic size

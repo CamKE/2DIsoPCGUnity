@@ -1229,7 +1229,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 1, g: 0.90943396, b: 0.90943396, a: 0}
+  m_BackGroundColor: {r: 0.9292453, g: 0.9919407, b: 1, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -1304,9 +1304,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab1575dd75e3bd64dae1952d7c2dddfa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  grid: {fileID: 1469670999}
   player: {fileID: 397201525090935536, guid: 31aac78f9ae5d844e81934a1a6e4c2c6, type: 3}
-  atlas: {fileID: 4343727234628468602, guid: 56d9446267c095048b35f04a22590c7d, type: 2}
   level: {fileID: 1469671001}
   rangeHeightEnabled: 0
 --- !u!4 &233506742

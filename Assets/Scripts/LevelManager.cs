@@ -67,7 +67,6 @@ public class LevelManager : MonoBehaviour
 
             playerController.setLevelManager(this);
 
-            Debug.Log(isPlayerInstatiated());
         }
 
         playerController.setDoMovement(rangeHeightEnabled);

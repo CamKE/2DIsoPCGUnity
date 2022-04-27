@@ -6,6 +6,7 @@ using UnityEngine.Tilemaps;
 using UnityEngine.U2D;
 using System.Diagnostics;
 using Debug = UnityEngine.Debug;
+using System.Linq;
 
 public class RiverGenerator
 {
@@ -67,14 +68,17 @@ public class RiverGenerator
 
     public void populateCells(Cell[,] map, List<Vector3Int> terrainCellList, List<Vector2Int> boundaryCellList)
     {
-        int levelArea = map.GetLength(0) * map.GetLength(1);
+        int width = map.GetLength(0);
+        int height = map.GetLength(1);
+        int levelArea = width * height;
 
         riverMaxCount = (int)Math.Ceiling(levelArea * (rMultiplier * ((int)riverSettings.rNum + 1)));
 
         rivers = new List<Vector3Int>[riverMaxCount];
 
-        Stopwatch sw = new Stopwatch();
-        sw.Start();
+       // List<int> boundaryXPositions = Enumerable.Range(0, width-1).ToList();
+       // List<int> boundaryYPositions = Enumerable.Range(0, height-1).ToList();
+
 
         for (int riverCount = 0; riverCount < riverMaxCount; riverCount++)
         {
@@ -92,8 +96,7 @@ public class RiverGenerator
 
             rivers[riverCount] = findAStarPath(map, startNode, endNode);
         }
-        sw.Stop();
-        Debug.Log($"{riverMaxCount} paths found: {sw.ElapsedMilliseconds} ms");
+
     }
 
     private List<Vector3Int> findAStarPath(Cell[,] map, Cell startNode, Cell endNode)
@@ -144,6 +147,7 @@ public class RiverGenerator
                 {
                     continue;
                 }
+
 
                 int newNeighbourGCost = currentNode.gCost + GetDistance(currentNode, neighbourNode);
 
