@@ -95,18 +95,33 @@ public class PlayerController : MonoBehaviour
     {
         Vector2 movement = getMovement();
 
-        playerWorldPosition += movement;
+        float currentCellZValue = levelManager.getCellZPosition(getWorldPositionOnGrid());
 
-        int currentCellZValue = levelManager.getCellZPosition(playerWorldPosition);
+        float previousZValue = transform.position.z - playerZOffset.z;
 
-        Vector3 newPos = new Vector3(playerWorldPosition.x, playerWorldPosition.y + (currentCellZValue * tileZIncrement), currentCellZValue) + playerZOffset;
+        if (currentCellZValue == previousZValue)
+        {
+            this.transform.Translate(movement.x, movement.y, 0);
+        } else
+        {
+            float zDifference = currentCellZValue - previousZValue;
+            Vector3 zChange = new Vector3(0, zDifference * tileZIncrement, zDifference);
 
-        Vector3 difference = newPos - transform.position;
-
-        this.transform.Translate(difference.x, difference.y, difference.z);
-
+            this.transform.Translate(movement.x, movement.y + zChange.y, zChange.z);
+        }
 
         flipSprite();
+    }
+
+    private Vector2 getWorldPositionOnGrid()
+    {
+        Vector2 playerWorldPositionOnGrid = transform.position;
+
+        float zValue = transform.position.z - playerZOffset.z;
+
+        playerWorldPositionOnGrid.y -= zValue * tileZIncrement;
+
+        return playerWorldPositionOnGrid;
     }
 
     private Vector2 getMovement()

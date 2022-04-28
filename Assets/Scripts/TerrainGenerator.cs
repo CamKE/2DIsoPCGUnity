@@ -40,6 +40,7 @@ public class TerrainGenerator
 
     public Tilemap terrainTilemap;
     public Tilemap terrainTilemapOuterBound;
+    public Tilemap terrainTilemapOuterBound2;
     public Tilemap terrainTilemap2;
 
     private readonly string[] greeneryGroundTileNames = { "ISO_Tile_Dirt_01_Grass_01", "ISO_Tile_Dirt_01_Grass_02" };
@@ -100,13 +101,14 @@ public class TerrainGenerator
     {
         test = ScriptableObject.CreateInstance<Tile>();
         test.sprite = atlas.GetSprite("ISO_Tile_Flesh_01");
-        test.colliderType = Tile.ColliderType.Grid;
+        //test.colliderType = Tile.ColliderType.Grid;
 
         terrainTilemap = setupTilemap(grid, "Terrain");
 
-        terrainTilemapOuterBound = setupTilemap(grid, "TerrainOuterBound");
-        terrainTilemapOuterBound.gameObject.AddComponent<TilemapCollider2D>();
-        terrainTilemapOuterBound.GetComponent<TilemapCollider2D>().offset = new Vector2(0, 0.875f);
+        terrainTilemapOuterBound = setupBoundTilemap(grid, "TerrainOuterBound");
+        terrainTilemapOuterBound2 = setupBoundTilemap(grid, "TerrainOuterBound2");
+        terrainTilemapOuterBound2.GetComponent<TilemapCollider2D>().offset = new Vector2(0, 0.875f);
+
 
         terrainTilemap2 = setupTilemap(grid, "TerrainTestmap");
 
@@ -124,6 +126,17 @@ public class TerrainGenerator
         terrainTiles lavaTiles = new terrainTiles(lavaGroundTileNames, lavaAccessoryTileNames, atlas);
         terrainTilesByType.Add(TerrainType.Lava, lavaTiles);
 
+    }
+
+    private Tilemap setupBoundTilemap(Grid grid, string name)
+    {
+        Tilemap tilemap =  setupTilemap(grid, name);
+        tilemap.gameObject.AddComponent<TilemapCollider2D>();
+        tilemap.gameObject.AddComponent<Rigidbody2D>();
+        tilemap.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
+        tilemap.gameObject.AddComponent<CompositeCollider2D>();
+
+        return tilemap;
     }
 
     private Tilemap setupTilemap(Grid grid, string name)
@@ -555,7 +568,10 @@ public class TerrainGenerator
     {
         List<Vector3Int> positions = new List<Vector3Int>();
         List<TileBase> tiles = new List<TileBase>();
-        
+
+        List<Vector3Int> positions2 = new List<Vector3Int>();
+        List<TileBase> tiles2 = new List<TileBase>();
+
         Vector2Int mapDimensions = new Vector2Int(map.GetLength(0), map.GetLength(1));
         foreach (Vector2Int boundaryCellPosition in boundaryCellList)
         {
@@ -565,8 +581,8 @@ public class TerrainGenerator
                 Vector3Int outerBoundPosition = new Vector3Int(boundaryCellPosition.x + 1, boundaryCellPosition.y, map[boundaryCellPosition.x, boundaryCellPosition.y].position.z);
                 if (!positions.Contains(outerBoundPosition))
                 {
-                    positions.Add(outerBoundPosition);
-                    tiles.Add(test);
+                    positions2.Add(outerBoundPosition);
+                    tiles2.Add(test);
 
                 }
             }
@@ -588,8 +604,8 @@ public class TerrainGenerator
                 Vector3Int outerBoundPosition = new Vector3Int(boundaryCellPosition.x, boundaryCellPosition.y+1, map[boundaryCellPosition.x, boundaryCellPosition.y].position.z);
                 if (!positions.Contains(outerBoundPosition))
                 {
-                    positions.Add(outerBoundPosition);
-                    tiles.Add(test);
+                    positions2.Add(outerBoundPosition);
+                    tiles2.Add(test);
 
                 }
             }
@@ -607,6 +623,7 @@ public class TerrainGenerator
         }
 
         terrainTilemapOuterBound.SetTiles(positions.ToArray(), tiles.ToArray());
+        terrainTilemapOuterBound2.SetTiles(positions2.ToArray(), tiles2.ToArray());
     }
 
     public void clearTilemap()
@@ -614,6 +631,7 @@ public class TerrainGenerator
         terrainTilemap.ClearAllTiles();
         terrainTilemap2.ClearAllTiles();
         terrainTilemapOuterBound.ClearAllTiles();
+        terrainTilemapOuterBound2.ClearAllTiles();
     }
 
     public void randomlyGenerate()
