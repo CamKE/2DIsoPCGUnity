@@ -123,17 +123,19 @@ public class RiverGenerator
                 Vector3Int position;
                 while (currentNode != startNode)
                 {
+                    // change the level cells map
                     position = currentNode.position;
-                    path.Add(currentNode.position);
                     map[position.x, position.y].status = Cell.CellStatus.RiverCell;
+                    map[position.x, position.y].position += Vector3Int.back;
+                    path.Add(map[position.x, position.y].position);
                     currentNode = currentNode.parent;
                 }
-
-                // add the start node
-                path.Add(currentNode.position);
                 // change the level cells map
                 position = currentNode.position;
                 map[position.x, position.y].status = Cell.CellStatus.RiverCell;
+                map[position.x, position.y].position += Vector3Int.back;
+                // add start node
+                path.Add(map[position.x, position.y].position);
 
                 path.Reverse();
 
@@ -230,7 +232,7 @@ public class RiverGenerator
 
             foreach (Vector3Int riverPos in river)
             {
-                Vector3Int newRiverPos = riverPos + Vector3Int.back;
+                Vector3Int newRiverPos = riverPos;
                 positions.Add(newRiverPos);
                 tiles.Add(riverTilesByType[riverSettings.tType]);
             }

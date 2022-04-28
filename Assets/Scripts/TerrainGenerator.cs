@@ -39,6 +39,7 @@ public class TerrainGenerator
     private const float perlinScale = 3.0f;
 
     public Tilemap terrainTilemap;
+    public Tilemap terrainTilemapOuterBound;
     public Tilemap terrainTilemap2;
 
     private readonly string[] greeneryGroundTileNames = { "ISO_Tile_Dirt_01_Grass_01", "ISO_Tile_Dirt_01_Grass_02" };
@@ -99,29 +100,15 @@ public class TerrainGenerator
     {
         test = ScriptableObject.CreateInstance<Tile>();
         test.sprite = atlas.GetSprite("ISO_Tile_Flesh_01");
+        test.colliderType = Tile.ColliderType.Grid;
 
-        terrainTilemap = new GameObject("Terrain").AddComponent<Tilemap>();
+        terrainTilemap = setupTilemap(grid, "Terrain");
 
-        terrainTilemap.gameObject.AddComponent<TilemapRenderer>();
-        terrainTilemap.transform.SetParent(grid.gameObject.transform);
-        // move tile anchor from the button of the tile, to the front point of the tile (in the z)
-        terrainTilemap.tileAnchor = new Vector3(0, 0, -2);
+        terrainTilemapOuterBound = setupTilemap(grid, "TerrainOuterBound");
+        terrainTilemapOuterBound.gameObject.AddComponent<TilemapCollider2D>();
+        terrainTilemapOuterBound.GetComponent<TilemapCollider2D>().offset = new Vector2(0, 0.875f);
 
-        var terrainTilemapRenderer = terrainTilemap.GetComponent<TilemapRenderer>();
-
-        terrainTilemapRenderer.mode = TilemapRenderer.Mode.Individual;
-
-
-        terrainTilemap2 = new GameObject("Terrain2").AddComponent<Tilemap>();
-
-        terrainTilemap2.gameObject.AddComponent<TilemapRenderer>();
-        terrainTilemap2.transform.SetParent(grid.gameObject.transform);
-        // move tile anchor from the button of the tile, to the front point of the tile (in the z)
-        terrainTilemap2.tileAnchor = new Vector3(0, 0, -2);
-
-        terrainTilemapRenderer = terrainTilemap2.GetComponent<TilemapRenderer>();
-
-        terrainTilemapRenderer.mode = TilemapRenderer.Mode.Individual;
+        terrainTilemap2 = setupTilemap(grid, "TerrainTestmap");
 
         terrainTilesByType = new Dictionary<TerrainType, terrainTiles>();
 
@@ -137,6 +124,22 @@ public class TerrainGenerator
         terrainTiles lavaTiles = new terrainTiles(lavaGroundTileNames, lavaAccessoryTileNames, atlas);
         terrainTilesByType.Add(TerrainType.Lava, lavaTiles);
 
+    }
+
+    private Tilemap setupTilemap(Grid grid, string name)
+    {
+        Tilemap tilemap = new GameObject(name).AddComponent<Tilemap>();
+
+        tilemap.gameObject.AddComponent<TilemapRenderer>();
+        tilemap.transform.SetParent(grid.gameObject.transform);
+        // move tile anchor from the button of the tile, to the front point of the tile (in the z)
+        tilemap.tileAnchor = new Vector3(0, 0, -2);
+
+        var terrainTilemapRenderer = tilemap.GetComponent<TilemapRenderer>();
+
+        terrainTilemapRenderer.mode = TilemapRenderer.Mode.Individual;
+
+        return tilemap;
     }
 
     public BoundsInt getTilemapBounds()
@@ -168,6 +171,7 @@ public class TerrainGenerator
             setCellsExact(map, width, height, terrainSettings.tExactHeight);
         }
 
+        setOuterBounds(map);
     }
 
     public Cell[,] createMap()
@@ -542,15 +546,74 @@ public class TerrainGenerator
             tiles2.Add(test);
         }
 
-        //terrainTilemap2.SetTiles(positions2.ToArray(), tiles2.ToArray());
+       // terrainTilemap2.SetTiles(positions2.ToArray(), tiles2.ToArray());
 
         terrainTilemap.SetTiles(positions.ToArray(), tiles.ToArray());
+    }
+
+    public void setOuterBounds(Cell[,] map)
+    {
+        List<Vector3Int> positions = new List<Vector3Int>();
+        List<TileBase> tiles = new List<TileBase>();
+        
+        Vector2Int mapDimensions = new Vector2Int(map.GetLength(0), map.GetLength(1));
+        foreach (Vector2Int boundaryCellPosition in boundaryCellList)
+        {
+            // if x+1 is out the bounds of the array or its an invalid cell, its an outer bound
+            if (boundaryCellPosition.x + 1 >  mapDimensions.x-1 || map[boundaryCellPosition.x + 1, boundaryCellPosition.y].status == Cell.CellStatus.InvalidCell)
+            {
+                Vector3Int outerBoundPosition = new Vector3Int(boundaryCellPosition.x + 1, boundaryCellPosition.y, map[boundaryCellPosition.x, boundaryCellPosition.y].position.z);
+                if (!positions.Contains(outerBoundPosition))
+                {
+                    positions.Add(outerBoundPosition);
+                    tiles.Add(test);
+
+                }
+            }
+
+            // if x-1 is out the bounds of the array or its an invalid cell, its an outer bound
+            if (boundaryCellPosition.x - 1 < 0 || map[boundaryCellPosition.x - 1, boundaryCellPosition.y].status == Cell.CellStatus.InvalidCell)
+            {
+                Vector3Int outerBoundPosition = new Vector3Int(boundaryCellPosition.x - 1, boundaryCellPosition.y, map[boundaryCellPosition.x, boundaryCellPosition.y].position.z);
+                if (!positions.Contains(outerBoundPosition))
+                {
+                    positions.Add(outerBoundPosition);
+                    tiles.Add(test);
+                }
+            }
+
+            // if y+1 is out the bounds of the array or its an invalid cell, its an outer bound
+            if (boundaryCellPosition.y + 1 > mapDimensions.y - 1 || map[boundaryCellPosition.x, boundaryCellPosition.y+1].status == Cell.CellStatus.InvalidCell)
+            {
+                Vector3Int outerBoundPosition = new Vector3Int(boundaryCellPosition.x, boundaryCellPosition.y+1, map[boundaryCellPosition.x, boundaryCellPosition.y].position.z);
+                if (!positions.Contains(outerBoundPosition))
+                {
+                    positions.Add(outerBoundPosition);
+                    tiles.Add(test);
+
+                }
+            }
+
+            // if x-1 is out the bounds of the array or its an invalid cell, its an outer bound
+            if (boundaryCellPosition.y - 1 < 0 || map[boundaryCellPosition.x, boundaryCellPosition.y-1].status == Cell.CellStatus.InvalidCell)
+            {
+                Vector3Int outerBoundPosition = new Vector3Int(boundaryCellPosition.x, boundaryCellPosition.y-1, map[boundaryCellPosition.x, boundaryCellPosition.y].position.z);
+                if (!positions.Contains(outerBoundPosition))
+                {
+                    positions.Add(outerBoundPosition);
+                    tiles.Add(test);
+                }
+            }
+        }
+
+        terrainTilemapOuterBound.SetTiles(positions.ToArray(), tiles.ToArray());
     }
 
     public void clearTilemap()
     {
         terrainTilemap.ClearAllTiles();
-        //terrainTilemap2.ClearAllTiles();
+        terrainTilemap2.ClearAllTiles();
+        terrainTilemapOuterBound.ClearAllTiles();
     }
 
     public void randomlyGenerate()

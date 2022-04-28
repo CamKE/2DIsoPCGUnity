@@ -169,9 +169,11 @@ public class Level : MonoBehaviour
 
     public int getCellZPosition(Vector2 worldPos)
     {
-        Vector3Int gridpos = grid.WorldToCell(worldPos);
+        Vector3Int gridPos = grid.WorldToCell(worldPos);
 
-        return map[gridpos.x, gridpos.y].position.z;
+        gridPos.Clamp(new Vector3Int(0,0,0), new Vector3Int(map.GetLength(0)-1,map.GetLength(1)-1,TerrainGenerator.terrainMaxHeight));
+
+        return map[gridPos.x, gridPos.y].position.z;
     }
 
 }

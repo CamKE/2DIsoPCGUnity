@@ -39,12 +39,14 @@ public class PlayerController : MonoBehaviour
 
     private static Action doMovement;
 
+    private Rigidbody2D body;
 
     // start is called before the first frame update when the script is enabled
     private void Start()
     {
         // store a ref to the player's sprite renderer component
         playerSprite = GetComponent<SpriteRenderer>();
+        body = GetComponent<Rigidbody2D>();
 
         //**note for me: removed the temporary z value of 3 from pivotOffset which was to keep the 
         // player sprite infront of the tiles, but dont need it and it does make sense here
@@ -97,7 +99,12 @@ public class PlayerController : MonoBehaviour
 
         int currentCellZValue = levelManager.getCellZPosition(playerWorldPosition);
 
-        updatePlayerPosition(currentCellZValue);
+        Vector3 newPos = new Vector3(playerWorldPosition.x, playerWorldPosition.y + (currentCellZValue * tileZIncrement), currentCellZValue) + playerZOffset;
+
+        Vector3 difference = newPos - transform.position;
+
+        this.transform.Translate(difference.x, difference.y, difference.z);
+
 
         flipSprite();
     }
