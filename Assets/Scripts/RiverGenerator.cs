@@ -76,27 +76,63 @@ public class RiverGenerator
 
         rivers = new List<Vector3Int>[riverMaxCount];
 
-       // List<int> boundaryXPositions = Enumerable.Range(0, width-1).ToList();
-       // List<int> boundaryYPositions = Enumerable.Range(0, height-1).ToList();
+        // List<int> boundaryXPositions = Enumerable.Range(0, width-1).ToList();
+        // List<int> boundaryYPositions = Enumerable.Range(0, height-1).ToList();
 
+        Cell startNode;
+        Cell endNode;
 
         for (int riverCount = 0; riverCount < riverMaxCount; riverCount++)
         {
-            Vector2Int boundaryCellXYPosition = boundaryCellList[UnityEngine.Random.Range(0, boundaryCellList.Count - 1)];
+            startNode = getReachableCell(map,ref boundaryCellList);
 
-            boundaryCellList.Remove(boundaryCellXYPosition);
-
-            Cell startNode = map[boundaryCellXYPosition.x, boundaryCellXYPosition.y];
-
-            boundaryCellXYPosition = boundaryCellList[UnityEngine.Random.Range(0, boundaryCellList.Count - 1)];
-
-            boundaryCellList.Remove(boundaryCellXYPosition);
-
-            Cell endNode = map[boundaryCellXYPosition.x, boundaryCellXYPosition.y];
+            endNode = getReachableCell(map,ref boundaryCellList);
 
             rivers[riverCount] = findAStarPath(map, startNode, endNode);
         }
 
+    }
+
+    private Cell getReachableCell(Cell[,] map,ref List<Vector2Int> boundaryCellList)
+    {
+        Vector2Int boundaryCellXYPosition;
+        int traversableNeighbourCount;
+
+        while (true)
+        {
+            boundaryCellXYPosition = boundaryCellList[UnityEngine.Random.Range(0, boundaryCellList.Count - 1)];
+
+            Cell cellToCheck = map[boundaryCellXYPosition.x, boundaryCellXYPosition.y];
+
+            traversableNeighbourCount = 0;
+
+            List<Cell> neighbours = getNeighbours(map, cellToCheck);
+
+            foreach (Cell neighbour in neighbours)
+            {
+                if (neighbour.isTraversable)
+                {
+                    traversableNeighbourCount++;
+                }
+            }
+
+            if (traversableNeighbourCount > 0)
+            {
+                map[boundaryCellXYPosition.x, boundaryCellXYPosition.y].isTraversable = true;
+                map[boundaryCellXYPosition.x, boundaryCellXYPosition.y].status = Cell.CellStatus.OutOfBounds;
+                boundaryCellList.Remove(boundaryCellXYPosition);
+                // remove adjacent boundary cells from list, we dont want the possibility
+                // of a 2 cell river
+                foreach (Cell neighbour in neighbours)
+                {
+                    //no need to check contain first, will just return false if not in list
+                   boundaryCellList.Remove((Vector2Int)neighbour.position);
+                }
+                return map[boundaryCellXYPosition.x, boundaryCellXYPosition.y];
+            }
+
+            boundaryCellList.Remove(boundaryCellXYPosition);
+        }
     }
 
     private List<Vector3Int> findAStarPath(Cell[,] map, Cell startNode, Cell endNode)

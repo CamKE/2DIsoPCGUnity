@@ -200,7 +200,6 @@ public class TerrainGenerator
             case TerrainGenerator.TerrainShape.Rectangle:
                 // 2:1, 3:1, or 4:1 ratio
                 mapDimensions = getDimensions(terrainSettings.tSize, UnityEngine.Random.Range(2, 4));
-                setBoundaryCells(mapDimensions);
                 map = new Cell[mapDimensions.x, mapDimensions.y];
                 for (int x = 0; x < mapDimensions.x; x++)
                 {
@@ -209,6 +208,7 @@ public class TerrainGenerator
                         map[x, y] = new Cell(new Vector3Int(x, y, 0), true);
                     }
                 }
+                setBoundaryCells(map);
                 break;
             // for random shape
             case TerrainGenerator.TerrainShape.Random:
@@ -222,8 +222,6 @@ public class TerrainGenerator
             default:
                 mapDimensions = getDimensions(terrainSettings.tSize);
 
-                setBoundaryCells(mapDimensions);
-
                 map = new Cell[mapDimensions.x, mapDimensions.y];
 
                 for (int x = 0; x < mapDimensions.x; x++)
@@ -233,6 +231,7 @@ public class TerrainGenerator
                         map[x, y] = new Cell(new Vector3Int(x, y, 0), true);
                     }
                 }
+                setBoundaryCells(map);
                 break;
         }
 
@@ -240,21 +239,34 @@ public class TerrainGenerator
     }
 
     //set boundary cells for rectangular and square levels
-    private void setBoundaryCells(Vector2Int levelCells2DDimensions)
+    private void setBoundaryCells(Cell[,] map)
     {
-        int width = levelCells2DDimensions.x;
-        int height = levelCells2DDimensions.y;
+        int width = map.GetLength(0);
+        int height = map.GetLength(1);
 
-        boundaryCellList.Add(new Vector2Int(0, 0));
-        boundaryCellList.Add(new Vector2Int(width - 1, 0));
-        boundaryCellList.Add(new Vector2Int(0, height - 1));
-        boundaryCellList.Add(new Vector2Int(width - 1, height - 1));
+        Vector2Int position = new Vector2Int(0, 0);
+
+        boundaryCellList.Add(position);
+        map[position.x, position.y].isTraversable = false;
+
+        position = new Vector2Int(width - 1, 0);
+        boundaryCellList.Add(position);
+        map[position.x, position.y].isTraversable = false;
+
+        position = new Vector2Int(0, height - 1);
+        boundaryCellList.Add(position);
+        map[position.x, position.y].isTraversable = false;
+
+        position = new Vector2Int(width - 1, height - 1);
+        boundaryCellList.Add(position);
+        map[position.x, position.y].isTraversable = false;
 
         for (int x = 0; x < width; x += (width - 1))
         {
             for (int y = 1; y < height - 1; y++)
             {
                 boundaryCellList.Add(new Vector2Int(x, y));
+                map[x, y].isTraversable = false;
             }
         }
         for (int y = 0; y < height; y += (height - 1))
@@ -262,6 +274,7 @@ public class TerrainGenerator
             for (int x = 1; x < width - 1; x++)
             {
                 boundaryCellList.Add(new Vector2Int(x, y));
+                map[x, y].isTraversable = false;
             }
         }
     }
@@ -387,6 +400,7 @@ public class TerrainGenerator
                 {
                     // its a boundary tile
                     boundaryCellList.Add((Vector2Int)cell.position);
+                    cell.isTraversable = false;
                 }
             }
         }
