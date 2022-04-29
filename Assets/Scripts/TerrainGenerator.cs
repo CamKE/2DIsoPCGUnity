@@ -103,14 +103,13 @@ public class TerrainGenerator
         test.sprite = atlas.GetSprite("ISO_Tile_Flesh_01");
         //test.colliderType = Tile.ColliderType.Grid;
 
-        terrainTilemap = setupTilemap(grid, "Terrain");
+        terrainTilemap = setupTilemap(grid, "Terrain", true);
 
         terrainTilemapOuterBound = setupBoundTilemap(grid, "TerrainOuterBound");
         terrainTilemapOuterBound2 = setupBoundTilemap(grid, "TerrainOuterBound2");
-        terrainTilemapOuterBound2.GetComponent<TilemapCollider2D>().offset = new Vector2(0, 0.875f);
+        terrainTilemapOuterBound2.GetComponent<TilemapCollider2D>().offset = new Vector2(0, 0.785f);
 
-
-        terrainTilemap2 = setupTilemap(grid, "TerrainTestmap");
+        terrainTilemap2 = setupTilemap(grid, "TerrainTestmap", true);
 
         terrainTilesByType = new Dictionary<TerrainType, terrainTiles>();
 
@@ -130,7 +129,7 @@ public class TerrainGenerator
 
     private Tilemap setupBoundTilemap(Grid grid, string name)
     {
-        Tilemap tilemap =  setupTilemap(grid, name);
+        Tilemap tilemap =  setupTilemap(grid, name, false);
         tilemap.gameObject.AddComponent<TilemapCollider2D>();
         tilemap.gameObject.AddComponent<Rigidbody2D>();
         tilemap.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
@@ -139,7 +138,7 @@ public class TerrainGenerator
         return tilemap;
     }
 
-    private Tilemap setupTilemap(Grid grid, string name)
+    private Tilemap setupTilemap(Grid grid, string name, bool tilemapRendererEnabled)
     {
         Tilemap tilemap = new GameObject(name).AddComponent<Tilemap>();
 
@@ -150,6 +149,7 @@ public class TerrainGenerator
 
         var terrainTilemapRenderer = tilemap.GetComponent<TilemapRenderer>();
 
+        terrainTilemapRenderer.enabled = tilemapRendererEnabled;
         terrainTilemapRenderer.mode = TilemapRenderer.Mode.Individual;
 
         return tilemap;
@@ -572,6 +572,8 @@ public class TerrainGenerator
         List<Vector3Int> positions2 = new List<Vector3Int>();
         List<TileBase> tiles2 = new List<TileBase>();
 
+        List<List<Vector3Int>> walls = new List<List<Vector3Int>>();
+
         Vector2Int mapDimensions = new Vector2Int(map.GetLength(0), map.GetLength(1));
         foreach (Vector2Int boundaryCellPosition in boundaryCellList)
         {
@@ -579,7 +581,7 @@ public class TerrainGenerator
             if (boundaryCellPosition.x + 1 >  mapDimensions.x-1 || map[boundaryCellPosition.x + 1, boundaryCellPosition.y].status == Cell.CellStatus.InvalidCell)
             {
                 Vector3Int outerBoundPosition = new Vector3Int(boundaryCellPosition.x + 1, boundaryCellPosition.y, map[boundaryCellPosition.x, boundaryCellPosition.y].position.z);
-                if (!positions.Contains(outerBoundPosition))
+                if (!positions2.Contains(outerBoundPosition) && !positions.Contains(outerBoundPosition))
                 {
                     positions2.Add(outerBoundPosition);
                     tiles2.Add(test);
@@ -591,7 +593,7 @@ public class TerrainGenerator
             if (boundaryCellPosition.x - 1 < 0 || map[boundaryCellPosition.x - 1, boundaryCellPosition.y].status == Cell.CellStatus.InvalidCell)
             {
                 Vector3Int outerBoundPosition = new Vector3Int(boundaryCellPosition.x - 1, boundaryCellPosition.y, map[boundaryCellPosition.x, boundaryCellPosition.y].position.z);
-                if (!positions.Contains(outerBoundPosition))
+                if (!positions.Contains(outerBoundPosition) && !positions2.Contains(outerBoundPosition))
                 {
                     positions.Add(outerBoundPosition);
                     tiles.Add(test);
@@ -602,7 +604,7 @@ public class TerrainGenerator
             if (boundaryCellPosition.y + 1 > mapDimensions.y - 1 || map[boundaryCellPosition.x, boundaryCellPosition.y+1].status == Cell.CellStatus.InvalidCell)
             {
                 Vector3Int outerBoundPosition = new Vector3Int(boundaryCellPosition.x, boundaryCellPosition.y+1, map[boundaryCellPosition.x, boundaryCellPosition.y].position.z);
-                if (!positions.Contains(outerBoundPosition))
+                if (!positions2.Contains(outerBoundPosition) && !positions.Contains(outerBoundPosition))
                 {
                     positions2.Add(outerBoundPosition);
                     tiles2.Add(test);
@@ -614,7 +616,7 @@ public class TerrainGenerator
             if (boundaryCellPosition.y - 1 < 0 || map[boundaryCellPosition.x, boundaryCellPosition.y-1].status == Cell.CellStatus.InvalidCell)
             {
                 Vector3Int outerBoundPosition = new Vector3Int(boundaryCellPosition.x, boundaryCellPosition.y-1, map[boundaryCellPosition.x, boundaryCellPosition.y].position.z);
-                if (!positions.Contains(outerBoundPosition))
+                if (!positions.Contains(outerBoundPosition) && !positions2.Contains(outerBoundPosition))
                 {
                     positions.Add(outerBoundPosition);
                     tiles.Add(test);
