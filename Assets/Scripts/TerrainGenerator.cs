@@ -548,14 +548,8 @@ public class TerrainGenerator
                     positions.Add(map[x, y].position);
                     // select random accessory tile at 30% chance
                     tiles.Add(UnityEngine.Random.Range(0.0f, 10.0f) > 3.0f ? groundTiles[map[x, y].position.z % groundTilesLength] : accessoryTiles[map[x, y].position.z % accessoryTilesLength]);
-
-                }
-
-                // add the cells below ground level at the boundary
-                // if its a cell at the boundary towards the camera
-                if (x == 0 || y == 0)
-                {
-                    for (int z = map[x, y].position.z - 2; z >= 0; z--)
+                    // add tiles below current position
+                    for (int z = map[x, y].position.z - 1; z >= 0; z--)
                     {
                         positions.Add(new Vector3Int(map[x, y].position.x, map[x, y].position.y, z));
                         tiles.Add(groundTiles[0]);

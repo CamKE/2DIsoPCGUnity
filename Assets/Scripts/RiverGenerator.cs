@@ -41,6 +41,9 @@ public class RiverGenerator
         riverTilemap.transform.SetParent(grid.gameObject.transform);
         // move tile anchor from the button of the tile, to the front point of the tile (in the z)
         riverTilemap.tileAnchor = new Vector3(0, 0, -2);
+        riverTilemap.gameObject.AddComponent<TilemapCollider2D>();
+        riverTilemap.gameObject.AddComponent<Rigidbody2D>();
+        riverTilemap.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
 
         var terrainTilemapRenderer = riverTilemap.GetComponent<TilemapRenderer>();
 
@@ -50,6 +53,8 @@ public class RiverGenerator
 
         Tile waterTile = ScriptableObject.CreateInstance<Tile>();
         waterTile.sprite = atlas.GetSprite(waterTileName);
+        waterTile.colliderType = Tile.ColliderType.Grid;
+
 
         riverTilesByType.Add(TerrainGenerator.TerrainType.Greenery, waterTile);
         riverTilesByType.Add(TerrainGenerator.TerrainType.Dessert, waterTile);
@@ -162,14 +167,14 @@ public class RiverGenerator
                     // change the level cells map
                     position = currentNode.position;
                     map[position.x, position.y].status = Cell.CellStatus.RiverCell;
-                    map[position.x, position.y].position += Vector3Int.back;
+                    map[position.x, position.y].position.z = getMaxDepth(map, currentNode);
                     path.Add(map[position.x, position.y].position);
                     currentNode = currentNode.parent;
                 }
                 // change the level cells map
                 position = currentNode.position;
                 map[position.x, position.y].status = Cell.CellStatus.RiverCell;
-                map[position.x, position.y].position += Vector3Int.back;
+                map[position.x, position.y].position.z = getMaxDepth(map, currentNode);
                 // add start node
                 path.Add(map[position.x, position.y].position);
 
@@ -208,6 +213,24 @@ public class RiverGenerator
         return null;
     }
 
+    // work out what the z value of the river tile should be based on its
+    // surrounding terrain tiles
+    private int getMaxDepth(Cell[,] map, Cell currentNode)
+    {
+        int maxRiverDepth = currentNode.position.z;
+        Vector3Int highestTerrainCell = Vector3Int.zero;
+
+        foreach (Cell neighbour in getNeighbours(map, currentNode))
+        {
+            if (neighbour.status == Cell.CellStatus.TerrainCell)
+            {
+                int neighbourDepth = neighbour.position.z;
+                maxRiverDepth = neighbourDepth < maxRiverDepth ? neighbourDepth : maxRiverDepth;
+            }
+        }
+
+        return maxRiverDepth - 1;
+    }
     private int GetDistance(Cell startNode, Cell endNode)
     {
         int xDistance = Mathf.Abs(startNode.position.x - endNode.position.x);
