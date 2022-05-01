@@ -55,6 +55,7 @@ public class Level : MonoBehaviour
 
     public void generate(TerrainOptions.TerrainSettings terrainSettings, RiverOptions.RiverSettings riverSettings, LakeOptions.LakeSettings lakeSettings)
     {
+        Debug.Log("NEW RUN");
         clear();
 
         Stopwatch sw = new Stopwatch();
