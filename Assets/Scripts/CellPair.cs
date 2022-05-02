@@ -19,6 +19,12 @@ public class CellPair : IHeapItem<CellPair>
     }
 
 
+    public CellPair(Cell startCell, Cell endCell)
+    {
+        this.startCell = startCell;
+        this.endCell = endCell;
+    }
+
     public int HeapIndex
     {
         get

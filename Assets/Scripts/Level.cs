@@ -55,12 +55,10 @@ public class Level : MonoBehaviour
 
     public void generate(TerrainOptions.TerrainSettings terrainSettings, RiverOptions.RiverSettings riverSettings, LakeOptions.LakeSettings lakeSettings)
     {
-        Debug.Log("NEW RUN");
+       // Debug.Log("NEW RUN");
         clear();
 
-        Stopwatch sw = new Stopwatch();
 
-        sw.Start();
 
         terrainGenerator.setTerrainSettings(terrainSettings);
 
@@ -82,9 +80,14 @@ public class Level : MonoBehaviour
             // populate the levelCells 3d array with the lake cells
             lakeGenerator.populateCells(map);
         }
+        Stopwatch sw = new Stopwatch();
 
+        sw.Start();
         // generate the terrain based on the current state of the levelCells array
         terrainGenerator.generate(map);
+
+        sw.Stop();
+        Debug.Log($"level generated: {sw.ElapsedMilliseconds} ms");
 
         // if river generation is enabled
         if (riverSettings.rGenerationEnabled)
@@ -101,8 +104,6 @@ public class Level : MonoBehaviour
         }
 
 
-        sw.Stop();
-        Debug.Log($"level generated: {sw.ElapsedMilliseconds} ms");
 
         isGenerated = true;
 

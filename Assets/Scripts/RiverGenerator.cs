@@ -20,8 +20,6 @@ public class RiverGenerator
 
     private int riverMaxCount;
 
-    private List<Vector3Int>[] rivers;
-
     public enum NumberOfRivers { Low, Medium, High }
 
     public Cell[,] grid;
@@ -29,8 +27,6 @@ public class RiverGenerator
     RiverOptions.RiverSettings riverSettings;
 
     private const float rMultiplier = 0.0034f;
-
-    int nodesearchcount;
 
     // river gen currently only for square and rectangular levels
     public RiverGenerator(Grid grid, SpriteAtlas atlas)
@@ -80,29 +76,33 @@ public class RiverGenerator
 
         riverMaxCount = (int)Math.Ceiling(levelArea * (rMultiplier * ((int)riverSettings.rNum + 1)));
 
-        rivers = new List<Vector3Int>[riverMaxCount];
-
-        //Cell[] cellPair;
         Heap<CellPair> cellPairs = new Heap<CellPair>(riverMaxCount);
 
         for (int riverCount = 0; riverCount < riverMaxCount; riverCount++)
         {
-            cellPairs.Add(getReachableCells(map, ref boundaryCellList, riverCount, cellPairs));
-            //cellPair = getReachableCells(map, ref boundaryCellList, riverCount);
+            CellPair pair = getReachableCells(map, ref boundaryCellList, riverCount, cellPairs, riverSettings.intersectionsEnabled);
 
-            //rivers[riverCount] = findAStarPath(map, cellPair[0], cellPair[1]);
+            if (pair == null)
+            {
+                break;
+            }
+
+            cellPairs.Add(pair);
+
         }
 
-        for (int riverCount = 0; riverCount < riverMaxCount; riverCount++)
+        while (cellPairs.Count > 0)
         {
             CellPair cellPair = cellPairs.RemoveFirst();
-            
-            rivers[riverCount] = findAStarPath(map, cellPair.startCell, cellPair.endCell);
-        }
+            cellPair.startCell.isTraversable = true;
+            cellPair.endCell.isTraversable = true;
 
+            bool done = findAStarPath(map, cellPair.startCell, cellPair.endCell, riverSettings.intersectionsEnabled);
+        }
     }
 
-    private CellPair getReachableCells(Cell[,] map,ref List<Vector2Int> boundaryCellList, int riverCount, Heap<CellPair> cellPairs)
+
+    private CellPair getReachableCells(Cell[,] map,ref List<Vector2Int> boundaryCellList, int riverCount, Heap<CellPair> cellPairs, bool intersectionsEnabled)
     {
         Vector2Int boundaryCellXYPosition;
         int traversableNeighbourCount;
@@ -111,10 +111,10 @@ public class RiverGenerator
         bool riverNodesFound = false;
 
         List<Vector2Int> boundaryCellListClone;
+        int searchCount = 0;
 
-        Debug.Log("finding pair of nodes");
-
-        while (!riverNodesFound)
+        // limit search count to prevent infinite searching for non-existent valid cell pair  (temporary solution)
+        while (!riverNodesFound && searchCount < 1000)
         {
 
             boundaryCellListClone = new List<Vector2Int>(boundaryCellList);
@@ -123,7 +123,6 @@ public class RiverGenerator
             {
                 while (true)
                 {
-                    Debug.Log(boundaryCellListClone.Count);
 
                     boundaryCellXYPosition = boundaryCellListClone[UnityEngine.Random.Range(0, boundaryCellListClone.Count - 1)];
 
@@ -146,7 +145,6 @@ public class RiverGenerator
                     {
                         //Debug.Log(boundaryCellList.Count);
 
-                        map[boundaryCellXYPosition.x, boundaryCellXYPosition.y].isTraversable = true;
                         boundaryCellListClone.Remove(boundaryCellXYPosition);
                         // remove adjacent boundary cells from list, we dont want the possibility
                         // of a 2 cell river
@@ -166,38 +164,44 @@ public class RiverGenerator
             }
 
 
-
             riverNodesFound = true;
 
             for (int x = 0; x < riverCount; x++)
             {
                 //bool intersects = lineSegmentsIntersect(cellPair[0].position, cellPair[1].position, rivers[x].First(), rivers[x].Last());
-                if (doIntersect(cellPair[0].position, cellPair[1].position, cellPairs.getItem(x).startCell.position, cellPairs.getItem(x).endCell.position))
+                if (!intersectionsEnabled && doIntersect(cellPair[0].position, cellPair[1].position, cellPairs.getItem(x).startCell.position, cellPairs.getItem(x).endCell.position))
                 {
                     riverNodesFound = false;
-                    Debug.Log("there is an intersection, pick another pair of nodes");
+                    //Debug.Log("there is an intersection, pick another pair of nodes");
                     break;
                 }
             }
+
+            searchCount++;
         }
 
-
-        foreach (Cell cell in cellPair)
+        if (searchCount == 1000)
         {
-            Vector2Int cellPosition = (Vector2Int)cell.position;
-            map[cellPosition.x, cellPosition.y].isTraversable = true;
-
-            boundaryCellList.Remove(cellPosition);
-            // remove adjacent boundary cells from list, we dont want the possibility
-            // of a 2 cell river
-            foreach (Cell neighbour in getNeighbours(map, cell))
+            return null;
+        } else
+        {
+            foreach (Cell cell in cellPair)
             {
-                //no need to check contain first, will just return false if not in list
-                boundaryCellList.Remove((Vector2Int)neighbour.position);
+                Vector2Int cellPosition = (Vector2Int)cell.position;
+
+                boundaryCellList.Remove(cellPosition);
+                // remove adjacent boundary cells from list, we dont want the possibility
+                // of a 2 cell river
+                foreach (Cell neighbour in getNeighbours(map, cell))
+                {
+                    //no need to check contain first, will just return false if not in list
+                    boundaryCellList.Remove((Vector2Int)neighbour.position);
+                }
             }
+
+            return new CellPair(cellPair[0], cellPair[1], GetDistance(cellPair[0], cellPair[1]));
         }
-        
-        return new CellPair(cellPair[0],cellPair[1], GetDistance(cellPair[0], cellPair[1]));
+
     }
 
     // The main function that returns true if line segment 'p1q1'
@@ -261,9 +265,8 @@ public class RiverGenerator
 
     public static bool lineSegmentsIntersect(Vector3 lineOneA, Vector3 lineOneB, Vector3 lineTwoA, Vector3 lineTwoB) { return (((lineTwoB.y - lineOneA.y) * (lineTwoA.x - lineOneA.x) > (lineTwoA.y - lineOneA.y) * (lineTwoB.x - lineOneA.x)) != ((lineTwoB.y - lineOneB.y) * (lineTwoA.x - lineOneB.x) > (lineTwoA.y - lineOneB.y) * (lineTwoB.x - lineOneB.x)) && ((lineTwoA.y - lineOneA.y) * (lineOneB.x - lineOneA.x) > (lineOneB.y - lineOneA.y) * (lineTwoA.x - lineOneA.x)) != ((lineTwoB.y - lineOneA.y) * (lineOneB.x - lineOneA.x) > (lineOneB.y - lineOneA.y) * (lineTwoB.x - lineOneA.x))); }
 
-    private List<Vector3Int> findAStarPath(Cell[,] map, Cell startNode, Cell endNode)
+    private bool findAStarPath(Cell[,] map, Cell startNode, Cell endNode, bool intersectionsEnabled)
     {
-        nodesearchcount = 0;
         Heap<Cell> openList = new Heap<Cell>(map.Length);
         HashSet<Cell> closedList = new HashSet<Cell>();
         Cell currentNode;
@@ -272,7 +275,6 @@ public class RiverGenerator
 
         while (openList.Count > 0)
         {
-            nodesearchcount++;
             currentNode = openList.RemoveFirst();
 
             closedList.Add(currentNode);
@@ -288,20 +290,30 @@ public class RiverGenerator
                     // change the level cells map
                     position = currentNode.position;
                     map[position.x, position.y].status = Cell.CellStatus.RiverCell;
-                    map[position.x, position.y].isTraversable = false;
-                    path.Add(map[position.x, position.y].position);
+
+                    if (!intersectionsEnabled)
+                    {
+                        map[position.x, position.y].isTraversable = false;
+                        foreach (Cell neighbour in getNeighbours(map, currentNode))
+                        {
+                            map[neighbour.position.x, neighbour.position.y].isTraversable = false;
+                        }
+                    }
                     currentNode = currentNode.parent;
                 }
                 // change the level cells map
                 position = currentNode.position;
                 map[position.x, position.y].status = Cell.CellStatus.RiverCell;
-                map[position.x, position.y].isTraversable = false;
-                // add start node
-                path.Add(map[position.x, position.y].position);
 
-                path.Reverse();
-
-                return path;
+                if (!intersectionsEnabled)
+                {
+                    map[position.x, position.y].isTraversable = false;
+                    foreach (Cell neighbour in getNeighbours(map, currentNode))
+                    {
+                        map[neighbour.position.x, neighbour.position.y].isTraversable = false;
+                    }
+                }
+                return true;
             }
 
             foreach (Cell neighbourNode in getNeighbours(map, currentNode))
@@ -331,7 +343,7 @@ public class RiverGenerator
                 }
             }
         }
-        return null;
+        return false;
     }
 
     // work out what the z value of the river tile should be based on its
