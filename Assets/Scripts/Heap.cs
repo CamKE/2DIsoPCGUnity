@@ -35,6 +35,11 @@ public class Heap<T> where T : IHeapItem<T>
 		currentItemCount++;
 	}
 
+	public T getItem(int index)
+    {
+		return items[index];
+    }
+
 	// remove the first item from the heap
 	public T RemoveFirst()
 	{

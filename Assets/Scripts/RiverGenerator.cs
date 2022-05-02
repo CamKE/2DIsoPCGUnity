@@ -82,19 +82,27 @@ public class RiverGenerator
 
         rivers = new List<Vector3Int>[riverMaxCount];
 
-        Cell[] cellPair;
+        //Cell[] cellPair;
+        Heap<CellPair> cellPairs = new Heap<CellPair>(riverMaxCount);
 
         for (int riverCount = 0; riverCount < riverMaxCount; riverCount++)
         {
+            cellPairs.Add(getReachableCells(map, ref boundaryCellList, riverCount, cellPairs));
+            //cellPair = getReachableCells(map, ref boundaryCellList, riverCount);
 
-            cellPair = getReachableCells(map, ref boundaryCellList, riverCount);
+            //rivers[riverCount] = findAStarPath(map, cellPair[0], cellPair[1]);
+        }
 
-            rivers[riverCount] = findAStarPath(map, cellPair[0], cellPair[1]);
+        for (int riverCount = 0; riverCount < riverMaxCount; riverCount++)
+        {
+            CellPair cellPair = cellPairs.RemoveFirst();
+            
+            rivers[riverCount] = findAStarPath(map, cellPair.startCell, cellPair.endCell);
         }
 
     }
 
-    private Cell[] getReachableCells(Cell[,] map,ref List<Vector2Int> boundaryCellList, int riverCount)
+    private CellPair getReachableCells(Cell[,] map,ref List<Vector2Int> boundaryCellList, int riverCount, Heap<CellPair> cellPairs)
     {
         Vector2Int boundaryCellXYPosition;
         int traversableNeighbourCount;
@@ -104,17 +112,20 @@ public class RiverGenerator
 
         List<Vector2Int> boundaryCellListClone;
 
+        Debug.Log("finding pair of nodes");
+
         while (!riverNodesFound)
         {
+
             boundaryCellListClone = new List<Vector2Int>(boundaryCellList);
 
             for (int x = 0; x < 2; x++)
             {
                 while (true)
                 {
-                    boundaryCellXYPosition = boundaryCellListClone[UnityEngine.Random.Range(0, boundaryCellListClone.Count - 1)];
+                    Debug.Log(boundaryCellListClone.Count);
 
-                    Debug.Log(boundaryCellXYPosition);
+                    boundaryCellXYPosition = boundaryCellListClone[UnityEngine.Random.Range(0, boundaryCellListClone.Count - 1)];
 
                     Cell cellToCheck = map[boundaryCellXYPosition.x, boundaryCellXYPosition.y];
 
@@ -160,8 +171,8 @@ public class RiverGenerator
 
             for (int x = 0; x < riverCount; x++)
             {
-                bool intersects = lineSegmentsIntersect(cellPair[0].position, cellPair[1].position, rivers[x].First(), rivers[x].Last());
-                if (intersects)
+                //bool intersects = lineSegmentsIntersect(cellPair[0].position, cellPair[1].position, rivers[x].First(), rivers[x].Last());
+                if (doIntersect(cellPair[0].position, cellPair[1].position, cellPairs.getItem(x).startCell.position, cellPairs.getItem(x).endCell.position))
                 {
                     riverNodesFound = false;
                     Debug.Log("there is an intersection, pick another pair of nodes");
@@ -185,8 +196,67 @@ public class RiverGenerator
                 boundaryCellList.Remove((Vector2Int)neighbour.position);
             }
         }
+        
+        return new CellPair(cellPair[0],cellPair[1], GetDistance(cellPair[0], cellPair[1]));
+    }
 
-        return cellPair;
+    // The main function that returns true if line segment 'p1q1'
+    // and 'p2q2' intersect.
+    static Boolean doIntersect(Vector3Int p1, Vector3Int q1, Vector3Int p2, Vector3Int q2)
+    {
+        // Find the four orientations needed for general and
+        // special cases
+        int o1 = orientation(p1, q1, p2);
+        int o2 = orientation(p1, q1, q2);
+        int o3 = orientation(p2, q2, p1);
+        int o4 = orientation(p2, q2, q1);
+
+        // General case
+        if (o1 != o2 && o3 != o4)
+            return true;
+
+        // Special Cases
+        // p1, q1 and p2 are collinear and p2 lies on segment p1q1
+        if (o1 == 0 && onSegment(p1, p2, q1)) return true;
+
+        // p1, q1 and q2 are collinear and q2 lies on segment p1q1
+        if (o2 == 0 && onSegment(p1, q2, q1)) return true;
+
+        // p2, q2 and p1 are collinear and p1 lies on segment p2q2
+        if (o3 == 0 && onSegment(p2, p1, q2)) return true;
+
+        // p2, q2 and q1 are collinear and q1 lies on segment p2q2
+        if (o4 == 0 && onSegment(p2, q1, q2)) return true;
+
+        return false; // Doesn't fall in any of the above cases
+    }
+
+    // Given three collinear points p, q, r, the function checks if
+    // point q lies on line segment 'pr'
+    static Boolean onSegment(Vector3Int p, Vector3Int q, Vector3Int r)
+    {
+        if (q.x <= Math.Max(p.x, r.x) && q.x >= Math.Min(p.x, r.x) &&
+            q.y <= Math.Max(p.y, r.y) && q.y >= Math.Min(p.y, r.y))
+            return true;
+
+        return false;
+    }
+
+    // To find orientation of ordered triplet (p, q, r).
+    // The function returns following values
+    // 0 --> p, q and r are collinear
+    // 1 --> Clockwise
+    // 2 --> Counterclockwise
+    static int orientation(Vector3Int p, Vector3Int q, Vector3Int r)
+    {
+        // See https://www.geeksforgeeks.org/orientation-3-ordered-points/
+        // for details of below formula.
+        int val = (q.y - p.y) * (r.x - q.x) -
+                (q.x - p.x) * (r.y - q.y);
+
+        if (val == 0) return 0; // collinear
+
+        return (val > 0) ? 1 : 2; // clock or counterclock wise
     }
 
     public static bool lineSegmentsIntersect(Vector3 lineOneA, Vector3 lineOneB, Vector3 lineTwoA, Vector3 lineTwoB) { return (((lineTwoB.y - lineOneA.y) * (lineTwoA.x - lineOneA.x) > (lineTwoA.y - lineOneA.y) * (lineTwoB.x - lineOneA.x)) != ((lineTwoB.y - lineOneB.y) * (lineTwoA.x - lineOneB.x) > (lineTwoA.y - lineOneB.y) * (lineTwoB.x - lineOneB.x)) && ((lineTwoA.y - lineOneA.y) * (lineOneB.x - lineOneA.x) > (lineOneB.y - lineOneA.y) * (lineTwoA.x - lineOneA.x)) != ((lineTwoB.y - lineOneA.y) * (lineOneB.x - lineOneA.x) > (lineOneB.y - lineOneA.y) * (lineTwoB.x - lineOneA.x))); }
