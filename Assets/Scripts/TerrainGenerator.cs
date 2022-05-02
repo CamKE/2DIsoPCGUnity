@@ -38,11 +38,6 @@ public class TerrainGenerator
     // set such that the variation in values returned is gradual
     private const float perlinScale = 3.0f;
 
-    public Tilemap terrainTilemap;
-    public Tilemap terrainTilemapOuterBound;
-    public Tilemap terrainTilemapOuterBound2;
-    public Tilemap terrainTilemap2;
-
     private readonly string[] greeneryGroundTileNames = { "ISO_Tile_Dirt_01_Grass_01", "ISO_Tile_Dirt_01_Grass_02" };
 
     private readonly string[] greeneryAccessoryTileNames = {"ISO_Tile_Dirt_01_GrassPatch_01",
@@ -97,19 +92,11 @@ public class TerrainGenerator
 
     TerrainOptions.TerrainSettings terrainSettings;
 
-    public TerrainGenerator(Grid grid, SpriteAtlas atlas)
+    public TerrainGenerator(SpriteAtlas atlas)
     {
         test = ScriptableObject.CreateInstance<Tile>();
         test.sprite = atlas.GetSprite("ISO_Tile_Flesh_01");
         //test.colliderType = Tile.ColliderType.Grid;
-
-        terrainTilemap = setupTilemap(grid, "Terrain", true);
-
-        terrainTilemapOuterBound = setupBoundTilemap(grid, "TerrainOuterBound");
-        terrainTilemapOuterBound2 = setupBoundTilemap(grid, "TerrainOuterBound2");
-        terrainTilemapOuterBound2.GetComponent<TilemapCollider2D>().offset = new Vector2(0, 0.785f);
-
-        terrainTilemap2 = setupTilemap(grid, "TerrainTestmap", true);
 
         terrainTilesByType = new Dictionary<TerrainType, terrainTiles>();
 
@@ -127,37 +114,14 @@ public class TerrainGenerator
 
     }
 
-    private Tilemap setupBoundTilemap(Grid grid, string name)
+    public Tile[] getGroundTiles()
     {
-        Tilemap tilemap =  setupTilemap(grid, name, false);
-        tilemap.gameObject.AddComponent<TilemapCollider2D>();
-        tilemap.gameObject.AddComponent<Rigidbody2D>();
-        tilemap.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
-        tilemap.gameObject.AddComponent<CompositeCollider2D>();
-
-        return tilemap;
+        return terrainTilesByType[terrainSettings.tType].groundTiles;
     }
 
-    private Tilemap setupTilemap(Grid grid, string name, bool tilemapRendererEnabled)
+    public Tile[] getAccessoryTiles()
     {
-        Tilemap tilemap = new GameObject(name).AddComponent<Tilemap>();
-
-        tilemap.gameObject.AddComponent<TilemapRenderer>();
-        tilemap.transform.SetParent(grid.gameObject.transform);
-        // move tile anchor from the button of the tile, to the front point of the tile (in the z)
-        tilemap.tileAnchor = new Vector3(0, 0, -2);
-
-        var terrainTilemapRenderer = tilemap.GetComponent<TilemapRenderer>();
-
-        terrainTilemapRenderer.enabled = tilemapRendererEnabled;
-        terrainTilemapRenderer.mode = TilemapRenderer.Mode.Individual;
-
-        return tilemap;
-    }
-
-    public BoundsInt getTilemapBounds()
-    {
-        return terrainTilemap.cellBounds;
+        return terrainTilesByType[terrainSettings.tType].accessoryTiles;
     }
 
     public void setTerrainSettings(TerrainOptions.TerrainSettings terrainSettings)
@@ -184,7 +148,6 @@ public class TerrainGenerator
             setCellsExact(map, width, height, terrainSettings.tExactHeight);
         }
 
-        setOuterBounds(map);
     }
 
     public Cell[,] createMap()
@@ -525,63 +488,8 @@ public class TerrainGenerator
         return zValue;
     }
 
-    public void generate(Cell[,] map)
+    public void setOuterBounds(Cell[,] map, ref List<Vector3Int> positions, ref List<TileBase> tiles, ref List<Vector3Int> positions2, ref List<TileBase> tiles2)
     {
-        // set the array of positions and array of tiles from the level cells which are terrain
-        // then populate the terrain tilemap with the tiles
-
-        // probably can use cellular automata here to choose the terrain tile to be used
-        List<Vector3Int> positions = new List<Vector3Int>();
-        List<TileBase> tiles = new List<TileBase>();
-
-        Tile[] groundTiles = terrainTilesByType[terrainSettings.tType].groundTiles;
-        Tile[] accessoryTiles = terrainTilesByType[terrainSettings.tType].accessoryTiles;
-        int groundTilesLength = groundTiles.Length;
-        int accessoryTilesLength = accessoryTiles.Length;
-
-        for (int x = 0; x < map.GetLength(0); x++)
-        {
-            for (int y = 0; y < map.GetLength(1); y++)
-            {
-                if (map[x, y].status == Cell.CellStatus.TerrainCell)
-                {
-                    positions.Add(map[x, y].position);
-                    // select random accessory tile at 30% chance
-                    tiles.Add(UnityEngine.Random.Range(0.0f, 10.0f) > 3.0f ? groundTiles[map[x, y].position.z % groundTilesLength] : accessoryTiles[map[x, y].position.z % accessoryTilesLength]);
-                    // add tiles below current position
-                    for (int z = map[x, y].position.z - 1; z >= 0; z--)
-                    {
-                        positions.Add(new Vector3Int(map[x, y].position.x, map[x, y].position.y, z));
-                        tiles.Add(groundTiles[0]);
-                    }
-                }
-            }
-        }
-
-        List<Vector3Int> positions2 = new List<Vector3Int>();
-        List<TileBase> tiles2 = new List<TileBase>();
-
-        foreach (Vector2Int boundarycell in boundaryCellList)
-        {
-            positions2.Add(new Vector3Int(map[boundarycell.x, boundarycell.y].position.x, map[boundarycell.x, boundarycell.y].position.y, 0));
-            tiles2.Add(test);
-        }
-
-       // terrainTilemap2.SetTiles(positions2.ToArray(), tiles2.ToArray());
-
-        terrainTilemap.SetTiles(positions.ToArray(), tiles.ToArray());
-    }
-
-    public void setOuterBounds(Cell[,] map)
-    {
-        List<Vector3Int> positions = new List<Vector3Int>();
-        List<TileBase> tiles = new List<TileBase>();
-
-        List<Vector3Int> positions2 = new List<Vector3Int>();
-        List<TileBase> tiles2 = new List<TileBase>();
-
-        List<List<Vector3Int>> walls = new List<List<Vector3Int>>();
-
         Vector2Int mapDimensions = new Vector2Int(map.GetLength(0), map.GetLength(1));
         foreach (Vector2Int boundaryCellPosition in boundaryCellList)
         {
@@ -631,17 +539,6 @@ public class TerrainGenerator
                 }
             }
         }
-
-        terrainTilemapOuterBound.SetTiles(positions.ToArray(), tiles.ToArray());
-        terrainTilemapOuterBound2.SetTiles(positions2.ToArray(), tiles2.ToArray());
-    }
-
-    public void clearTilemap()
-    {
-        terrainTilemap.ClearAllTiles();
-        terrainTilemap2.ClearAllTiles();
-        terrainTilemapOuterBound.ClearAllTiles();
-        terrainTilemapOuterBound2.ClearAllTiles();
     }
 
     public void randomlyGenerate()

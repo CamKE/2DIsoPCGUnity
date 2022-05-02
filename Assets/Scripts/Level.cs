@@ -4,10 +4,11 @@ using UnityEngine;
 using UnityEngine.U2D;
 using System.Diagnostics;
 using Debug = UnityEngine.Debug;
+using UnityEngine.Tilemaps;
+using System;
 
 public class Level : MonoBehaviour
 {
-
     private Cell[,] map;
 
     ///  whether or not a level is generated
@@ -29,7 +30,13 @@ public class Level : MonoBehaviour
 
     private LevelCameraController cameraController;
 
+    private Tilemap[] tilemaps;
 
+    List<Vector3Int>[] positions;
+
+    List<TileBase>[] tiles;
+
+    private enum TilemapNames { Terrain, TerrainOuterBounds1, TerrainOuterBounds2, Water }
     // Start is called before the first frame update
     void Start()
     {
@@ -37,15 +44,56 @@ public class Level : MonoBehaviour
 
         grid = transform.GetComponent<Grid>();
 
-        terrainGenerator = new TerrainGenerator(grid, atlas);
+        int numEnum = Enum.GetValues(typeof(TilemapNames)).Length;
+        tilemaps = new Tilemap[numEnum];
+        positions = new List<Vector3Int>[numEnum];
+        tiles = new List<TileBase>[numEnum];
 
-        riverGenerator = new RiverGenerator(grid, atlas);
+        tilemaps[(int)TilemapNames.Terrain] = setupTilemap(grid, "Terrain", true);
 
-        lakeGenerator = new LakeGenerator(grid, atlas);
+        tilemaps[(int)TilemapNames.TerrainOuterBounds1] = setupCollidableTilemap(grid, "TerrainOuterBounds1", false, 0.785f);
+        tilemaps[(int)TilemapNames.TerrainOuterBounds2] = setupCollidableTilemap(grid, "TerrainOuterBounds2", false);
+
+        tilemaps[(int)TilemapNames.Water] = setupCollidableTilemap(grid, "Water", true, 1.125f);
+
+        terrainGenerator = new TerrainGenerator(atlas);
+
+        riverGenerator = new RiverGenerator(atlas);
+
+        lakeGenerator = new LakeGenerator(atlas);
 
         cameraController = transform.GetChild(0).GetComponent<LevelCameraController>();
 
         cameraController.enabled = false;
+    }
+
+    private Tilemap setupTilemap(Grid grid, string name, bool tilemapRendererEnabled)
+    {
+        Tilemap tilemap = new GameObject(name).AddComponent<Tilemap>();
+
+        tilemap.gameObject.AddComponent<TilemapRenderer>();
+        tilemap.transform.SetParent(grid.gameObject.transform);
+        // move tile anchor from the button of the tile, to the front point of the tile (in the z)
+        tilemap.tileAnchor = new Vector3(0, 0, -2);
+
+        var terrainTilemapRenderer = tilemap.GetComponent<TilemapRenderer>();
+
+        terrainTilemapRenderer.enabled = tilemapRendererEnabled;
+        terrainTilemapRenderer.mode = TilemapRenderer.Mode.Individual;
+
+        return tilemap;
+    }
+
+    private Tilemap setupCollidableTilemap(Grid grid, string name, bool tilemapRendererEnabled, float colliderYOffset = 0)
+    {
+        Tilemap tilemap = setupTilemap(grid, name, tilemapRendererEnabled);
+        tilemap.gameObject.AddComponent<TilemapCollider2D>();
+        tilemap.gameObject.AddComponent<Rigidbody2D>();
+        tilemap.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
+        //tilemap.gameObject.AddComponent<CompositeCollider2D>();
+        tilemap.GetComponent<TilemapCollider2D>().offset = new Vector2(0, colliderYOffset);
+
+        return tilemap;
     }
 
     public void setCameraActive(bool value)
@@ -58,13 +106,21 @@ public class Level : MonoBehaviour
        // Debug.Log("NEW RUN");
         clear();
 
+        int numEnums = Enum.GetValues(typeof(TilemapNames)).Length;
 
+        for (int x = 0; x < numEnums; x++)
+        {
+            positions[x] = new List<Vector3Int>();
+            tiles[x] = new List<TileBase>();
+        }
 
         terrainGenerator.setTerrainSettings(terrainSettings);
 
         map = terrainGenerator.createMap();
 
         terrainGenerator.populateCells(map);
+
+        terrainGenerator.setOuterBounds(map, ref positions[(int)TilemapNames.TerrainOuterBounds2], ref tiles[(int)TilemapNames.TerrainOuterBounds2], ref positions[(int)TilemapNames.TerrainOuterBounds1], ref tiles[(int)TilemapNames.TerrainOuterBounds1]);
 
         if (riverSettings.rGenerationEnabled)
         {
@@ -80,30 +136,15 @@ public class Level : MonoBehaviour
             // populate the levelCells 3d array with the lake cells
             lakeGenerator.populateCells(map);
         }
+
         Stopwatch sw = new Stopwatch();
 
         sw.Start();
-        // generate the terrain based on the current state of the levelCells array
-        terrainGenerator.generate(map);
+
+        setTilemaps();
 
         sw.Stop();
         Debug.Log($"level generated: {sw.ElapsedMilliseconds} ms");
-
-        // if river generation is enabled
-        if (riverSettings.rGenerationEnabled)
-        {
-            // populate the levelCells 3d array with the river cells
-            riverGenerator.generate(map);
-        }
-
-        // if lake generation is enabled
-        if (lakeSettings.lGenerationEnabled)
-        {
-            // populate the levelCells 3d array with the lake cells
-            lakeGenerator.generate(map);
-        }
-
-
 
         isGenerated = true;
 
@@ -112,13 +153,69 @@ public class Level : MonoBehaviour
 
     }
 
+    public void setTilemaps()
+    {
+        // set the array of positions and array of tiles from the level cells which are terrain
+        // then populate the terrain tilemap with the tiles
+
+        // terrain tiles
+        Tile[] groundTiles = terrainGenerator.getGroundTiles();
+        Tile[] accessoryTiles = terrainGenerator.getAccessoryTiles();
+        int groundTilesLength = groundTiles.Length;
+        int accessoryTilesLength = accessoryTiles.Length;
+
+        // river tile
+        Tile riverTile = riverGenerator.getTile();
+
+        for (int x = 0; x < map.GetLength(0); x++)
+        {
+            for (int y = 0; y < map.GetLength(1); y++)
+            {
+                switch (map[x, y].status)
+                {
+                    case Cell.CellStatus.TerrainCell:
+
+                        positions[(int)TilemapNames.Terrain].Add(map[x, y].position);
+                        // select random accessory tile at 30% chance
+                        tiles[(int)TilemapNames.Terrain].Add(UnityEngine.Random.Range(0.0f, 10.0f) > 3.0f ? groundTiles[map[x, y].position.z % groundTilesLength] : accessoryTiles[map[x, y].position.z % accessoryTilesLength]);
+                        // add tiles below current position
+                        for (int z = map[x, y].position.z - 1; z >= 0; z--)
+                        {
+                            positions[(int)TilemapNames.Terrain].Add(new Vector3Int(map[x, y].position.x, map[x, y].position.y, z));
+                            tiles[(int)TilemapNames.Terrain].Add(groundTiles[0]);
+                        }
+                        break;
+                    case Cell.CellStatus.RiverCell:
+
+                        map[x, y].position.z = riverGenerator.getMaxDepth(map, map[x, y]);
+                        positions[(int)TilemapNames.Water].Add(map[x, y].position);
+                        tiles[(int)TilemapNames.Water].Add(riverTile);
+                        break;
+                    case Cell.CellStatus.LakeCell:
+
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+
+        foreach (TilemapNames tilemapName in Enum.GetValues(typeof(TilemapNames)))
+        {
+            int tilemapNameIndex = (int)tilemapName;
+            tilemaps[tilemapNameIndex].SetTiles(positions[tilemapNameIndex].ToArray(), tiles[tilemapNameIndex].ToArray());
+        }
+    }
+
     // gives the camera the new center of the level and the new orthographic size
     private void updateCamera()
     {
         // enable the controller now that a level is generated
         cameraController.enabled = true;
 
-        BoundsInt terrainBounds = terrainGenerator.getTilemapBounds();
+        //BoundsInt terrainBounds = terrainGenerator.getTilemapBounds();
+        BoundsInt terrainBounds = tilemaps[(int)TilemapNames.Terrain].cellBounds;
 
         // find the local position of the cell on the grid at the x most tile value and the 
         // y most tile value
@@ -163,10 +260,12 @@ public class Level : MonoBehaviour
 
     public void clear()
     {
-        terrainGenerator.clearTilemap();
-        riverGenerator.clearTilemap();
-        lakeGenerator.clearTilemap();
         isGenerated = false;
+
+        foreach (Tilemap tilemap in tilemaps)
+        {
+            tilemap.ClearAllTiles();
+        }
     }
 
     public int getCellZPosition(Vector2 worldPos)

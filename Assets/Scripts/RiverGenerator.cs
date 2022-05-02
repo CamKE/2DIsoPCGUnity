@@ -10,8 +10,6 @@ using System.Linq;
 
 public class RiverGenerator
 {
-    private Tilemap riverTilemap;
-
     Dictionary<TerrainGenerator.TerrainType, Tile> riverTilesByType;
 
     private readonly string waterTileName = "ISO_Tile_Water_01";
@@ -29,23 +27,8 @@ public class RiverGenerator
     private const float rMultiplier = 0.0034f;
 
     // river gen currently only for square and rectangular levels
-    public RiverGenerator(Grid grid, SpriteAtlas atlas)
+    public RiverGenerator(SpriteAtlas atlas)
     {
-        riverTilemap = new GameObject("River").AddComponent<Tilemap>();
-
-        riverTilemap.gameObject.AddComponent<TilemapRenderer>();
-        riverTilemap.transform.SetParent(grid.gameObject.transform);
-        // move tile anchor from the button of the tile, to the front point of the tile (in the z)
-        riverTilemap.tileAnchor = new Vector3(0, 0, -2);
-        riverTilemap.gameObject.AddComponent<TilemapCollider2D>();
-        riverTilemap.gameObject.AddComponent<Rigidbody2D>();
-        riverTilemap.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
-        riverTilemap.GetComponent<TilemapCollider2D>().offset = new Vector2(0, 1.125f);
-
-        var terrainTilemapRenderer = riverTilemap.GetComponent<TilemapRenderer>();
-
-        terrainTilemapRenderer.mode = TilemapRenderer.Mode.Individual;
-
         riverTilesByType = new Dictionary<TerrainGenerator.TerrainType, Tile>();
 
         Tile waterTile = ScriptableObject.CreateInstance<Tile>();
@@ -66,6 +49,11 @@ public class RiverGenerator
     public void setRiverSettings(RiverOptions.RiverSettings riverSettings)
     {
         this.riverSettings = riverSettings;
+    }
+
+    public Tile getTile()
+    {
+        return riverTilesByType[riverSettings.tType];
     }
 
     public void populateCells(Cell[,] map, List<Vector3Int> terrainCellList, List<Vector2Int> boundaryCellList)
@@ -263,8 +251,6 @@ public class RiverGenerator
         return (val > 0) ? 1 : 2; // clock or counterclock wise
     }
 
-    public static bool lineSegmentsIntersect(Vector3 lineOneA, Vector3 lineOneB, Vector3 lineTwoA, Vector3 lineTwoB) { return (((lineTwoB.y - lineOneA.y) * (lineTwoA.x - lineOneA.x) > (lineTwoA.y - lineOneA.y) * (lineTwoB.x - lineOneA.x)) != ((lineTwoB.y - lineOneB.y) * (lineTwoA.x - lineOneB.x) > (lineTwoA.y - lineOneB.y) * (lineTwoB.x - lineOneB.x)) && ((lineTwoA.y - lineOneA.y) * (lineOneB.x - lineOneA.x) > (lineOneB.y - lineOneA.y) * (lineTwoA.x - lineOneA.x)) != ((lineTwoB.y - lineOneA.y) * (lineOneB.x - lineOneA.x) > (lineOneB.y - lineOneA.y) * (lineTwoB.x - lineOneA.x))); }
-
     private bool findAStarPath(Cell[,] map, Cell startNode, Cell endNode, bool intersectionsEnabled)
     {
         Heap<Cell> openList = new Heap<Cell>(map.Length);
@@ -348,7 +334,7 @@ public class RiverGenerator
 
     // work out what the z value of the river tile should be based on its
     // surrounding terrain tiles
-    private int getMaxDepth(Cell[,] map, Cell currentNode)
+    public int getMaxDepth(Cell[,] map, Cell currentNode)
     {
         int maxRiverDepth = currentNode.position.z;
 
@@ -404,30 +390,6 @@ public class RiverGenerator
         }
 
         return neighbours;
-    }
-
-    public void clearTilemap()
-    {
-        riverTilemap.ClearAllTiles();
-    }
-
-    public void generate(Cell[,] map)
-    {
-        // set the array of positions and array of tiles from the level cells which are terrain
-        // then populate the terrain tilemap with the tiles
-        List<Vector3Int> positions = new List<Vector3Int>();
-        List<TileBase> tiles = new List<TileBase>();
-
-        foreach (Cell cell in map)
-        {
-            if (cell.status == Cell.CellStatus.RiverCell)
-            {
-                cell.position.z = getMaxDepth(map, cell);
-                positions.Add(cell.position);
-                tiles.Add(riverTilesByType[riverSettings.tType]);
-            }
-        }
-        riverTilemap.SetTiles(positions.ToArray(), tiles.ToArray());
     }
 
     public void randomlyGenerate()

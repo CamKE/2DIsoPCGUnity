@@ -12,9 +12,29 @@ public class LakeGenerator
 
     LakeOptions.LakeSettings lakeSettings;
 
-    public LakeGenerator(Grid grid, SpriteAtlas atlas)
-    {
+    Dictionary<TerrainGenerator.TerrainType, Tile> lakeTilesByType;
 
+    private readonly string waterTileName = "ISO_Tile_Water_01";
+    private readonly string iceTileName = "ISO_Tile_Ice_01-06";
+    private readonly string lavaTileName = "ISO_Tile_Lava_01";
+
+    public LakeGenerator(SpriteAtlas atlas)
+    {
+        lakeTilesByType = new Dictionary<TerrainGenerator.TerrainType, Tile>();
+
+        Tile waterTile = ScriptableObject.CreateInstance<Tile>();
+        waterTile.sprite = atlas.GetSprite(waterTileName);
+        waterTile.colliderType = Tile.ColliderType.Grid;
+
+
+        lakeTilesByType.Add(TerrainGenerator.TerrainType.Greenery, waterTile);
+        lakeTilesByType.Add(TerrainGenerator.TerrainType.Dessert, waterTile);
+
+        lakeTilesByType.Add(TerrainGenerator.TerrainType.Lava, ScriptableObject.CreateInstance<Tile>());
+        lakeTilesByType[TerrainGenerator.TerrainType.Lava].sprite = atlas.GetSprite(lavaTileName);
+
+        lakeTilesByType.Add(TerrainGenerator.TerrainType.Snow, ScriptableObject.CreateInstance<Tile>());
+        lakeTilesByType[TerrainGenerator.TerrainType.Snow].sprite = atlas.GetSprite(iceTileName);
     }
 
     public void setLakeSettings(LakeOptions.LakeSettings lakeSettings)
@@ -24,33 +44,7 @@ public class LakeGenerator
 
     public void populateCells(Cell[,] map)
     {
-
-    }
-
-    public void generate(Cell[,] map)
-    {
-        // set the array of positions and array of tiles from the level cells which are terrain
-        // then populate the terrain tilemap with the tiles
-        List<Vector3Int> positions = new List<Vector3Int>();
-        List<TileBase> tiles = new List<TileBase>();
-
-        for (int x = 0; x < map.GetLength(0); x++)
-        {
-            for (int y = 0; y < map.GetLength(1); y++)
-            {
-                    if (map[x, y].status == Cell.CellStatus.LakeCell)
-                    {
-                        positions.Add(map[x, y].position);
-                        // set tile
-                    }
-            }
-        }
-        //terrainTilemap.SetTiles(positions.ToArray(), tiles.ToArray());
-    }
-
-    public void clearTilemap()
-    {
-
+        //continue here
     }
 
     public void randomlyGenerate()
