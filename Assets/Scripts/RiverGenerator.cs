@@ -81,7 +81,7 @@ public class RiverGenerator
             cellPair.startCell.isTraversable = true;
             cellPair.endCell.isTraversable = true;
 
-            bool done = findAStarPath(map, cellPair.startCell, cellPair.endCell, riverSettings.intersectionsEnabled);
+            bool done = findAStarPath(map, cellPair.startCell, cellPair.endCell, Cell.CellStatus.RiverCell, riverSettings.intersectionsEnabled);
         }
     }
 
@@ -247,7 +247,7 @@ public class RiverGenerator
         return (val > 0) ? 1 : 2; // clock or counterclock wise
     }
 
-    private bool findAStarPath(Map map, Cell startNode, Cell endNode, bool intersectionsEnabled)
+    private bool findAStarPath(Map map, Cell startNode, Cell endNode, Cell.CellStatus status, bool intersectionsEnabled)
     {
         Heap<Cell> openList = new Heap<Cell>(map.area);
         HashSet<Cell> closedList = new HashSet<Cell>();
@@ -265,13 +265,11 @@ public class RiverGenerator
             {
                 currentNode = endNode;
 
-                Vector3Int position;
                 while (currentNode != startNode)
                 {
                     // change the level cells map
-                    position = currentNode.position;
 
-                    map.updateCellStatus(currentNode, Cell.CellStatus.RiverCell, intersectionsEnabled);
+                    map.updateCellStatus(currentNode, status, intersectionsEnabled);
 
                     if (!intersectionsEnabled)
                     {
@@ -283,9 +281,8 @@ public class RiverGenerator
                     currentNode = currentNode.parent;
                 }
                 // change the level cells map
-                position = currentNode.position;
 
-                map.updateCellStatus(currentNode, Cell.CellStatus.RiverCell, intersectionsEnabled);
+                map.updateCellStatus(currentNode, status, intersectionsEnabled);
 
                 if (!intersectionsEnabled)
                 {

@@ -105,6 +105,9 @@ public class Level : MonoBehaviour
     {
        // Debug.Log("NEW RUN");
         clear();
+        Stopwatch sw = new Stopwatch();
+
+        sw.Start();
 
         int numEnums = Enum.GetValues(typeof(TilemapNames)).Length;
 
@@ -136,10 +139,6 @@ public class Level : MonoBehaviour
             // populate the levelCells 3d array with the lake cells
             lakeGenerator.populateCells(levelMap);
         }
-
-        Stopwatch sw = new Stopwatch();
-
-        sw.Start();
 
         setTilemaps();
 

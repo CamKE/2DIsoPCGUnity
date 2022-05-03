@@ -256,33 +256,29 @@ public class TerrainGenerator
         {
             if (cell.status == Cell.CellStatus.ValidCell)
             {
-                int invalidTileCount = 0;
                 int validTileCount = 0;
-                int neighbourCount = 0;
 
+                List<Cell> neighbours = map.getNeighbours(cell);
 
-                foreach (Cell neighbour in map.getNeighbours(cell))
-                {
-
-                    switch (neighbour.status)
-                    {
-                        case Cell.CellStatus.ValidCell:
-                            validTileCount++;
-                            break;
-                        //invalid
-                        default:
-                            if (closedSet.Contains(neighbour))
-                            {
-                                invalidTileCount++;
-                            }
-                            break;
-                    }
-                    neighbourCount++;
-                }
-                if (validTileCount > 0 && invalidTileCount > 0 || neighbourCount < 4)
+                if (neighbours.Count < 4)
                 {
                     // its a boundary tile
                     map.addBoundaryCellPosition((Vector2Int)cell.position);
+                }
+                else
+                {
+                    foreach (Cell neighbour in neighbours)
+                    {
+                        if (neighbour.status == Cell.CellStatus.ValidCell)
+                        {
+                            validTileCount++;
+                        }
+                    }
+                    if (validTileCount < 4)
+                    {
+                        // its a boundary tile
+                        map.addBoundaryCellPosition((Vector2Int)cell.position);
+                    }
                 }
             }
         }
@@ -385,7 +381,7 @@ public class TerrainGenerator
         foreach (Vector2Int boundaryCellPosition in map.getBoundaryCellPositions())
         {
             // if x+1 is out the bounds of the array or its an invalid cell, its an outer bound
-            if (boundaryCellPosition.x + 1 >  map.width-1 || map.getCell(boundaryCellPosition).status == Cell.CellStatus.InvalidCell)
+            if (boundaryCellPosition.x + 1 >  map.width-1 || map.getCell(boundaryCellPosition.x + 1, boundaryCellPosition.y).status == Cell.CellStatus.InvalidCell)
             {
                 Vector3Int outerBoundPosition = new Vector3Int(boundaryCellPosition.x + 1, boundaryCellPosition.y, map.getCell(boundaryCellPosition).position.z);
                 if (!positions2.Contains(outerBoundPosition) && !positions.Contains(outerBoundPosition))
