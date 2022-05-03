@@ -186,8 +186,8 @@ public class Level : MonoBehaviour
                         }
                         break;
                     case Cell.CellStatus.RiverCell:
-
-                        levelMap.getCell(x, y).position.z = riverGenerator.getMaxDepth(levelMap, levelMap.getCell(x, y));
+                        // set river tile to be 1 lower than the lowest depth neighbour
+                        levelMap.getCell(x, y).position.z = levelMap.getMinDepth(levelMap.getCell(x, y)) - 1;
                         positions[(int)TilemapNames.Water].Add(levelMap.getCell(x, y).position);
                         tiles[(int)TilemapNames.Water].Add(riverTile);
                         break;

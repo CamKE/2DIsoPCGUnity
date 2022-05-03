@@ -100,4 +100,53 @@ public class Map
         return map;
     }
 
+    public List<Cell> getNeighbours(Cell currentNode)
+    {
+        List<Cell> neighbours = new List<Cell>();
+
+        Vector3Int currentNodePosition = currentNode.position;
+
+        // left
+        if (currentNodePosition.x > 0)
+        {
+            neighbours.Add(getCell(currentNodePosition.x - 1, currentNodePosition.y));
+        }
+
+        // right
+        if (currentNodePosition.x < width - 1)
+        {
+            neighbours.Add(getCell(currentNodePosition.x + 1, currentNodePosition.y));
+        }
+
+        // top
+        if (currentNodePosition.y < height - 1)
+        {
+            neighbours.Add(getCell(currentNodePosition.x, currentNodePosition.y + 1));
+        }
+
+        // bottom
+        if (currentNodePosition.y > 0)
+        {
+            neighbours.Add(getCell(currentNodePosition.x, currentNodePosition.y - 1));
+        }
+
+        return neighbours;
+    }
+
+    // finds the minimum depth (z value) from surrounding tiles
+    public int getMinDepth(Cell currentNode)
+    {
+        int minDepth = currentNode.position.z;
+
+        foreach (Cell neighbour in getNeighbours(currentNode))
+        {
+            if (neighbour.status == Cell.CellStatus.TerrainCell)
+            {
+                int neighbourDepth = neighbour.position.z;
+                minDepth = neighbourDepth < minDepth ? neighbourDepth : minDepth;
+            }
+        }
+
+        return minDepth;
+    }
 }

@@ -231,44 +231,46 @@ public class TerrainGenerator
         // set all cells invalid initially
         Map map = new Map(terrainLength,terrainLength, Cell.CellStatus.InvalidCell);
 
-        Vector2Int centerCell = new Vector2Int(terrainLength / 2, terrainLength / 2);
+        Vector2Int centerCellPosition = new Vector2Int(terrainLength / 2, terrainLength / 2);
 
-        map.updateCellStatus(centerCell, Cell.CellStatus.ValidCell);
+        map.updateCellStatus(centerCellPosition, Cell.CellStatus.ValidCell);
 
-        Queue<Vector2Int> openSetPositions = new Queue<Vector2Int>();
-        HashSet<Vector2Int> closedSetPositions = new HashSet<Vector2Int>();
+        Cell centerCell = map.getCell(centerCellPosition);
 
-        foreach (Vector2Int neighbour in getNeighbours(centerCell, dimensions))
+        Queue<Cell> openSet = new Queue<Cell>();
+        HashSet<Cell> closedSet = new HashSet<Cell>();
+
+        foreach (Cell neighbour in map.getNeighbours(centerCell))
         {
-            openSetPositions.Enqueue(neighbour);
+            openSet.Enqueue(neighbour);
         }
 
-        closedSetPositions.Add(centerCell);
+        closedSet.Add(centerCell);
 
-        Vector2Int currentCellPosition;
+        Cell currentCell;
 
         float validTileChance = 1.0f;
         // the rate at which each additional tile reduces the valid tile chance 
         float chanceFalloffRate = 0.1f;
 
-        while (openSetPositions.Count > 0)
+        while (openSet.Count > 0)
         {
-            currentCellPosition = openSetPositions.Dequeue();
+            currentCell = openSet.Dequeue();
 
-            List<Vector2Int> neighbours = getNeighbours(currentCellPosition, dimensions);
+            List<Cell> neighbours = map.getNeighbours(currentCell);
             int invalidTileCount = 0;
             int validTileCount = 0;
 
-            foreach (Vector2Int neighbour in neighbours)
+            foreach (Cell neighbour in neighbours)
             {
-                switch (map.getCell(neighbour).status)
+                switch (neighbour.status)
                 {
                     case Cell.CellStatus.ValidCell:
                         validTileCount++;
                         break;
                     //invalid
                     default:
-                        if (closedSetPositions.Contains(neighbour))
+                        if (closedSet.Contains(neighbour))
                         {
                             invalidTileCount++;
                         }
@@ -279,26 +281,26 @@ public class TerrainGenerator
             //make valid based on random prob
             if (UnityEngine.Random.value < validTileChance && (validTileCount > 0 && invalidTileCount == 0 ))                                                                                                                                                                                                                                                                                                                                                   
             {
-                map.updateCellStatus(currentCellPosition, Cell.CellStatus.ValidCell);
+                map.updateCellStatus((Vector2Int)currentCell.position, Cell.CellStatus.ValidCell);
                 validTileChance -= (chanceFalloffRate / (float)terrainSize);
 
             }
 
 
-            if (map.getCell(currentCellPosition).status == Cell.CellStatus.ValidCell)
+            if (currentCell.status == Cell.CellStatus.ValidCell)
             {
 
-                foreach (Vector2Int neighbour in neighbours)
+                foreach (Cell neighbour in neighbours)
                 {
-                    if (!openSetPositions.Contains(neighbour) && !closedSetPositions.Contains(neighbour))
+                    if (!openSet.Contains(neighbour) && !closedSet.Contains(neighbour))
                     {
-                        openSetPositions.Enqueue(neighbour);
+                        openSet.Enqueue(neighbour);
                     }
                 }
 
             }
 
-            closedSetPositions.Add(currentCellPosition);
+            closedSet.Add(currentCell);
 
         }
 
@@ -311,17 +313,17 @@ public class TerrainGenerator
                 int validTileCount = 0;
                 int neighbourCount = 0;
 
-                foreach (Vector2Int neighbour in getNeighbours((Vector2Int)cell.position, dimensions))
+                foreach (Cell neighbour in map.getNeighbours(cell))
                 {
 
-                    switch (map.getCell(neighbour).status)
+                    switch (neighbour.status)
                     {
                         case Cell.CellStatus.ValidCell:
                             validTileCount++;
                             break;
                         //invalid
                         default:
-                            if (closedSetPositions.Contains(neighbour))
+                            if (closedSet.Contains(neighbour))
                             {
                                 invalidTileCount++;
                             }
@@ -339,37 +341,6 @@ public class TerrainGenerator
         }
 
         return map;
-    }
-
-    private List<Vector2Int> getNeighbours(Vector2Int currentPosition, Vector2Int mapDimensions)
-    {
-        List<Vector2Int> neighbours = new List<Vector2Int>();
-
-        // left
-        if (currentPosition.x > 0)
-        {
-            neighbours.Add(currentPosition + Vector2Int.left);
-        }
-
-        // right
-        if (currentPosition.x < mapDimensions.x - 1)
-        {
-            neighbours.Add(currentPosition + Vector2Int.right);
-        }
-
-        // top
-        if (currentPosition.y < mapDimensions.y - 1)
-        {
-            neighbours.Add(currentPosition + Vector2Int.up);
-        }
-
-        // bottom
-        if (currentPosition.y > 0)
-        {
-            neighbours.Add(currentPosition + Vector2Int.down);
-        }
-
-        return neighbours;
     }
 
     // calculates the square for 1:1 length to width ratio.

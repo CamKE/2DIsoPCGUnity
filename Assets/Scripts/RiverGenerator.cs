@@ -114,7 +114,7 @@ public class RiverGenerator
 
                     traversableNeighbourCount = 0;
 
-                    List<Cell> neighbours = getNeighbours(map, cellToCheck);
+                    List<Cell> neighbours = map.getNeighbours(cellToCheck);
 
                     foreach (Cell neighbour in neighbours)
                     {
@@ -133,7 +133,7 @@ public class RiverGenerator
                         // remove adjacent boundary cells from list, we dont want the possibility
                         // of a 2 cell river
 
-                        foreach (Cell neighbour in getNeighbours(map, map.getCell(boundaryCellXYPosition)))
+                        foreach (Cell neighbour in map.getNeighbours(map.getCell(boundaryCellXYPosition)))
                         {
                             //no need to check contain first, will just return false if not in list
                             boundaryCellListClone.Remove((Vector2Int)neighbour.position);
@@ -176,7 +176,7 @@ public class RiverGenerator
                 boundaryCellList.Remove(cellPosition);
                 // remove adjacent boundary cells from list, we dont want the possibility
                 // of a 2 cell river
-                foreach (Cell neighbour in getNeighbours(map, cell))
+                foreach (Cell neighbour in map.getNeighbours(cell))
                 {
                     //no need to check contain first, will just return false if not in list
                     boundaryCellList.Remove((Vector2Int)neighbour.position);
@@ -276,7 +276,7 @@ public class RiverGenerator
 
                     if (!intersectionsEnabled)
                     {
-                        foreach (Cell neighbour in getNeighbours(map, currentNode))
+                        foreach (Cell neighbour in map.getNeighbours(currentNode))
                         {
                             map.getCell((Vector2Int)neighbour.position).isTraversable = false;
                         }
@@ -290,7 +290,7 @@ public class RiverGenerator
 
                 if (!intersectionsEnabled)
                 {
-                    foreach (Cell neighbour in getNeighbours(map, currentNode))
+                    foreach (Cell neighbour in map.getNeighbours(currentNode))
                     {
                         map.getCell((Vector2Int)neighbour.position).isTraversable = false;
                     }
@@ -298,7 +298,7 @@ public class RiverGenerator
                 return true;
             }
 
-            foreach (Cell neighbourNode in getNeighbours(map, currentNode))
+            foreach (Cell neighbourNode in map.getNeighbours(currentNode))
             {
 
                 if (!neighbourNode.isTraversable || closedList.Contains(neighbourNode))
@@ -327,63 +327,12 @@ public class RiverGenerator
         return false;
     }
 
-    // work out what the z value of the river tile should be based on its
-    // surrounding terrain tiles
-    public int getMaxDepth(Map map, Cell currentNode)
-    {
-        int maxRiverDepth = currentNode.position.z;
-
-        foreach (Cell neighbour in getNeighbours(map, currentNode))
-        {
-            if (neighbour.status == Cell.CellStatus.TerrainCell)
-            {
-                int neighbourDepth = neighbour.position.z;
-                maxRiverDepth = neighbourDepth < maxRiverDepth ? neighbourDepth : maxRiverDepth;
-            }
-        }
-
-        return maxRiverDepth - 1;
-    }
-
     private int GetDistance(Cell startNode, Cell endNode)
     {
         int xDistance = Mathf.Abs(startNode.position.x - endNode.position.x);
         int yDistance = Mathf.Abs(startNode.position.y - endNode.position.y);
 
         return 10 * (yDistance + xDistance);
-    }
-
-    private List<Cell> getNeighbours(Map map, Cell currentNode)
-    {
-        List<Cell> neighbours = new List<Cell>();
-
-        Vector3Int currentNodePosition = currentNode.position;
-
-        // left
-        if(currentNodePosition.x > 0)
-        {
-            neighbours.Add(map.getCell(currentNodePosition.x - 1, currentNodePosition.y));
-        }
-
-        // right
-        if(currentNodePosition.x < map.width - 1)
-        {
-            neighbours.Add(map.getCell(currentNodePosition.x + 1, currentNodePosition.y));
-        }
-
-        // top
-        if (currentNodePosition.y < map.height - 1)
-        {
-            neighbours.Add(map.getCell(currentNodePosition.x, currentNodePosition.y + 1));
-        }
-
-        // bottom
-        if (currentNodePosition.y > 0)
-        {
-            neighbours.Add(map.getCell(currentNodePosition.x, currentNodePosition.y - 1));
-        }
-
-        return neighbours;
     }
 
     public void randomlyGenerate()
