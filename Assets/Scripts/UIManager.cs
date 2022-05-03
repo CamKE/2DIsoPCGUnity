@@ -96,7 +96,7 @@ public class UIManager : MonoBehaviour
     {
         if (terrainOptions.heightRangeIsOnAndInvalid())
         {
-            popupManager.showPopup("Invalid Terrain Height Range", "Terrain height minimum value cannot be greater than the maximum value.");
+            popupManager.showPopup("Invalid Terrain Height Range", "Terrain height minimum value cannot be greater than or equal to the maximum value.");
             return;
         }
 

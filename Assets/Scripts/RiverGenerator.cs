@@ -56,7 +56,7 @@ public class RiverGenerator
         return riverTilesByType[riverSettings.tType];
     }
 
-    public void populateCells(Map map, List<Vector3Int> terrainCellList, List<Vector2Int> boundaryCellList)
+    public void populateCells(Map map)
     {
         riverMaxCount = (int)Math.Ceiling(map.area * (rMultiplier * ((int)riverSettings.rNum + 1)));
 
@@ -64,7 +64,7 @@ public class RiverGenerator
 
         for (int riverCount = 0; riverCount < riverMaxCount; riverCount++)
         {
-            CellPair pair = getReachableCells(map, ref boundaryCellList, riverCount, cellPairs, riverSettings.intersectionsEnabled);
+            CellPair pair = getReachableCells(map, map.getBoundaryCellPositions(), riverCount, cellPairs, riverSettings.intersectionsEnabled);
 
             if (pair == null)
             {
@@ -86,7 +86,7 @@ public class RiverGenerator
     }
 
 
-    private CellPair getReachableCells(Map map,ref List<Vector2Int> boundaryCellList, int riverCount, Heap<CellPair> cellPairs, bool intersectionsEnabled)
+    private CellPair getReachableCells(Map map, List<Vector2Int> boundaryCellList, int riverCount, Heap<CellPair> cellPairs, bool intersectionsEnabled)
     {
         Vector2Int boundaryCellXYPosition;
         int traversableNeighbourCount;
@@ -263,7 +263,6 @@ public class RiverGenerator
 
             if (currentNode == endNode)
             {
-                List<Vector3Int> path = new List<Vector3Int>();
                 currentNode = endNode;
 
                 Vector3Int position;
@@ -272,7 +271,7 @@ public class RiverGenerator
                     // change the level cells map
                     position = currentNode.position;
 
-                    map.updateCellStatus((Vector2Int)position, Cell.CellStatus.RiverCell, intersectionsEnabled);
+                    map.updateCellStatus(currentNode, Cell.CellStatus.RiverCell, intersectionsEnabled);
 
                     if (!intersectionsEnabled)
                     {
@@ -286,7 +285,7 @@ public class RiverGenerator
                 // change the level cells map
                 position = currentNode.position;
 
-                map.updateCellStatus((Vector2Int)position, Cell.CellStatus.RiverCell, intersectionsEnabled);
+                map.updateCellStatus(currentNode, Cell.CellStatus.RiverCell, intersectionsEnabled);
 
                 if (!intersectionsEnabled)
                 {

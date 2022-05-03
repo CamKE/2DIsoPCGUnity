@@ -126,7 +126,7 @@ public class Level : MonoBehaviour
         {
             riverGenerator.setRiverSettings(riverSettings);
             // populate the levelCells 3d array with the river cells
-            riverGenerator.populateCells(levelMap, terrainGenerator.terrainCellList, terrainGenerator.boundaryCellList);
+            riverGenerator.populateCells(levelMap);
         }
 
         // if lake generation is enabled
@@ -153,16 +153,15 @@ public class Level : MonoBehaviour
 
     }
 
-    public void setTilemaps()
+    private void setTilemaps()
     {
         // set the array of positions and array of tiles from the level cells which are terrain
         // then populate the terrain tilemap with the tiles
 
+
         // terrain tiles
         Tile[] groundTiles = terrainGenerator.getGroundTiles();
         Tile[] accessoryTiles = terrainGenerator.getAccessoryTiles();
-        int groundTilesLength = groundTiles.Length;
-        int accessoryTilesLength = accessoryTiles.Length;
 
         // river tile
         Tile riverTile = riverGenerator.getTile();
@@ -171,24 +170,25 @@ public class Level : MonoBehaviour
         {
             for (int y = 0; y < levelMap.height; y++)
             {
-                switch (levelMap.getCell(x,y).status)
+                Cell currentCell = levelMap.getCell(x, y);
+                switch (currentCell.status)
                 {
                     case Cell.CellStatus.TerrainCell:
 
-                        positions[(int)TilemapNames.Terrain].Add(levelMap.getCell(x, y).position);
+                        positions[(int)TilemapNames.Terrain].Add(currentCell.position);
                         // select random accessory tile at 30% chance
-                        tiles[(int)TilemapNames.Terrain].Add(UnityEngine.Random.Range(0.0f, 10.0f) > 3.0f ? groundTiles[levelMap.getCell(x, y).position.z % groundTilesLength] : accessoryTiles[levelMap.getCell(x, y).position.z % accessoryTilesLength]);
+                        tiles[(int)TilemapNames.Terrain].Add(UnityEngine.Random.Range(0.0f, 10.0f) > 3.0f ? groundTiles[currentCell.position.z % groundTiles.Length] : accessoryTiles[currentCell.position.z % accessoryTiles.Length]);
                         // add tiles below current position
-                        for (int z = levelMap.getCell(x, y).position.z - 1; z >= 0; z--)
+                        for (int z = currentCell.position.z - 1; z >= 0; z--)
                         {
-                            positions[(int)TilemapNames.Terrain].Add(new Vector3Int(levelMap.getCell(x, y).position.x, levelMap.getCell(x, y).position.y, z));
+                            positions[(int)TilemapNames.Terrain].Add(new Vector3Int(currentCell.position.x, currentCell.position.y, z));
                             tiles[(int)TilemapNames.Terrain].Add(groundTiles[0]);
                         }
                         break;
                     case Cell.CellStatus.RiverCell:
                         // set river tile to be 1 lower than the lowest depth neighbour
-                        levelMap.getCell(x, y).position.z = levelMap.getMinDepth(levelMap.getCell(x, y)) - 1;
-                        positions[(int)TilemapNames.Water].Add(levelMap.getCell(x, y).position);
+                        currentCell.position.z = levelMap.getMinDepth(currentCell) - 1;
+                        positions[(int)TilemapNames.Water].Add(currentCell.position);
                         tiles[(int)TilemapNames.Water].Add(riverTile);
                         break;
                     case Cell.CellStatus.LakeCell:
@@ -237,19 +237,15 @@ public class Level : MonoBehaviour
 
     public Vector3Int getRandomCell()
     {
-        bool cellFound = false;
-        while (!cellFound)
+        while (true)
         {
             Vector2Int cellPosition = new Vector2Int(UnityEngine.Random.Range(0, levelMap.width - 1), UnityEngine.Random.Range(0, levelMap.height - 1));
 
             if (levelMap.getCell(cellPosition).status == Cell.CellStatus.TerrainCell)
             {
-                cellFound = true;
                 return levelMap.getCell(cellPosition).position;
             }
         }
-
-        return default;
     }
 
     public Vector2 getGridPosition(Vector2Int cellPosition)
@@ -258,7 +254,7 @@ public class Level : MonoBehaviour
     }
 
 
-    public void clear()
+    private void clear()
     {
         isGenerated = false;
 

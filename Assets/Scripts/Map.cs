@@ -6,6 +6,8 @@ public class Map
 {
     private Cell[,] map;
 
+    private List<Vector2Int> boundaryCellPositions;
+
     public int terrainCellCount { get; private set; }
 
     public readonly int width;
@@ -29,55 +31,28 @@ public class Map
                 addCell(new Vector2Int(x,y), status);
             }
         }
+
+        boundaryCellPositions = new List<Vector2Int>();
     }
 
-    public void updateCellStatus(Vector2Int cellPosition, Cell.CellStatus status, bool intersectionsEnabled = false)
+    public void updateCellStatus(Cell currentCell, Cell.CellStatus status, bool intersectionsEnabled = false)
     {
-        Cell currentCell = map[cellPosition.x, cellPosition.y];
-
-        switch (status)
+        if (currentCell.status != status)
         {
-            case Cell.CellStatus.TerrainCell:
-                if (currentCell.status == Cell.CellStatus.TerrainCell)
-                {
-                    return;
-                }
+            if (status == Cell.CellStatus.TerrainCell)
+            {
                 terrainCellCount++;
-                break;
-            default:
-                if (currentCell.status == Cell.CellStatus.TerrainCell)
-                {
-                    terrainCellCount--;
-                }
-                break;
+            }
+
+            if (currentCell.status == Cell.CellStatus.TerrainCell)
+            {
+                terrainCellCount--;
+            }
+
         }
 
         currentCell.setCellStatus(status, intersectionsEnabled);
         //foreach get neighbours here
-    }
-
-    public void updateCellStatus(int x, int y , Cell.CellStatus status, bool intersectionsEnabled = false)
-    {
-        Cell currentCell = map[x, y];
-
-        switch (status)
-        {
-            case Cell.CellStatus.TerrainCell:
-                if (currentCell.status == Cell.CellStatus.TerrainCell)
-                {
-                    return;
-                }
-                terrainCellCount++;
-                break;
-            default:
-                if (currentCell.status == Cell.CellStatus.TerrainCell)
-                {
-                    terrainCellCount--;
-                }
-                break;
-        }
-
-        currentCell.setCellStatus(status, intersectionsEnabled);
     }
 
     public Cell getCell(Vector2Int cellPosition)
@@ -148,5 +123,95 @@ public class Map
         }
 
         return minDepth;
+    }
+
+    //set boundary cells for rectangular and square levels
+    public void setBoundaryCells()
+    {
+        Vector2Int position = new Vector2Int(0, 0);
+
+        boundaryCellPositions.Add(position);
+        getCell(position).onBoundary = true;
+
+        position = new Vector2Int(width - 1, 0);
+        boundaryCellPositions.Add(position);
+        getCell(position).onBoundary = true;
+
+        position = new Vector2Int(0, height - 1);
+        boundaryCellPositions.Add(position);
+        getCell(position).onBoundary = true;
+
+        position = new Vector2Int(width - 1, height - 1);
+        boundaryCellPositions.Add(position);
+        getCell(position).onBoundary = true;
+
+        for (int x = 0; x < width; x += (width - 1))
+        {
+            for (int y = 1; y < height - 1; y++)
+            {
+                position = new Vector2Int(x, y);
+                boundaryCellPositions.Add(position);
+                getCell(position).onBoundary = true;
+            }
+        }
+        for (int y = 0; y < height; y += (height - 1))
+        {
+            for (int x = 1; x < width - 1; x++)
+            {
+                position = new Vector2Int(x, y);
+                boundaryCellPositions.Add(position);
+                getCell(position).onBoundary = true;
+            }
+        }
+    }
+
+    public void checkForBoundaryCell(Cell cell)
+    {
+        List<Cell> neighbours = getNeighbours(cell);
+
+        if (neighbours.Count < 4)
+        {
+            // its a boundary tile
+            addBoundaryCellPosition((Vector2Int)cell.position);
+        }
+        else
+        {
+            int invalidTileCount = 0;
+            int validTileCount = 0;
+
+            foreach (Cell neighbour in neighbours)
+            {
+                switch (neighbour.status)
+                {
+                    case Cell.CellStatus.ValidCell:
+                        validTileCount++;
+                        break;
+                    //invalid
+                    default:
+                        //if (closedSet.Contains(neighbour))
+                        {
+                            invalidTileCount++;
+                        }
+                        break;
+                }
+            }
+
+            if (validTileCount > 0 && invalidTileCount > 0)
+            {
+                // its a boundary tile
+                addBoundaryCellPosition((Vector2Int)cell.position);
+            }
+        }
+    }
+
+    public void addBoundaryCellPosition(Vector2Int position)
+    {
+        boundaryCellPositions.Add(position);
+        getCell(position).onBoundary = true;
+    }
+
+    public List<Vector2Int> getBoundaryCellPositions()
+    {
+        return boundaryCellPositions;
     }
 }

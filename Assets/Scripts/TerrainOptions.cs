@@ -102,6 +102,7 @@ public class TerrainOptions : Options
         // variables set here as this method is always called after submission of the options
         terrainType = (TerrainGenerator.TerrainType)dropdowns[((int)TerrainDropdownName.TerrainType)].value;
         heightRangedEnabled = toggles[(int)TerrainToggleOptionName.TerrainRangeHeight].isOn;
-        return heightRangedEnabled && (int.Parse(inputFields[((int)TerrainSliderInputName.TerrainRangeHeightMin)].text) > int.Parse(inputFields[((int)TerrainSliderInputName.TerrainRangeHeightMax)].text));
+
+        return heightRangedEnabled && (int.Parse(inputFields[((int)TerrainSliderInputName.TerrainRangeHeightMin)].text) >= int.Parse(inputFields[((int)TerrainSliderInputName.TerrainRangeHeightMax)].text));
     }
 }

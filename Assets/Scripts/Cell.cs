@@ -10,7 +10,7 @@ public class Cell : IHeapItem<Cell>
     public int hCost;
     public int gCost;
     public bool isTraversable;
-    public enum CellStatus { ValidCell, InvalidCell, TerrainCell, TerrainBoundaryCell, LakeCell, RiverCell, OutOfBounds }
+    public enum CellStatus { ValidCell, InvalidCell, TerrainCell, LakeCell, RiverCell }
     public CellStatus status;
     int heapIndex;
     public bool onBoundary;
