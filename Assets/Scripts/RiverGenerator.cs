@@ -56,13 +56,9 @@ public class RiverGenerator
         return riverTilesByType[riverSettings.tType];
     }
 
-    public void populateCells(Cell[,] map, List<Vector3Int> terrainCellList, List<Vector2Int> boundaryCellList)
+    public void populateCells(Map map, List<Vector3Int> terrainCellList, List<Vector2Int> boundaryCellList)
     {
-        int width = map.GetLength(0);
-        int height = map.GetLength(1);
-        int levelArea = width * height;
-
-        riverMaxCount = (int)Math.Ceiling(levelArea * (rMultiplier * ((int)riverSettings.rNum + 1)));
+        riverMaxCount = (int)Math.Ceiling(map.area * (rMultiplier * ((int)riverSettings.rNum + 1)));
 
         Heap<CellPair> cellPairs = new Heap<CellPair>(riverMaxCount);
 
@@ -90,7 +86,7 @@ public class RiverGenerator
     }
 
 
-    private CellPair getReachableCells(Cell[,] map,ref List<Vector2Int> boundaryCellList, int riverCount, Heap<CellPair> cellPairs, bool intersectionsEnabled)
+    private CellPair getReachableCells(Map map,ref List<Vector2Int> boundaryCellList, int riverCount, Heap<CellPair> cellPairs, bool intersectionsEnabled)
     {
         Vector2Int boundaryCellXYPosition;
         int traversableNeighbourCount;
@@ -114,7 +110,7 @@ public class RiverGenerator
 
                     boundaryCellXYPosition = boundaryCellListClone[UnityEngine.Random.Range(0, boundaryCellListClone.Count - 1)];
 
-                    Cell cellToCheck = map[boundaryCellXYPosition.x, boundaryCellXYPosition.y];
+                    Cell cellToCheck = map.getCell(boundaryCellXYPosition);
 
                     traversableNeighbourCount = 0;
 
@@ -137,13 +133,13 @@ public class RiverGenerator
                         // remove adjacent boundary cells from list, we dont want the possibility
                         // of a 2 cell river
 
-                        foreach (Cell neighbour in getNeighbours(map, map[boundaryCellXYPosition.x, boundaryCellXYPosition.y]))
+                        foreach (Cell neighbour in getNeighbours(map, map.getCell(boundaryCellXYPosition)))
                         {
                             //no need to check contain first, will just return false if not in list
                             boundaryCellListClone.Remove((Vector2Int)neighbour.position);
                         }
 
-                        cellPair[x] = map[boundaryCellXYPosition.x, boundaryCellXYPosition.y];
+                        cellPair[x] = map.getCell(boundaryCellXYPosition);
                         break;
                     }
 
@@ -251,9 +247,9 @@ public class RiverGenerator
         return (val > 0) ? 1 : 2; // clock or counterclock wise
     }
 
-    private bool findAStarPath(Cell[,] map, Cell startNode, Cell endNode, bool intersectionsEnabled)
+    private bool findAStarPath(Map map, Cell startNode, Cell endNode, bool intersectionsEnabled)
     {
-        Heap<Cell> openList = new Heap<Cell>(map.Length);
+        Heap<Cell> openList = new Heap<Cell>(map.area);
         HashSet<Cell> closedList = new HashSet<Cell>();
         Cell currentNode;
 
@@ -275,28 +271,28 @@ public class RiverGenerator
                 {
                     // change the level cells map
                     position = currentNode.position;
-                    map[position.x, position.y].status = Cell.CellStatus.RiverCell;
+
+                    map.updateCellStatus((Vector2Int)position, Cell.CellStatus.RiverCell, intersectionsEnabled);
 
                     if (!intersectionsEnabled)
                     {
-                        map[position.x, position.y].isTraversable = false;
                         foreach (Cell neighbour in getNeighbours(map, currentNode))
                         {
-                            map[neighbour.position.x, neighbour.position.y].isTraversable = false;
+                            map.getCell((Vector2Int)neighbour.position).isTraversable = false;
                         }
                     }
                     currentNode = currentNode.parent;
                 }
                 // change the level cells map
                 position = currentNode.position;
-                map[position.x, position.y].status = Cell.CellStatus.RiverCell;
+
+                map.updateCellStatus((Vector2Int)position, Cell.CellStatus.RiverCell, intersectionsEnabled);
 
                 if (!intersectionsEnabled)
                 {
-                    map[position.x, position.y].isTraversable = false;
                     foreach (Cell neighbour in getNeighbours(map, currentNode))
                     {
-                        map[neighbour.position.x, neighbour.position.y].isTraversable = false;
+                        map.getCell((Vector2Int)neighbour.position).isTraversable = false;
                     }
                 }
                 return true;
@@ -309,7 +305,6 @@ public class RiverGenerator
                 {
                     continue;
                 }
-
 
                 int newNeighbourGCost = currentNode.gCost + GetDistance(currentNode, neighbourNode);
 
@@ -334,7 +329,7 @@ public class RiverGenerator
 
     // work out what the z value of the river tile should be based on its
     // surrounding terrain tiles
-    public int getMaxDepth(Cell[,] map, Cell currentNode)
+    public int getMaxDepth(Map map, Cell currentNode)
     {
         int maxRiverDepth = currentNode.position.z;
 
@@ -349,6 +344,7 @@ public class RiverGenerator
 
         return maxRiverDepth - 1;
     }
+
     private int GetDistance(Cell startNode, Cell endNode)
     {
         int xDistance = Mathf.Abs(startNode.position.x - endNode.position.x);
@@ -357,36 +353,34 @@ public class RiverGenerator
         return 10 * (yDistance + xDistance);
     }
 
-    private List<Cell> getNeighbours(Cell[,] grid, Cell currentNode)
+    private List<Cell> getNeighbours(Map map, Cell currentNode)
     {
         List<Cell> neighbours = new List<Cell>();
-        int width = grid.GetLength(0);
-        int height = grid.GetLength(1);
 
         Vector3Int currentNodePosition = currentNode.position;
 
         // left
         if(currentNodePosition.x > 0)
         {
-            neighbours.Add(grid[currentNodePosition.x - 1, currentNodePosition.y]);
+            neighbours.Add(map.getCell(currentNodePosition.x - 1, currentNodePosition.y));
         }
 
         // right
-        if(currentNodePosition.x < width - 1)
+        if(currentNodePosition.x < map.width - 1)
         {
-            neighbours.Add(grid[currentNodePosition.x + 1, currentNodePosition.y]);
+            neighbours.Add(map.getCell(currentNodePosition.x + 1, currentNodePosition.y));
         }
 
         // top
-        if (currentNodePosition.y < height - 1)
+        if (currentNodePosition.y < map.height - 1)
         {
-            neighbours.Add(grid[currentNodePosition.x, currentNodePosition.y + 1]);
+            neighbours.Add(map.getCell(currentNodePosition.x, currentNodePosition.y + 1));
         }
 
         // bottom
         if (currentNodePosition.y > 0)
         {
-            neighbours.Add(grid[currentNodePosition.x, currentNodePosition.y - 1]);
+            neighbours.Add(map.getCell(currentNodePosition.x, currentNodePosition.y - 1));
         }
 
         return neighbours;

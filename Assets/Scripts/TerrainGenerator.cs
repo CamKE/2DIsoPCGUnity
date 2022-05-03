@@ -129,31 +129,27 @@ public class TerrainGenerator
         this.terrainSettings = terrainSettings;
     }
 
-    public void populateCells(Cell[,] map)
+    public void populateCells(Map map)
     {
         // define all the terrain cells
-
-        // get width and height of the array
-        int width = map.GetLength(0);
-        int height = map.GetLength(1);
 
         terrainCellList = new List<Vector3Int>();
 
         if (terrainSettings.heightRangedEnabled)
         {
-            setCellsRange(map, width, height, terrainSettings.tMinHeight, terrainSettings.tMaxHeight); ;
+            setCellsRange(map, terrainSettings.tMinHeight, terrainSettings.tMaxHeight); ;
         }
         else
         {
-            setCellsExact(map, width, height, terrainSettings.tExactHeight);
+            setCellsExact(map, terrainSettings.tExactHeight);
         }
 
     }
 
-    public Cell[,] createMap()
+    public Map createMap()
     {
         Vector2Int mapDimensions = Vector2Int.zero;
-        Cell[,] map;
+        Map map;
         boundaryCellList = new List<Vector2Int>();
 
         // check the terrain shape chosen
@@ -163,14 +159,7 @@ public class TerrainGenerator
             case TerrainGenerator.TerrainShape.Rectangle:
                 // 2:1, 3:1, or 4:1 ratio
                 mapDimensions = getDimensions(terrainSettings.tSize, UnityEngine.Random.Range(2, 4));
-                map = new Cell[mapDimensions.x, mapDimensions.y];
-                for (int x = 0; x < mapDimensions.x; x++)
-                {
-                    for (int y = 0; y < mapDimensions.y; y++)
-                    {
-                        map[x, y] = new Cell(new Vector3Int(x, y, 0), true);
-                    }
-                }
+                map = new Map(mapDimensions.x, mapDimensions.y);
                 setBoundaryCells(map);
                 break;
             // for random shape
@@ -184,16 +173,7 @@ public class TerrainGenerator
             // default shape is square 
             default:
                 mapDimensions = getDimensions(terrainSettings.tSize);
-
-                map = new Cell[mapDimensions.x, mapDimensions.y];
-
-                for (int x = 0; x < mapDimensions.x; x++)
-                {
-                    for (int y = 0; y < mapDimensions.y; y++)
-                    {
-                        map[x, y] = new Cell(new Vector3Int(x, y, 0), true);
-                    }
-                }
+                map = new Map(mapDimensions.x, mapDimensions.y);
                 setBoundaryCells(map);
                 break;
         }
@@ -202,68 +182,58 @@ public class TerrainGenerator
     }
 
     //set boundary cells for rectangular and square levels
-    private void setBoundaryCells(Cell[,] map)
+    private void setBoundaryCells(Map map)
     {
-        int width = map.GetLength(0);
-        int height = map.GetLength(1);
-
         Vector2Int position = new Vector2Int(0, 0);
 
         boundaryCellList.Add(position);
-        map[position.x, position.y].isTraversable = false;
+        map.getCell(position).onBoundary = true;
 
-        position = new Vector2Int(width - 1, 0);
+        position = new Vector2Int(map.width - 1, 0);
         boundaryCellList.Add(position);
-        map[position.x, position.y].isTraversable = false;
+        map.getCell(position).onBoundary = true;
 
-        position = new Vector2Int(0, height - 1);
+        position = new Vector2Int(0, map.height - 1);
         boundaryCellList.Add(position);
-        map[position.x, position.y].isTraversable = false;
+        map.getCell(position).onBoundary = true;
 
-        position = new Vector2Int(width - 1, height - 1);
+        position = new Vector2Int(map.width - 1, map.height - 1);
         boundaryCellList.Add(position);
-        map[position.x, position.y].isTraversable = false;
+        map.getCell(position).onBoundary = true;
 
-        for (int x = 0; x < width; x += (width - 1))
+        for (int x = 0; x < map.width; x += (map.width - 1))
         {
-            for (int y = 1; y < height - 1; y++)
+            for (int y = 1; y < map.height - 1; y++)
             {
-                boundaryCellList.Add(new Vector2Int(x, y));
-                map[x, y].isTraversable = false;
+                position = new Vector2Int(x,y);
+                boundaryCellList.Add(position);
+                map.getCell(position).onBoundary = true;
             }
         }
-        for (int y = 0; y < height; y += (height - 1))
+        for (int y = 0; y < map.height; y += (map.height - 1))
         {
-            for (int x = 1; x < width - 1; x++)
+            for (int x = 1; x < map.width - 1; x++)
             {
-                boundaryCellList.Add(new Vector2Int(x, y));
-                map[x, y].isTraversable = false;
+                position = new Vector2Int(x, y);
+                boundaryCellList.Add(position);
+                map.getCell(position).onBoundary = true;
             }
         }
     }
 
-    private Cell[,] createRandomLevelShapeBFS(int terrainSize)
+    private Map createRandomLevelShapeBFS(int terrainSize)
     {
         // get the square size.
         Vector2Int dimensions = getDimensions(terrainSize);
 
         int terrainLength = dimensions.x;
-
-        Cell[,] newLevelShape = new Cell[terrainLength, terrainLength];
-
-        // set all cells to be invalid initially
-        for (int x = 0; x < terrainLength; x++)
-        {
-            for (int y = 0; y < terrainLength; y++)
-            {
-                newLevelShape[x, y] = new Cell(new Vector3Int(x, y, 0), false);
-                newLevelShape[x, y].setCellStatus(Cell.CellStatus.InvalidCell);
-            }
-        }
+        
+        // set all cells invalid initially
+        Map map = new Map(terrainLength,terrainLength, Cell.CellStatus.InvalidCell);
 
         Vector2Int centerCell = new Vector2Int(terrainLength / 2, terrainLength / 2);
 
-        newLevelShape[centerCell.x, centerCell.y].setCellStatus(Cell.CellStatus.ValidCell);
+        map.updateCellStatus(centerCell, Cell.CellStatus.ValidCell);
 
         Queue<Vector2Int> openSetPositions = new Queue<Vector2Int>();
         HashSet<Vector2Int> closedSetPositions = new HashSet<Vector2Int>();
@@ -291,7 +261,7 @@ public class TerrainGenerator
 
             foreach (Vector2Int neighbour in neighbours)
             {
-                switch (newLevelShape[neighbour.x, neighbour.y].status)
+                switch (map.getCell(neighbour).status)
                 {
                     case Cell.CellStatus.ValidCell:
                         validTileCount++;
@@ -309,13 +279,13 @@ public class TerrainGenerator
             //make valid based on random prob
             if (UnityEngine.Random.value < validTileChance && (validTileCount > 0 && invalidTileCount == 0 ))                                                                                                                                                                                                                                                                                                                                                   
             {
-                newLevelShape[currentCellPosition.x, currentCellPosition.y].setCellStatus(Cell.CellStatus.ValidCell);
+                map.updateCellStatus(currentCellPosition, Cell.CellStatus.ValidCell);
                 validTileChance -= (chanceFalloffRate / (float)terrainSize);
 
             }
 
 
-            if (newLevelShape[currentCellPosition.x, currentCellPosition.y].status == Cell.CellStatus.ValidCell)
+            if (map.getCell(currentCellPosition).status == Cell.CellStatus.ValidCell)
             {
 
                 foreach (Vector2Int neighbour in neighbours)
@@ -333,7 +303,7 @@ public class TerrainGenerator
         }
 
         // set the boundary cells
-        foreach (Cell cell in newLevelShape)
+        foreach (Cell cell in map.getAll())
         {
             if (cell.status == Cell.CellStatus.ValidCell)
             {
@@ -344,7 +314,7 @@ public class TerrainGenerator
                 foreach (Vector2Int neighbour in getNeighbours((Vector2Int)cell.position, dimensions))
                 {
 
-                    switch (newLevelShape[neighbour.x, neighbour.y].status)
+                    switch (map.getCell(neighbour).status)
                     {
                         case Cell.CellStatus.ValidCell:
                             validTileCount++;
@@ -363,12 +333,12 @@ public class TerrainGenerator
                 {
                     // its a boundary tile
                     boundaryCellList.Add((Vector2Int)cell.position);
-                    cell.isTraversable = false;
+                    cell.onBoundary = true;
                 }
             }
         }
 
-        return newLevelShape;
+        return map;
     }
 
     private List<Vector2Int> getNeighbours(Vector2Int currentPosition, Vector2Int mapDimensions)
@@ -407,58 +377,65 @@ public class TerrainGenerator
     {
 
         double rawLength = Math.Sqrt((float)terrainSize / ratio);
-        int length = (int)Math.Floor(rawLength);
-        //tminsize wrong, need user defined one
-        if ((length * length * ratio) < TerrainGenerator.terrainMinSize)
+
+        int length = (int)Math.Round(rawLength, MidpointRounding.AwayFromZero);
+
+        int totalArea = length * length * ratio;
+
+        if (totalArea < TerrainGenerator.terrainMinSize)
         {
             length = (int)Math.Ceiling(rawLength);
+        }
+        else if (totalArea > TerrainGenerator.terrainMaxSize)
+        {
+           length = (int)Math.Floor(rawLength);
         }
 
         // random orientation of width and height
         return UnityEngine.Random.value > 0.5f ? new Vector2Int(length, length * ratio) : new Vector2Int(length * ratio, length);
     }
 
-    private void setCellsRange(Cell[,] map, int mapWidth, int mapHeight, int minCellDepth, int maxCellDepth)
+    private void setCellsRange(Map map, int minCellDepth, int maxCellDepth)
     {
         Vector2 perlinOffset = new Vector2(UnityEngine.Random.Range(0.0f, 999.0f), UnityEngine.Random.Range(0.0f, 999.0f));
 
-        for (int x = 0; x < mapWidth; x++)
+        for (int x = 0; x < map.width; x++)
         {
-            for (int y = 0; y < mapHeight; y++)
+            for (int y = 0; y < map.height; y++)
             {
                 // check in the 2d z plane if we are able to put a tile on the cell
                 // all tiles in the y plane at x,0 will also be valid cells
-                if (map[x, y].status == Cell.CellStatus.ValidCell)
+                if (map.getCell(x,y).status == Cell.CellStatus.ValidCell)
                 {
                     // work out which cell in the z plane should be populated
-                    int zValue = calculateDepth(x, y, mapWidth, mapHeight, minCellDepth, maxCellDepth, perlinOffset);
+                    int zValue = calculateDepth(x, y, map.width, map.height, minCellDepth, maxCellDepth, perlinOffset);
 
                     // mark the cell as a terrain cell
-                    map[x, y].status = Cell.CellStatus.TerrainCell;
-                    map[x, y].position = new Vector3Int(x, y, zValue);
+                    map.updateCellStatus(x,y, Cell.CellStatus.TerrainCell);
+                    map.getCell(x, y).position.z = zValue;
                     // an implementation which will need to be refactored.
                     // when path gen is done, we will need to refactor.
-                    terrainCellList.Add(map[x, y].position);
+                    terrainCellList.Add(map.getCell(x, y).position);
                 }
             }
         }
     }
 
-    private void setCellsExact(Cell[,] map, int mapWidth, int mapHeight, int cellDepth)
+    private void setCellsExact(Map map, int cellDepth)
     {
-        for (int x = 0; x < mapWidth; x++)
+        for (int x = 0; x < map.width; x++)
         {
-            for (int y = 0; y < mapHeight; y++)
+            for (int y = 0; y < map.height; y++)
             {
                 // check in the 2d z plane if we are able to put a tile on the cell
                 // all tiles in the y plane at x,0 will also be valid cells
-                if (map[x, y].status == Cell.CellStatus.ValidCell)
+                if (map.getCell(x,y).status == Cell.CellStatus.ValidCell)
                 {
                     // mark the cell as a terrain cell
-                    map[x, y].status = Cell.CellStatus.TerrainCell;
-                    map[x, y].position = new Vector3Int(x, y, cellDepth);
+                    map.updateCellStatus(x, y, Cell.CellStatus.TerrainCell);
+                    map.getCell(x, y).position.z = cellDepth;
 
-                    terrainCellList.Add(map[x, y].position);
+                    terrainCellList.Add(map.getCell(x, y).position);
                 }
             }
         }
@@ -488,15 +465,14 @@ public class TerrainGenerator
         return zValue;
     }
 
-    public void setOuterBounds(Cell[,] map, ref List<Vector3Int> positions, ref List<TileBase> tiles, ref List<Vector3Int> positions2, ref List<TileBase> tiles2)
+    public void setOuterBounds(Map map, ref List<Vector3Int> positions, ref List<TileBase> tiles, ref List<Vector3Int> positions2, ref List<TileBase> tiles2)
     {
-        Vector2Int mapDimensions = new Vector2Int(map.GetLength(0), map.GetLength(1));
         foreach (Vector2Int boundaryCellPosition in boundaryCellList)
         {
             // if x+1 is out the bounds of the array or its an invalid cell, its an outer bound
-            if (boundaryCellPosition.x + 1 >  mapDimensions.x-1 || map[boundaryCellPosition.x + 1, boundaryCellPosition.y].status == Cell.CellStatus.InvalidCell)
+            if (boundaryCellPosition.x + 1 >  map.width-1 || map.getCell(boundaryCellPosition).status == Cell.CellStatus.InvalidCell)
             {
-                Vector3Int outerBoundPosition = new Vector3Int(boundaryCellPosition.x + 1, boundaryCellPosition.y, map[boundaryCellPosition.x, boundaryCellPosition.y].position.z);
+                Vector3Int outerBoundPosition = new Vector3Int(boundaryCellPosition.x + 1, boundaryCellPosition.y, map.getCell(boundaryCellPosition).position.z);
                 if (!positions2.Contains(outerBoundPosition) && !positions.Contains(outerBoundPosition))
                 {
                     positions2.Add(outerBoundPosition);
@@ -506,9 +482,9 @@ public class TerrainGenerator
             }
 
             // if x-1 is out the bounds of the array or its an invalid cell, its an outer bound
-            if (boundaryCellPosition.x - 1 < 0 || map[boundaryCellPosition.x - 1, boundaryCellPosition.y].status == Cell.CellStatus.InvalidCell)
+            if (boundaryCellPosition.x - 1 < 0 || map.getCell(boundaryCellPosition.x - 1, boundaryCellPosition.y).status == Cell.CellStatus.InvalidCell)
             {
-                Vector3Int outerBoundPosition = new Vector3Int(boundaryCellPosition.x - 1, boundaryCellPosition.y, map[boundaryCellPosition.x, boundaryCellPosition.y].position.z);
+                Vector3Int outerBoundPosition = new Vector3Int(boundaryCellPosition.x - 1, boundaryCellPosition.y, map.getCell(boundaryCellPosition).position.z);
                 if (!positions.Contains(outerBoundPosition) && !positions2.Contains(outerBoundPosition))
                 {
                     positions.Add(outerBoundPosition);
@@ -517,9 +493,9 @@ public class TerrainGenerator
             }
 
             // if y+1 is out the bounds of the array or its an invalid cell, its an outer bound
-            if (boundaryCellPosition.y + 1 > mapDimensions.y - 1 || map[boundaryCellPosition.x, boundaryCellPosition.y+1].status == Cell.CellStatus.InvalidCell)
+            if (boundaryCellPosition.y + 1 > map.height - 1 || map.getCell(boundaryCellPosition.x, boundaryCellPosition.y+1).status == Cell.CellStatus.InvalidCell)
             {
-                Vector3Int outerBoundPosition = new Vector3Int(boundaryCellPosition.x, boundaryCellPosition.y+1, map[boundaryCellPosition.x, boundaryCellPosition.y].position.z);
+                Vector3Int outerBoundPosition = new Vector3Int(boundaryCellPosition.x, boundaryCellPosition.y+1, map.getCell(boundaryCellPosition).position.z);
                 if (!positions2.Contains(outerBoundPosition) && !positions.Contains(outerBoundPosition))
                 {
                     positions2.Add(outerBoundPosition);
@@ -529,9 +505,9 @@ public class TerrainGenerator
             }
 
             // if x-1 is out the bounds of the array or its an invalid cell, its an outer bound
-            if (boundaryCellPosition.y - 1 < 0 || map[boundaryCellPosition.x, boundaryCellPosition.y-1].status == Cell.CellStatus.InvalidCell)
+            if (boundaryCellPosition.y - 1 < 0 || map.getCell(boundaryCellPosition.x, boundaryCellPosition.y-1).status == Cell.CellStatus.InvalidCell)
             {
-                Vector3Int outerBoundPosition = new Vector3Int(boundaryCellPosition.x, boundaryCellPosition.y-1, map[boundaryCellPosition.x, boundaryCellPosition.y].position.z);
+                Vector3Int outerBoundPosition = new Vector3Int(boundaryCellPosition.x, boundaryCellPosition.y-1, map.getCell(boundaryCellPosition).position.z);
                 if (!positions.Contains(outerBoundPosition) && !positions2.Contains(outerBoundPosition))
                 {
                     positions.Add(outerBoundPosition);

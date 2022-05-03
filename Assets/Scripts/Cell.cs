@@ -10,19 +10,23 @@ public class Cell : IHeapItem<Cell>
     public int hCost;
     public int gCost;
     public bool isTraversable;
-    public enum CellStatus { ValidCell, InvalidCell, TerrainCell, LakeCell, RiverCell, OutOfBounds }
+    public enum CellStatus { ValidCell, InvalidCell, TerrainCell, TerrainBoundaryCell, LakeCell, RiverCell, OutOfBounds }
     public CellStatus status;
     int heapIndex;
-    
+    public bool onBoundary;
+
     // update bool based on cell status
-    public void setCellStatus(CellStatus newStatus)
+    public void setCellStatus(CellStatus newStatus, bool intersectionsEnabled = false)
     {
         status = newStatus;
         switch (newStatus)
         {
             case CellStatus.ValidCell:
             case CellStatus.TerrainCell:
-                isTraversable = true;
+                isTraversable = onBoundary ? false : true;
+                break;
+            case CellStatus.RiverCell:
+                isTraversable = intersectionsEnabled;
                 break;
             default:
                 isTraversable = false;
@@ -31,10 +35,10 @@ public class Cell : IHeapItem<Cell>
     }
     
 
-    public Cell(Vector3Int position, bool isTraversable)
+    public Cell(Vector3Int position, CellStatus status = CellStatus.ValidCell)
     {
         this.position = position;
-        this.isTraversable = isTraversable;
+        setCellStatus(status);
     }
 
     public int fCost()
