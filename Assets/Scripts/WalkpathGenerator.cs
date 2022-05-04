@@ -63,31 +63,34 @@ public class WalkpathGenerator : PathGenerator
 
     public void populateCells(Map map)
     {
-        walkpathMaxCount = (int)Math.Ceiling(map.area * (wMultiplier * ((int)walkpathSettings.wNum + 1)));
+        List<Vector2Int> boundaryCellPositions = map.getBoundaryCellPositions();
 
-        Heap<CellPair> cellPairs = new Heap<CellPair>(walkpathMaxCount);
+            walkpathMaxCount = (int)Math.Ceiling(map.area * (wMultiplier * ((int)walkpathSettings.wNum + 1)));
 
-        for (int riverCount = 0; riverCount < walkpathMaxCount; riverCount++)
-        {
-            CellPair pair = getReachableCells(map, map.getBoundaryCellPositions(), riverCount, cellPairs, walkpathSettings.intersectionsEnabled);
+            Heap<CellPair> cellPairs = new Heap<CellPair>(walkpathMaxCount);
 
-            if (pair == null)
+            for (int count = 0; count < walkpathMaxCount; count++)
             {
-                break;
+                CellPair pair = getReachableCells(map, boundaryCellPositions, cellPairs, walkpathSettings.intersectionsEnabled);
+
+                if (pair == null)
+                {
+                    break;
+                }
+
+                cellPairs.Add(pair);
+            
             }
 
-            cellPairs.Add(pair);
+            while (cellPairs.Count > 0)
+            {
+                CellPair cellPair = cellPairs.RemoveFirst();
+                cellPair.startCell.isTraversable = true;
+                cellPair.endCell.isTraversable = true;
 
-        }
-
-        while (cellPairs.Count > 0)
-        {
-            CellPair cellPair = cellPairs.RemoveFirst();
-            cellPair.startCell.isTraversable = true;
-            cellPair.endCell.isTraversable = true;
-
-            bool done = findAStarPath(map, cellPair.startCell, cellPair.endCell, Cell.CellStatus.WalkpathCell, walkpathSettings.intersectionsEnabled);
-        }
+                bool done = findAStarPath(map, cellPair.startCell, cellPair.endCell, Cell.CellStatus.WalkpathCell, walkpathSettings.intersectionsEnabled);
+            }
+        
     }
 
     public void randomlyGenerate()

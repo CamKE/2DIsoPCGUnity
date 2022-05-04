@@ -68,9 +68,9 @@ public class RiverGenerator : PathGenerator
 
         Heap<CellPair> cellPairs = new Heap<CellPair>(riverMaxCount);
 
-        for (int riverCount = 0; riverCount < riverMaxCount; riverCount++)
+        for (int count = 0; count < riverMaxCount; count++)
         {
-            CellPair pair = getReachableCells(map, map.getBoundaryCellPositions(), riverCount, cellPairs, riverSettings.intersectionsEnabled);
+            CellPair pair = getReachableCells(map, map.getBoundaryCellPositions(), cellPairs, riverSettings.intersectionsEnabled);
 
             if (pair == null)
             {

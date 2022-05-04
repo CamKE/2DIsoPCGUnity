@@ -8,7 +8,7 @@ using UnityEngine.U2D;
 public class PathGenerator
 {
 
-    protected CellPair getReachableCells(Map map, List<Vector2Int> boundaryCellList, int riverCount, Heap<CellPair> cellPairs, bool intersectionsEnabled)
+    protected CellPair getReachableCells(Map map, List<Vector2Int> boundaryCellList, Heap<CellPair> cellPairs, bool intersectionsEnabled)
     {
         Vector2Int boundaryCellXYPosition;
         int traversableNeighbourCount;
@@ -29,7 +29,10 @@ public class PathGenerator
             {
                 while (true)
                 {
-
+                    if (boundaryCellListClone.Count == 0)
+                    {
+                        return null;
+                    }
                     boundaryCellXYPosition = boundaryCellListClone[UnityEngine.Random.Range(0, boundaryCellListClone.Count - 1)];
 
                     Cell cellToCheck = map.getCell(boundaryCellXYPosition);
@@ -66,13 +69,14 @@ public class PathGenerator
                     }
 
                     boundaryCellListClone.Remove(boundaryCellXYPosition);
+                    boundaryCellList.Remove(boundaryCellXYPosition);
                 }
             }
 
 
             riverNodesFound = true;
 
-            for (int x = 0; x < riverCount; x++)
+            for (int x = 0; x < cellPairs.Count; x++)
             {
                 //bool intersects = lineSegmentsIntersect(cellPair[0].position, cellPair[1].position, rivers[x].First(), rivers[x].Last());
                 if (!intersectionsEnabled && doIntersect(cellPair[0].position, cellPair[1].position, cellPairs.getItem(x).startCell.position, cellPairs.getItem(x).endCell.position))
