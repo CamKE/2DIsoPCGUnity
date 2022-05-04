@@ -33,11 +33,11 @@ public class LevelManager : MonoBehaviour
     /// <summary>
     /// Generate the level. temporary setup.
     /// </summary>
-    public void generate(TerrainOptions.TerrainSettings terrainSettings, RiverOptions.RiverSettings riverSettings, LakeOptions.LakeSettings lakeSettings)
+    public void generate(TerrainOptions.TerrainSettings terrainSettings, RiverOptions.RiverSettings riverSettings, LakeOptions.LakeSettings lakeSettings, WalkpathPathOptions.WalkpathSettings walkpathSettings)
     {
         rangeHeightEnabled = terrainSettings.heightRangedEnabled;
 
-        level.generate(terrainSettings, riverSettings, lakeSettings);
+        level.generate(terrainSettings, riverSettings, lakeSettings, walkpathSettings);
     }
 
     // whether or not the player character has been instantiated

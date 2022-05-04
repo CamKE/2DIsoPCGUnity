@@ -57,10 +57,12 @@ public class TerrainGenerator
 
     private readonly string[] lavaAccessoryTileNames = { "ISO_Tile_LavaCracks_01", "ISO_Tile_LavaCracks_01 1" };
 
-    Tile test;
+    Tile outerBoundsTile;
 
     Dictionary<TerrainType, terrainTiles> terrainTilesByType;
-    
+
+    private static Action<Cell> checkForBoundaryCell;
+
     struct terrainTiles
     {
         public Tile[] groundTiles;
@@ -89,9 +91,8 @@ public class TerrainGenerator
 
     public TerrainGenerator(SpriteAtlas atlas)
     {
-        test = ScriptableObject.CreateInstance<Tile>();
-        test.sprite = atlas.GetSprite("ISO_Tile_Flesh_01");
-        //test.colliderType = Tile.ColliderType.Grid;
+        outerBoundsTile = ScriptableObject.CreateInstance<Tile>();
+        outerBoundsTile.sprite = atlas.GetSprite("ISO_Tile_Flesh_01");
 
         terrainTilesByType = new Dictionary<TerrainType, terrainTiles>();
 
@@ -142,6 +143,7 @@ public class TerrainGenerator
     {
         Vector2Int mapDimensions;
         Map map;
+        checkForBoundaryCell = null;
 
         // check the terrain shape chosen
         switch (terrainSettings.tShape)
@@ -151,7 +153,7 @@ public class TerrainGenerator
                 // 2:1, 3:1, or 4:1 ratio
                 mapDimensions = getDimensions(terrainSettings.tSize, UnityEngine.Random.Range(2, 4));
                 map = new Map(mapDimensions.x, mapDimensions.y);
-                map.setBoundaryCells();
+                checkForBoundaryCell += map.checkForBoundaryCell;
                 break;
             // for random shape
             case TerrainGenerator.TerrainShape.Random:
@@ -159,13 +161,13 @@ public class TerrainGenerator
                 // possibly return some other 2d structure that can grow like a list
                 // convert the 2d list of levelcellstatus to a 3d array 
                 map = createRandomLevelShapeBFS(terrainSettings.tSize);
-
+                checkForBoundaryCell += map.checkForBoundaryCellRandom;
                 break;
             // default shape is square 
             default:
                 mapDimensions = getDimensions(terrainSettings.tSize);
                 map = new Map(mapDimensions.x, mapDimensions.y);
-                map.setBoundaryCells();
+                checkForBoundaryCell += map.checkForBoundaryCell;
                 break;
         }
 
@@ -251,38 +253,6 @@ public class TerrainGenerator
 
         }
 
-        // set the boundary cells
-        foreach (Cell cell in map.getAll())
-        {
-            if (cell.status == Cell.CellStatus.ValidCell)
-            {
-                int validTileCount = 0;
-
-                List<Cell> neighbours = map.getNeighbours(cell);
-
-                if (neighbours.Count < 4)
-                {
-                    // its a boundary tile
-                    map.addBoundaryCellPosition((Vector2Int)cell.position);
-                }
-                else
-                {
-                    foreach (Cell neighbour in neighbours)
-                    {
-                        if (neighbour.status == Cell.CellStatus.ValidCell)
-                        {
-                            validTileCount++;
-                        }
-                    }
-                    if (validTileCount < 4)
-                    {
-                        // its a boundary tile
-                        map.addBoundaryCellPosition((Vector2Int)cell.position);
-                    }
-                }
-            }
-        }
-
         return map;
     }
 
@@ -322,6 +292,7 @@ public class TerrainGenerator
                 Cell currentCell = map.getCell(x, y);
                 if (currentCell.status == Cell.CellStatus.ValidCell)
                 {
+                    checkForBoundaryCell(currentCell);
                     // work out which cell in the z plane should be populated
                     int zValue = calculateDepth(x, y, map.width, map.height, minCellDepth, maxCellDepth, perlinOffset);
 
@@ -344,8 +315,9 @@ public class TerrainGenerator
                 Cell currentCell = map.getCell(x, y);
                 if (currentCell.status == Cell.CellStatus.ValidCell)
                 {
+                    checkForBoundaryCell(currentCell);
                     // mark the cell as a terrain cell
-                   map.updateCellStatus( currentCell, Cell.CellStatus.TerrainCell);
+                    map.updateCellStatus( currentCell, Cell.CellStatus.TerrainCell);
                     currentCell.position.z = cellDepth;
                 }
             }
@@ -387,7 +359,7 @@ public class TerrainGenerator
                 if (!positions2.Contains(outerBoundPosition) && !positions.Contains(outerBoundPosition))
                 {
                     positions2.Add(outerBoundPosition);
-                    tiles2.Add(test);
+                    tiles2.Add(outerBoundsTile);
 
                 }
             }
@@ -399,7 +371,7 @@ public class TerrainGenerator
                 if (!positions.Contains(outerBoundPosition) && !positions2.Contains(outerBoundPosition))
                 {
                     positions.Add(outerBoundPosition);
-                    tiles.Add(test);
+                    tiles.Add(outerBoundsTile);
                 }
             }
 
@@ -410,7 +382,7 @@ public class TerrainGenerator
                 if (!positions2.Contains(outerBoundPosition) && !positions.Contains(outerBoundPosition))
                 {
                     positions2.Add(outerBoundPosition);
-                    tiles2.Add(test);
+                    tiles2.Add(outerBoundsTile);
 
                 }
             }
@@ -422,7 +394,7 @@ public class TerrainGenerator
                 if (!positions.Contains(outerBoundPosition) && !positions2.Contains(outerBoundPosition))
                 {
                     positions.Add(outerBoundPosition);
-                    tiles.Add(test);
+                    tiles.Add(outerBoundsTile);
                 }
             }
         }

@@ -10,10 +10,11 @@ public class Cell : IHeapItem<Cell>
     public int hCost;
     public int gCost;
     public bool isTraversable;
-    public enum CellStatus { ValidCell, InvalidCell, TerrainCell, LakeCell, RiverCell }
+    public enum CellStatus { ValidCell, InvalidCell, TerrainCell, LakeCell, RiverCell, WalkpathCell }
     public CellStatus status;
     int heapIndex;
     public bool onBoundary;
+    public Map.BoundaryCellSide direction;
 
     // update bool based on cell status
     public void setCellStatus(CellStatus newStatus, bool intersectionsEnabled = false)

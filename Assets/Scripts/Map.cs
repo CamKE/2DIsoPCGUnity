@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Map
@@ -7,6 +9,10 @@ public class Map
     private Cell[,] map;
 
     private List<Vector2Int> boundaryCellPositions;
+
+    private List<Vector2Int>[] boundaryCellSides;
+
+    public enum BoundaryCellSide { Up, Down, Left, Right }
 
     public int terrainCellCount { get; private set; }
 
@@ -33,6 +39,14 @@ public class Map
         }
 
         boundaryCellPositions = new List<Vector2Int>();
+
+        int length = Enum.GetValues(typeof(BoundaryCellSide)).Length;
+        boundaryCellSides = new List<Vector2Int>[length];
+
+        for (int x = 0; x < length; x++)
+        {
+            boundaryCellSides[x] = new List<Vector2Int>();
+        }
     }
 
     public void updateCellStatus(Cell currentCell, Cell.CellStatus status, bool intersectionsEnabled = false)
@@ -84,25 +98,34 @@ public class Map
         // left
         if (currentNodePosition.x > 0)
         {
-            neighbours.Add(getCell(currentNodePosition.x - 1, currentNodePosition.y));
+            Cell cell = getCell(currentNodePosition.x - 1, currentNodePosition.y);
+            cell.direction = BoundaryCellSide.Left;
+            neighbours.Add(cell);
+
         }
 
         // right
         if (currentNodePosition.x < width - 1)
         {
-            neighbours.Add(getCell(currentNodePosition.x + 1, currentNodePosition.y));
+            Cell cell = getCell(currentNodePosition.x + 1, currentNodePosition.y);
+            cell.direction = BoundaryCellSide.Right;
+            neighbours.Add(cell);
         }
 
         // top
         if (currentNodePosition.y < height - 1)
         {
-            neighbours.Add(getCell(currentNodePosition.x, currentNodePosition.y + 1));
+            Cell cell = getCell(currentNodePosition.x, currentNodePosition.y + 1);
+            cell.direction = BoundaryCellSide.Up;
+            neighbours.Add(cell);
         }
 
         // bottom
         if (currentNodePosition.y > 0)
         {
-            neighbours.Add(getCell(currentNodePosition.x, currentNodePosition.y - 1));
+            Cell cell = getCell(currentNodePosition.x, currentNodePosition.y - 1);
+            cell.direction = BoundaryCellSide.Down;
+            neighbours.Add(cell);
         }
 
         return neighbours;
@@ -125,48 +148,10 @@ public class Map
         return minDepth;
     }
 
-    //set boundary cells for rectangular and square levels
-    public void setBoundaryCells()
+    public void checkForBoundaryCellRandom(Cell cell)
     {
-        Vector2Int position = new Vector2Int(0, 0);
+        int validTileCount = 0;
 
-        boundaryCellPositions.Add(position);
-        getCell(position).onBoundary = true;
-
-        position = new Vector2Int(width - 1, 0);
-        boundaryCellPositions.Add(position);
-        getCell(position).onBoundary = true;
-
-        position = new Vector2Int(0, height - 1);
-        boundaryCellPositions.Add(position);
-        getCell(position).onBoundary = true;
-
-        position = new Vector2Int(width - 1, height - 1);
-        boundaryCellPositions.Add(position);
-        getCell(position).onBoundary = true;
-
-        for (int x = 0; x < width; x += (width - 1))
-        {
-            for (int y = 1; y < height - 1; y++)
-            {
-                position = new Vector2Int(x, y);
-                boundaryCellPositions.Add(position);
-                getCell(position).onBoundary = true;
-            }
-        }
-        for (int y = 0; y < height; y += (height - 1))
-        {
-            for (int x = 1; x < width - 1; x++)
-            {
-                position = new Vector2Int(x, y);
-                boundaryCellPositions.Add(position);
-                getCell(position).onBoundary = true;
-            }
-        }
-    }
-
-    public void checkForBoundaryCell(Cell cell)
-    {
         List<Cell> neighbours = getNeighbours(cell);
 
         if (neighbours.Count < 4)
@@ -176,27 +161,14 @@ public class Map
         }
         else
         {
-            int invalidTileCount = 0;
-            int validTileCount = 0;
-
             foreach (Cell neighbour in neighbours)
             {
-                switch (neighbour.status)
+                if (neighbour.status == Cell.CellStatus.ValidCell || neighbour.status == Cell.CellStatus.TerrainCell)
                 {
-                    case Cell.CellStatus.ValidCell:
-                        validTileCount++;
-                        break;
-                    //invalid
-                    default:
-                        //if (closedSet.Contains(neighbour))
-                        {
-                            invalidTileCount++;
-                        }
-                        break;
+                    validTileCount++;
                 }
             }
-
-            if (validTileCount > 0 && invalidTileCount > 0)
+            if (validTileCount < 4)
             {
                 // its a boundary tile
                 addBoundaryCellPosition((Vector2Int)cell.position);
@@ -204,11 +176,41 @@ public class Map
         }
     }
 
+    public void checkForBoundaryCell(Cell cell)
+    {
+        List<Cell> neighbours = getNeighbours(cell);
+        // remove this if want to revert
+        List<BoundaryCellSide> sides = Enum.GetValues(typeof(BoundaryCellSide)).Cast<BoundaryCellSide>().ToList();
+
+        if (neighbours.Count < 4)
+        {
+            // remove this if want to revert
+            foreach (Cell neighbour in neighbours)
+            {
+                sides.Remove(neighbour.direction);
+            }
+            // its a boundary tile
+            addBoundaryCellPosition((Vector2Int)cell.position);
+            // remove this if want to revert
+            addBoundaryCellPosition((Vector2Int)cell.position, sides.First());
+        }
+
+    }
+
+
     public void addBoundaryCellPosition(Vector2Int position)
     {
         boundaryCellPositions.Add(position);
         getCell(position).onBoundary = true;
     }
+
+    // remove this if want to revert
+    public void addBoundaryCellPosition(Vector2Int position, BoundaryCellSide side)
+    {
+        boundaryCellSides[(int)side].Add(position);
+        getCell(position).onBoundary = true;
+    }
+
 
     public List<Vector2Int> getBoundaryCellPositions()
     {

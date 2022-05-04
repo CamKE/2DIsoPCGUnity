@@ -44,6 +44,9 @@ public class UIManager : MonoBehaviour
     private LakeOptions lakeOptions;
 
     [SerializeField]
+    private WalkpathPathOptions walkpathPathOptions;
+
+    [SerializeField]
     private List<Button> levelInteractionButtons;
 
     // start is called before the first frame update when the script is enabled
@@ -54,6 +57,7 @@ public class UIManager : MonoBehaviour
         terrainOptions.setupUIElements();
         riverOptions.setupUIElements();
         lakeOptions.setupUIElements();
+        walkpathPathOptions.setupUIElements();
 
         foreach (Button button in levelInteractionButtons)
         {
@@ -103,9 +107,10 @@ public class UIManager : MonoBehaviour
         TerrainOptions.TerrainSettings terrainSettings =  terrainOptions.createUserSettings();
         RiverOptions.RiverSettings riverSettings = riverOptions.createUserSettings();
         LakeOptions.LakeSettings lakeSettings = lakeOptions.createUserSettings();
+        WalkpathPathOptions.WalkpathSettings walkpathSettings = walkpathPathOptions.createUserSettings();
 
         // generate the level
-        levelManager.generate(terrainSettings, riverSettings, lakeSettings);
+        levelManager.generate(terrainSettings, riverSettings, lakeSettings, walkpathSettings);
 
         foreach (Button button in levelInteractionButtons)
         {

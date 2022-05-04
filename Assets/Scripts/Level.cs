@@ -21,6 +21,8 @@ public class Level : MonoBehaviour
 
     private LakeGenerator lakeGenerator;
 
+    private WalkpathGenerator walkpathGenerator;
+
     // sprites packed for more efficient use
     [SerializeField]
     private SpriteAtlas atlas;
@@ -62,6 +64,8 @@ public class Level : MonoBehaviour
 
         lakeGenerator = new LakeGenerator(atlas);
 
+        walkpathGenerator = new WalkpathGenerator(atlas);
+
         cameraController = transform.GetChild(0).GetComponent<LevelCameraController>();
 
         cameraController.enabled = false;
@@ -101,7 +105,7 @@ public class Level : MonoBehaviour
         cameraController.gameObject.SetActive(value);
     }
 
-    public void generate(TerrainOptions.TerrainSettings terrainSettings, RiverOptions.RiverSettings riverSettings, LakeOptions.LakeSettings lakeSettings)
+    public void generate(TerrainOptions.TerrainSettings terrainSettings, RiverOptions.RiverSettings riverSettings, LakeOptions.LakeSettings lakeSettings, WalkpathPathOptions.WalkpathSettings walkpathSettings)
     {
        // Debug.Log("NEW RUN");
         clear();
@@ -140,6 +144,13 @@ public class Level : MonoBehaviour
             lakeGenerator.populateCells(levelMap);
         }
 
+        if (walkpathSettings.wGenerationEnabled)
+        {
+            walkpathGenerator.setWalkpathSettings(walkpathSettings);
+            // populate the levelCells 3d array with the river cells
+            walkpathGenerator.populateCells(levelMap);
+        }
+
         setTilemaps();
 
         sw.Stop();
@@ -164,6 +175,9 @@ public class Level : MonoBehaviour
 
         // river tile
         Tile riverTile = riverGenerator.getTile();
+
+        // walkpath tile
+        Tile walkpathTile = walkpathGenerator.getTile();
 
         for (int x = 0; x < levelMap.width; x++)
         {
@@ -192,6 +206,17 @@ public class Level : MonoBehaviour
                         break;
                     case Cell.CellStatus.LakeCell:
 
+                        break;
+                    case Cell.CellStatus.WalkpathCell:
+                        positions[(int)TilemapNames.Terrain].Add(currentCell.position);
+                        // select random accessory tile at 30% chance
+                        tiles[(int)TilemapNames.Terrain].Add(walkpathTile);
+                        // add tiles below current position
+                        for (int z = currentCell.position.z - 1; z >= 0; z--)
+                        {
+                            positions[(int)TilemapNames.Terrain].Add(new Vector3Int(currentCell.position.x, currentCell.position.y, z));
+                            tiles[(int)TilemapNames.Terrain].Add(groundTiles[0]);
+                        }
                         break;
                     default:
                         break;

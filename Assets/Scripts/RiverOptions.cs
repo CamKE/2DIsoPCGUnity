@@ -9,7 +9,7 @@ public class RiverOptions : Options
 {
     private enum RiverDropdownName { RiverAmount }
 
-    private enum RiverToggleOptionName { RiverGeneration, RiverIntersection, RiverBridges }
+    private enum RiverToggleOptionName { RiverGeneration, RiverIntersection }
 
     public struct RiverSettings
     {
@@ -17,15 +17,13 @@ public class RiverOptions : Options
         readonly public bool rGenerationEnabled;
         readonly public RiverGenerator.NumberOfRivers rNum;
         readonly public bool intersectionsEnabled;
-        readonly public bool bridgesEnabled;
 
-        public RiverSettings(TerrainGenerator.TerrainType tType, bool rGenerationEnabled, RiverGenerator.NumberOfRivers rNum, bool intersectionsEnabled, bool bridgesEnabled)
+        public RiverSettings(TerrainGenerator.TerrainType tType, bool rGenerationEnabled, RiverGenerator.NumberOfRivers rNum, bool intersectionsEnabled)
         {
             this.tType = tType;
             this.rGenerationEnabled = rGenerationEnabled;
             this.rNum = rNum;
             this.intersectionsEnabled = intersectionsEnabled;
-            this.bridgesEnabled = bridgesEnabled;
         }
     }
 
@@ -44,8 +42,7 @@ public class RiverOptions : Options
         bool rGenerationEnabled = toggles[(int)RiverToggleOptionName.RiverGeneration].isOn;
         RiverGenerator.NumberOfRivers rNum = (RiverGenerator.NumberOfRivers)dropdowns[(int)RiverDropdownName.RiverAmount].value;
         bool intersectionsEnabled = toggles[(int)RiverToggleOptionName.RiverIntersection].isOn;
-        bool bridgesEnabled = toggles[(int)RiverToggleOptionName.RiverBridges].isOn;
 
-        return new RiverSettings(terrainType, rGenerationEnabled, rNum, intersectionsEnabled, bridgesEnabled);
+        return new RiverSettings(terrainType, rGenerationEnabled, rNum, intersectionsEnabled);
     }
 }
