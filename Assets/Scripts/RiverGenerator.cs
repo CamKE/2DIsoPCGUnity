@@ -22,7 +22,7 @@ public class RiverGenerator : PathGenerator
 
     RiverOptions.RiverSettings riverSettings;
 
-    private const float rMultiplier = 0.0034f;
+    private const float rMultiplier = 0.0015f;
 
     // river gen currently only for square and rectangular levels
     public RiverGenerator(SpriteAtlas atlas)
@@ -64,7 +64,7 @@ public class RiverGenerator : PathGenerator
 
     public void populateCells(Map map)
     {
-        riverMaxCount = (int)Math.Ceiling(map.area * (rMultiplier * ((int)riverSettings.rNum + 1)));
+        riverMaxCount = (int)Math.Ceiling(map.terrainCellCount * (rMultiplier * ((int)riverSettings.rNum + 1)));
 
         Heap<CellPair> cellPairs = new Heap<CellPair>(riverMaxCount);
 

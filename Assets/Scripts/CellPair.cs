@@ -11,7 +11,7 @@ public class CellPair : IHeapItem<CellPair>
     public readonly Cell startCell;
     public readonly Cell endCell;
 
-    public CellPair(Cell startCell, Cell endCell, int distance)
+    public CellPair(Cell startCell, Cell endCell, int distance = 0)
     {
         this.startCell = startCell;
         this.endCell = endCell;

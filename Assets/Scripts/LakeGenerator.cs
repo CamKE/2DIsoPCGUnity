@@ -19,9 +19,17 @@ public class LakeGenerator
     private readonly string iceTileName = "ISO_Tile_Ice_01-06";
     private readonly string lavaTileName = "ISO_Tile_Lava_01";
 
-    private int lakeMaxsize;
+    int lakeMinSize = 4;
 
-    float lakeCoveragePercentage = 0.1f;
+    int lakeMaxSize;
+
+    int lakeMaxCount;
+
+    float lMultiplier = 0.0034f;
+
+    float sizeMultiplier = 0.05f;
+
+    List<CellPair> existingLakes;
 
     public LakeGenerator(SpriteAtlas atlas)
     {
@@ -49,11 +57,11 @@ public class LakeGenerator
 
     public void populateCells(Map map)
     {
-        //continue here
-        int terrainCellCountThreshhold = (int)Math.Round(map.terrainCellCount * (1.0f - lakeCoveragePercentage), MidpointRounding.AwayFromZero);
-        int lakeCount = 0;
+        lakeMaxCount = (int)Math.Ceiling(map.terrainCellCount * (lMultiplier * ((int)lakeSettings.lNum + 1)));
 
-        while (map.terrainCellCount > terrainCellCountThreshhold)
+        lakeMaxSize = (int)Math.Ceiling(map.terrainCellCount * (sizeMultiplier * ((int)lakeSettings.lMaxSize + 1)));
+
+        for (int count = 0; count < lakeMaxCount; count++)
         {
             Vector2Int lakeDimensions = getDimensions(5, 2);
 
@@ -61,21 +69,24 @@ public class LakeGenerator
             {
                 break;
             }
-            lakeCount++;
+            
         }
     }
 
     private bool addLake(Map map, Vector2Int lakeDimension)
     {
         Vector2Int startPosition;
+        Cell startCell;
         Vector2Int endPosition;
+        Cell endCell;
         int searchCount = 0;
 
         while (searchCount < map.terrainCellCount)
         {
             startPosition = (Vector2Int)map.getRandomCell();
-            
-            if (map.isBoundaryCell(startPosition) || map.getCell(startPosition).isWaterBound)
+            startCell = map.getCell(startPosition);
+
+            if (map.isBoundaryCell(startPosition) || startCell.isWaterBound)
             {
                 continue;
             }
@@ -85,11 +96,19 @@ public class LakeGenerator
             {
                 for (int y = -1; y < 2; y += 2)
                 {
+
                     endPosition = new Vector2Int(startPosition.x + ((lakeDimension.x) * x), startPosition.y + ((lakeDimension.y) * y));
+                    
                     if (map.checkCell(endPosition))
                     {
+                        Vector2Int direction = new Vector2Int(x, y);
+                        endCell = map.getCell(endPosition);
+                        CellPair newLake = new CellPair(startCell, endCell);
+
+
                         // put the lake in the position
-                        placeLake(map, startPosition, endPosition, new Vector2Int(x,y));
+
+                        placeLake(map, startPosition, endPosition, direction);
                         return true;
                     }
                 }
@@ -117,6 +136,29 @@ public class LakeGenerator
         }
     }
 
+    private bool lakesOverlap(CellPair newLake, Vector2Int direction)
+    {
+        Rect lake = new Rect();
+        foreach (CellPair existingLake in existingLakes)
+        {
+            // check if existing lake is inside new lake
+            if (existingLake.startCell.position.x > newLake.startCell.position.x && existingLake.startCell.position.y > newLake.startCell.position.y)
+            {
+                if (existingLake.endCell.position.x < newLake.endCell.position.x && existingLake.endCell.position.y < newLake.endCell.position.y)
+                {
+                    // existing lake is inside new lake
+                    return true;
+                }
+            }
+
+           // if (newLake.startCell.position.x - )
+            {
+
+            }
+        }
+        return true;
+    }
+
     public Tile getTile()
     {
         return lakeTilesByType[lakeSettings.tType];
@@ -129,7 +171,7 @@ public class LakeGenerator
         double rawLength = Math.Sqrt((float)terrainSize / ratio);
         int length = (int)Math.Floor(rawLength);
         //tminsize wrong, need user defined one
-        if ((length * length * ratio) < TerrainGenerator.terrainMinSize)
+        if ((length * length * ratio) < lakeMinSize)
         {
             length = (int)Math.Ceiling(rawLength);
         }

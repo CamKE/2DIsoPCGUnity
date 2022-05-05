@@ -212,13 +212,15 @@ public class Map
 
     public bool checkCell(Vector2Int cellPosition)
     {
+
         if (cellPosition.x >= 0 && cellPosition.x < width)
         {
             if (cellPosition.y >= 0 && cellPosition.y < height)
             {
-                if (!isBoundaryCell(cellPosition) && !getCell(cellPosition).isWaterBound)
+                Cell cell = getCell(cellPosition);
+                if (!isBoundaryCell((Vector2Int)cellPosition) && !cell.isWaterBound)
                 {
-                    return getCell(cellPosition).status == Cell.CellStatus.TerrainCell;
+                    return cell.status == Cell.CellStatus.TerrainCell;
                 }
             }
         }

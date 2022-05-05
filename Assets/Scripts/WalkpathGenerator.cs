@@ -21,7 +21,7 @@ public class WalkpathGenerator : PathGenerator
 
     WalkpathPathOptions.WalkpathSettings walkpathSettings;
 
-    private const float wMultiplier = 0.0034f;
+    private const float wMultiplier = 0.0025f;
 
     // river gen currently only for square and rectangular levels
     public WalkpathGenerator(SpriteAtlas atlas)
@@ -65,7 +65,7 @@ public class WalkpathGenerator : PathGenerator
     {
         List<Vector2Int> boundaryCellPositions = map.getBoundaryCellPositions();
 
-            walkpathMaxCount = (int)Math.Ceiling(map.area * (wMultiplier * ((int)walkpathSettings.wNum + 1)));
+            walkpathMaxCount = (int)Math.Ceiling(map.terrainCellCount * (wMultiplier * ((int)walkpathSettings.wNum + 1)));
 
             Heap<CellPair> cellPairs = new Heap<CellPair>(walkpathMaxCount);
 
