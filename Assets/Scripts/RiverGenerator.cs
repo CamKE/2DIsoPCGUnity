@@ -81,6 +81,8 @@ public class RiverGenerator : PathGenerator
 
         }
 
+      statusToCheck = Cell.CellStatus.WalkpathCell;
+
         while (cellPairs.Count > 0)
         {
             CellPair cellPair = cellPairs.RemoveFirst();
@@ -90,6 +92,7 @@ public class RiverGenerator : PathGenerator
             bool done = findAStarPath(map, cellPair.startCell, cellPair.endCell, Cell.CellStatus.RiverCell, riverSettings.intersectionsEnabled);
         }
     }
+
 
     public void randomlyGenerate()
     {

@@ -7,6 +7,8 @@ using UnityEngine.U2D;
 
 public class PathGenerator
 {
+    // status which is exempt from traversable checks
+    protected Cell.CellStatus statusToCheck;
 
     protected CellPair getReachableCells(Map map, List<Vector2Int> boundaryCellList, Heap<CellPair> cellPairs, bool intersectionsEnabled)
     {
@@ -49,8 +51,9 @@ public class PathGenerator
                         }
                     }
 
+                    Cell cell = map.getCell(boundaryCellXYPosition);
 
-                    if (traversableNeighbourCount > 0)
+                    if (traversableNeighbourCount > 0 && cell.status == Cell.CellStatus.TerrainCell)
                     {
                         //Debug.Log(boundaryCellList.Count);
 
@@ -58,13 +61,13 @@ public class PathGenerator
                         // remove adjacent boundary cells from list, we dont want the possibility
                         // of a 2 cell river
 
-                        foreach (Cell neighbour in map.getNeighbours(map.getCell(boundaryCellXYPosition)))
+                        foreach (Cell neighbour in map.getNeighbours(cell))
                         {
                             //no need to check contain first, will just return false if not in list
                             boundaryCellListClone.Remove((Vector2Int)neighbour.position);
                         }
 
-                        cellPair[x] = map.getCell(boundaryCellXYPosition);
+                        cellPair[x] = cell;
                         break;
                     }
 
@@ -179,7 +182,7 @@ public class PathGenerator
         Heap<Cell> openList = new Heap<Cell>(map.area);
         HashSet<Cell> closedList = new HashSet<Cell>();
         Cell currentNode;
-
+  
         openList.Add(startNode);
 
         while (openList.Count > 0)
@@ -198,35 +201,30 @@ public class PathGenerator
 
                     map.updateCellStatus(currentNode, status, intersectionsEnabled);
 
-                    if (!intersectionsEnabled)
-                    {
-                        foreach (Cell neighbour in map.getNeighbours(currentNode))
-                        {
-                            map.getCell((Vector2Int)neighbour.position).isTraversable = false;
-                        }
-                    }
                     currentNode = currentNode.parent;
                 }
                 // change the level cells map
 
                 map.updateCellStatus(currentNode, status, intersectionsEnabled);
 
-                if (!intersectionsEnabled)
-                {
-                    foreach (Cell neighbour in map.getNeighbours(currentNode))
-                    {
-                        map.getCell((Vector2Int)neighbour.position).isTraversable = false;
-                    }
-                }
                 return true;
             }
 
             foreach (Cell neighbourNode in map.getNeighbours(currentNode))
             {
 
-                if (!neighbourNode.isTraversable || closedList.Contains(neighbourNode))
+                if (status == Cell.CellStatus.RiverCell)
                 {
-                    continue;
+                    if (!neighbourNode.isTraversable || closedList.Contains(neighbourNode) || !intersectionsEnabled && neighbourNode.isWaterBound)
+                    {
+                            continue;
+                    }
+                } else
+                {
+                    if ((!neighbourNode.isTraversable && neighbourNode.status != Cell.CellStatus.RiverCell) || closedList.Contains(neighbourNode))
+                    {
+                            continue;
+                    }
                 }
 
                 int newNeighbourGCost = currentNode.gCost + GetDistance(currentNode, neighbourNode);
@@ -255,6 +253,19 @@ public class PathGenerator
         int xDistance = Mathf.Abs(startNode.position.x - endNode.position.x);
         int yDistance = Mathf.Abs(startNode.position.y - endNode.position.y);
 
-        return 10 * (yDistance + xDistance);
+        int travelCost;
+
+        switch(endNode.status)
+        {
+            case Cell.CellStatus.RiverCell:
+            case Cell.CellStatus.WalkpathCell:
+                travelCost = 15;
+                break;
+            default:
+                travelCost = 10;
+                break;
+        }
+
+        return travelCost * (yDistance + xDistance);
     }
 }

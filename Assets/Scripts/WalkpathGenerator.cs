@@ -11,7 +11,7 @@ public class WalkpathGenerator : PathGenerator
 {
     Dictionary<TerrainGenerator.TerrainType, Tile> pathTilesByType;
 
-    private readonly string snowPathTileName = "ISO_Tile_Snow_02_ToStone_01";
+    private readonly string snowPathTileName = "ISO_Tile_Stone_03";
     private readonly string pathTileName = "ISO_Tile_Stone_02";
     private readonly string lavaPathTileName = "ISO_Tile_Brick_Stone_02_01";
 
@@ -81,6 +81,8 @@ public class WalkpathGenerator : PathGenerator
                 cellPairs.Add(pair);
             
             }
+
+        statusToCheck = Cell.CellStatus.RiverCell;
 
             while (cellPairs.Count > 0)
             {

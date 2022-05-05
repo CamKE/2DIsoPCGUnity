@@ -129,19 +129,19 @@ public class Level : MonoBehaviour
 
         terrainGenerator.setOuterBounds(levelMap, ref positions[(int)TilemapNames.TerrainOuterBounds2], ref tiles[(int)TilemapNames.TerrainOuterBounds2], ref positions[(int)TilemapNames.TerrainOuterBounds1], ref tiles[(int)TilemapNames.TerrainOuterBounds1]);
 
-        if (riverSettings.rGenerationEnabled)
-        {
-            riverGenerator.setRiverSettings(riverSettings);
-            // populate the levelCells 3d array with the river cells
-            riverGenerator.populateCells(levelMap);
-        }
-
         // if lake generation is enabled
         if (lakeSettings.lGenerationEnabled)
         {
             lakeGenerator.setLakeSettings(lakeSettings);
             // populate the levelCells 3d array with the lake cells
             lakeGenerator.populateCells(levelMap);
+        }
+
+        if (riverSettings.rGenerationEnabled)
+        {
+            riverGenerator.setRiverSettings(riverSettings);
+            // populate the levelCells 3d array with the river cells
+            riverGenerator.populateCells(levelMap);
         }
 
         if (walkpathSettings.wGenerationEnabled)
@@ -179,6 +179,9 @@ public class Level : MonoBehaviour
         // walkpath tile
         Tile walkpathTile = walkpathGenerator.getTile();
 
+        // lake tile
+        Tile lakeTile = lakeGenerator.getTile();
+
         for (int x = 0; x < levelMap.width; x++)
         {
             for (int y = 0; y < levelMap.height; y++)
@@ -190,7 +193,7 @@ public class Level : MonoBehaviour
 
                         positions[(int)TilemapNames.Terrain].Add(currentCell.position);
                         // select random accessory tile at 30% chance
-                        tiles[(int)TilemapNames.Terrain].Add(UnityEngine.Random.Range(0.0f, 10.0f) > 3.0f ? groundTiles[currentCell.position.z % groundTiles.Length] : accessoryTiles[currentCell.position.z % accessoryTiles.Length]);
+                        tiles[(int)TilemapNames.Terrain].Add(UnityEngine.Random.value > 0.2f ? groundTiles[currentCell.position.z % groundTiles.Length] : accessoryTiles[currentCell.position.x % accessoryTiles.Length]);
                         // add tiles below current position
                         for (int z = currentCell.position.z - 1; z >= 0; z--)
                         {
@@ -205,7 +208,10 @@ public class Level : MonoBehaviour
                         tiles[(int)TilemapNames.Water].Add(riverTile);
                         break;
                     case Cell.CellStatus.LakeCell:
-
+                        currentCell.position.z -= 1;
+                        positions[(int)TilemapNames.Water].Add(currentCell.position);
+                        // select random accessory tile at 30% chance
+                        tiles[(int)TilemapNames.Water].Add(lakeTile);
                         break;
                     case Cell.CellStatus.WalkpathCell:
                         positions[(int)TilemapNames.Terrain].Add(currentCell.position);
@@ -261,15 +267,7 @@ public class Level : MonoBehaviour
 
     public Vector3Int getRandomCell()
     {
-        while (true)
-        {
-            Vector2Int cellPosition = new Vector2Int(UnityEngine.Random.Range(0, levelMap.width - 1), UnityEngine.Random.Range(0, levelMap.height - 1));
-
-            if (levelMap.getCell(cellPosition).status == Cell.CellStatus.TerrainCell)
-            {
-                return levelMap.getCell(cellPosition).position;
-            }
-        }
+        return levelMap.getRandomCell();
     }
 
     public Vector2 getGridPosition(Vector2Int cellPosition)

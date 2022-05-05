@@ -14,7 +14,7 @@ public class Cell : IHeapItem<Cell>
     public CellStatus status;
     int heapIndex;
     public bool onBoundary;
-    public Map.BoundaryCellSide direction;
+    public bool isWaterBound;
 
     // update bool based on cell status
     public void setCellStatus(CellStatus newStatus, bool intersectionsEnabled = false)
@@ -28,6 +28,7 @@ public class Cell : IHeapItem<Cell>
                 break;
             case CellStatus.RiverCell:
                 isTraversable = intersectionsEnabled;
+                isWaterBound = false;
                 break;
             default:
                 isTraversable = false;

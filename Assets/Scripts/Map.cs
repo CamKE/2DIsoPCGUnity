@@ -10,10 +10,6 @@ public class Map
 
     private List<Vector2Int> boundaryCellPositions;
 
-    private List<Vector2Int>[] boundaryCellSides;
-
-    public enum BoundaryCellSide { Up, Down, Left, Right }
-
     public int terrainCellCount { get; private set; }
 
     public readonly int width;
@@ -40,13 +36,6 @@ public class Map
 
         boundaryCellPositions = new List<Vector2Int>();
 
-        int length = Enum.GetValues(typeof(BoundaryCellSide)).Length;
-        boundaryCellSides = new List<Vector2Int>[length];
-
-        for (int x = 0; x < length; x++)
-        {
-            boundaryCellSides[x] = new List<Vector2Int>();
-        }
     }
 
     public void updateCellStatus(Cell currentCell, Cell.CellStatus status, bool intersectionsEnabled = false)
@@ -62,9 +51,19 @@ public class Map
             {
                 terrainCellCount--;
             }
-
         }
 
+
+        if (status == Cell.CellStatus.RiverCell || status == Cell.CellStatus.LakeCell)
+        {
+            foreach (Cell neighbour in getNeighbours(currentCell))
+            {
+                if (neighbour.status == Cell.CellStatus.TerrainCell)
+                {
+                    neighbour.isWaterBound = true;
+                }
+            }
+        }
         currentCell.setCellStatus(status, intersectionsEnabled);
         //foreach get neighbours here
     }
@@ -99,7 +98,6 @@ public class Map
         if (currentNodePosition.x > 0)
         {
             Cell cell = getCell(currentNodePosition.x - 1, currentNodePosition.y);
-            cell.direction = BoundaryCellSide.Left;
             neighbours.Add(cell);
 
         }
@@ -108,7 +106,6 @@ public class Map
         if (currentNodePosition.x < width - 1)
         {
             Cell cell = getCell(currentNodePosition.x + 1, currentNodePosition.y);
-            cell.direction = BoundaryCellSide.Right;
             neighbours.Add(cell);
         }
 
@@ -116,7 +113,6 @@ public class Map
         if (currentNodePosition.y < height - 1)
         {
             Cell cell = getCell(currentNodePosition.x, currentNodePosition.y + 1);
-            cell.direction = BoundaryCellSide.Up;
             neighbours.Add(cell);
         }
 
@@ -124,7 +120,6 @@ public class Map
         if (currentNodePosition.y > 0)
         {
             Cell cell = getCell(currentNodePosition.x, currentNodePosition.y - 1);
-            cell.direction = BoundaryCellSide.Down;
             neighbours.Add(cell);
         }
 
@@ -180,19 +175,11 @@ public class Map
     {
         List<Cell> neighbours = getNeighbours(cell);
         // remove this if want to revert
-        List<BoundaryCellSide> sides = Enum.GetValues(typeof(BoundaryCellSide)).Cast<BoundaryCellSide>().ToList();
 
         if (neighbours.Count < 4)
         {
-            // remove this if want to revert
-            foreach (Cell neighbour in neighbours)
-            {
-                sides.Remove(neighbour.direction);
-            }
             // its a boundary tile
             addBoundaryCellPosition((Vector2Int)cell.position);
-            // remove this if want to revert
-            addBoundaryCellPosition((Vector2Int)cell.position, sides.First());
         }
 
     }
@@ -204,16 +191,42 @@ public class Map
         getCell(position).onBoundary = true;
     }
 
-    // remove this if want to revert
-    public void addBoundaryCellPosition(Vector2Int position, BoundaryCellSide side)
-    {
-        boundaryCellSides[(int)side].Add(position);
-        getCell(position).onBoundary = true;
-    }
-
-
     public List<Vector2Int> getBoundaryCellPositions()
     {
         return boundaryCellPositions;
+    }
+
+    public Vector3Int getRandomCell()
+    {
+        while (true)
+        {
+            // random range is max exclusive
+            Vector2Int cellPosition = new Vector2Int(UnityEngine.Random.Range(0, width), UnityEngine.Random.Range(0, height));
+
+            if (getCell(cellPosition).status == Cell.CellStatus.TerrainCell)
+            {
+                return getCell(cellPosition).position;
+            }
+        }
+    }
+
+    public bool checkCell(Vector2Int cellPosition)
+    {
+        if (cellPosition.x >= 0 && cellPosition.x < width)
+        {
+            if (cellPosition.y >= 0 && cellPosition.y < height)
+            {
+                if (!isBoundaryCell(cellPosition) && !getCell(cellPosition).isWaterBound)
+                {
+                    return getCell(cellPosition).status == Cell.CellStatus.TerrainCell;
+                }
+            }
+        }
+        return false;
+    }
+
+    public bool isBoundaryCell(Vector2Int cellPosition)
+    {
+        return boundaryCellPositions.Contains(cellPosition);
     }
 }
