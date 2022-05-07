@@ -49,6 +49,7 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private List<Button> levelInteractionButtons;
 
+    string levelGenInfo;
     // start is called before the first frame update when the script is enabled
     private void Start()
     {
@@ -124,6 +125,11 @@ public class UIManager : MonoBehaviour
         {
             levelInteractionButtons.First().interactable = false;
         }
+
+        foreach (string generationStep in levelManager.getGenerationInfo())
+        {
+            levelGenInfo += generationStep + "\n";
+        }
     }
 
     /// <summary>
@@ -153,6 +159,17 @@ public class UIManager : MonoBehaviour
         {
             levelInteractionButtons.First().interactable = false;
         }
+
+        foreach (string generationStep in levelManager.getGenerationInfo())
+        {
+            levelGenInfo += generationStep + "\n";
+        }
+    }
+
+    // make panel expand to scrollable if text is too long
+    public void showLevelInfo()
+    {
+        popupManager.showPopup("Level Generation Information", levelGenInfo);
     }
 
     /// <summary>

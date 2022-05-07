@@ -25,8 +25,10 @@ public class RiverGenerator : PathGenerator
 
     private const float rMultiplier = 0.0015f;
 
+    List<string> generationInfo;
+
     // river gen currently only for square and rectangular levels
-    public RiverGenerator(SpriteAtlas atlas)
+    public RiverGenerator(SpriteAtlas atlas, List<string> generationInfo)
     {
         riverTilesByType = new Dictionary<TerrainGenerator.TerrainType, Tile>();
 
@@ -42,6 +44,8 @@ public class RiverGenerator : PathGenerator
         Tile iceTile = setupTile(atlas, iceTileName);
 
         riverTilesByType.Add(TerrainGenerator.TerrainType.Snow, iceTile);
+
+        this.generationInfo = generationInfo;
     }
 
     private Tile setupTile(SpriteAtlas atlas, string tilename)
@@ -55,6 +59,7 @@ public class RiverGenerator : PathGenerator
 
     public void setRiverSettings(RiverOptions.RiverSettings riverSettings)
     {
+        generationInfo.Add("step 4");
         this.riverSettings = riverSettings;
     }
 
@@ -65,6 +70,7 @@ public class RiverGenerator : PathGenerator
 
     public void populateCells(Map map)
     {
+        generationInfo.Add("step 5");
         riverMaxCount = (int)Math.Ceiling(map.terrainCellCount * (rMultiplier * ((int)riverSettings.rNum + 1)));
 
         Heap<CellPair> cellPairs = new Heap<CellPair>(riverMaxCount);

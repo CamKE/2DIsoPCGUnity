@@ -25,8 +25,10 @@ public class WalkpathGenerator : PathGenerator
 
     private const float wMultiplier = 0.0025f;
 
+    List<string> generationInfo;
+
     // river gen currently only for square and rectangular levels
-    public WalkpathGenerator(SpriteAtlas atlas)
+    public WalkpathGenerator(SpriteAtlas atlas, List<string> generationInfo)
     {
         pathTilesByType = new Dictionary<TerrainGenerator.TerrainType, Tile>();
 
@@ -42,6 +44,8 @@ public class WalkpathGenerator : PathGenerator
         Tile snowPathTile = setupTile(atlas, snowPathTileName);
 
         pathTilesByType.Add(TerrainGenerator.TerrainType.Snow, snowPathTile);
+
+        this.generationInfo = generationInfo;
     }
 
     private Tile setupTile(SpriteAtlas atlas, string tilename)

@@ -107,6 +107,11 @@ public class LevelManager : MonoBehaviour
         }
     }
 
+    public List<string> getGenerationInfo()
+    {
+        return level.getGenerationInfo();
+    }
+
     // runs before the application is quit 
     private void OnApplicationQuit()
     {

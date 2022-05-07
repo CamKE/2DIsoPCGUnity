@@ -33,8 +33,10 @@ public class LakeGenerator
 
     List<Rect> existingLakes;
 
+    List<string> generationInfo;
+
     // lake depth is an issue
-    public LakeGenerator(SpriteAtlas atlas)
+    public LakeGenerator(SpriteAtlas atlas, List<string> generationInfo)
     {
         lakeTilesByType = new Dictionary<TerrainGenerator.TerrainType, Tile>();
 
@@ -54,7 +56,7 @@ public class LakeGenerator
         lakeTilesByType[TerrainGenerator.TerrainType.Snow].sprite = atlas.GetSprite(iceTileName);
         lakeTilesByType[TerrainGenerator.TerrainType.Snow].colliderType = Tile.ColliderType.Grid;
 
-
+        this.generationInfo = generationInfo;
     }
 
     public void setLakeSettings(LakeOptions.LakeSettings lakeSettings)
@@ -65,6 +67,7 @@ public class LakeGenerator
     public void populateCells(Map map)
     {
         lakeMaxCount = (int)Math.Ceiling((map.terrainCellCount * countMultiplier * ((int)lakeSettings.lNum + 1)));
+        generationInfo.Add(lakeMaxCount + " max lake count calculated based on " + lakeSettings.lNum + " lake amount setting");
 
         // size of lake affects how many lakes can be generated
         Debug.Log(lakeMaxCount);

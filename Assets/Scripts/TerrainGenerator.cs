@@ -67,6 +67,8 @@ public class TerrainGenerator
 
     private static Action<Cell> checkForBoundaryCell;
 
+    List<string> generationInfo;
+
     struct terrainTiles
     {
         public Tile[] groundTiles;
@@ -103,7 +105,7 @@ public class TerrainGenerator
 
     TerrainOptions.TerrainSettings terrainSettings;
 
-    public TerrainGenerator(SpriteAtlas atlas)
+    public TerrainGenerator(SpriteAtlas atlas, List<string> generationInfo)
     {
         // doesnt have to be dictionaries, could just be lists. work on generalisation
         outerBoundsTile = ScriptableObject.CreateInstance<Tile>();
@@ -124,6 +126,8 @@ public class TerrainGenerator
         terrainTilesByType.Add(TerrainType.Lava, lavaTiles);
 
         setTiles(lowerGroundTileNames,out lowerGroundTiles, atlas);
+
+        this.generationInfo = generationInfo;
     }
 
     private void setTiles(string[] names,out Tile[] tiles, SpriteAtlas atlas)
@@ -162,24 +166,24 @@ public class TerrainGenerator
         this.terrainSettings = terrainSettings;
     }
 
-    public void setRandomSettings()
-    {
-
-    }
-
     public void populateCells(Map map)
     {
         // define all the terrain cells
         if (terrainSettings.heightRangedEnabled)
         {
+            generationInfo.Add("Populating the map with cell heights between " + terrainSettings.tMinHeight + " and " + terrainSettings.tMaxHeight);
             setCellsRange(map, terrainSettings.tMinHeight, terrainSettings.tMaxHeight); ;
         }
         else
         {
+            generationInfo.Add("Populating the map with cell exact height " + terrainSettings.tExactHeight);
             setCellsExact(map, terrainSettings.tExactHeight);
         }
 
         terrainSettings.updateTerrainSize(map.area);
+
+        generationInfo.Add(map.getBoundaryCellPositions().Count + " boundary cells found whilst populating map");
+
     }
 
     public Map createMap()
@@ -213,6 +217,10 @@ public class TerrainGenerator
                 checkForBoundaryCell += map.checkForBoundaryCell;
                 break;
         }
+
+        generationInfo.Add("Creating "+ terrainSettings.tShape +" shaped map");
+        generationInfo.Add("Terrain size " + terrainSettings.tSize + " rounded to square value " + map.area);
+        generationInfo.Add("map dimension " + map.width + " by " + map.height);
 
         return map;
     }
@@ -393,6 +401,8 @@ public class TerrainGenerator
 
     public void setOuterBounds(Map map, ref List<Vector3Int> positions, ref List<TileBase> tiles, ref List<Vector3Int> positions2, ref List<TileBase> tiles2)
     {
+        generationInfo.Add("Finding and setting the outer bounds of the map based on the boundary cells");
+
         foreach (Vector2Int boundaryCellPosition in map.getBoundaryCellPositions())
         {
             // if x+1 is out the bounds of the array or its an invalid cell, its an outer bound

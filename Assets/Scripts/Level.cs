@@ -40,6 +40,9 @@ public class Level : MonoBehaviour
 
     int tilemapNamesCount = Enum.GetValues(typeof(TilemapNames)).Length;
 
+    // can be static across generalisation of generators (if i do it)
+    private List<string> generationInfo;
+
     private enum TilemapNames { Terrain, TerrainOuterBounds1, TerrainOuterBounds2, Water }
     // Start is called before the first frame update
     void Start()
@@ -60,13 +63,15 @@ public class Level : MonoBehaviour
 
         tilemaps[(int)TilemapNames.Water] = setupCollidableTilemap(grid, "Water", true, 1.125f);
 
-        terrainGenerator = new TerrainGenerator(atlas);
+        generationInfo = new List<string>();
 
-        riverGenerator = new RiverGenerator(atlas);
+        terrainGenerator = new TerrainGenerator(atlas, generationInfo);
 
-        lakeGenerator = new LakeGenerator(atlas);
+        riverGenerator = new RiverGenerator(atlas, generationInfo);
 
-        walkpathGenerator = new WalkpathGenerator(atlas);
+        lakeGenerator = new LakeGenerator(atlas, generationInfo);
+
+        walkpathGenerator = new WalkpathGenerator(atlas, generationInfo);
 
         cameraController = transform.GetChild(0).GetComponent<LevelCameraController>();
 
@@ -121,6 +126,7 @@ public class Level : MonoBehaviour
 
         sw.Start();
 
+        generationInfo.Add("Terrain Generator:");
         terrainGenerator.setTerrainSettings(terrainSettings);
 
         levelMap = terrainGenerator.createMap();
@@ -132,6 +138,7 @@ public class Level : MonoBehaviour
         // if lake generation is enabled
         if (lakeSettings.lGenerationEnabled)
         {
+            generationInfo.Add("Lake Generator:");
             lakeGenerator.setLakeSettings(lakeSettings);
             // populate the levelCells 3d array with the lake cells
             lakeGenerator.populateCells(levelMap);
@@ -139,6 +146,7 @@ public class Level : MonoBehaviour
 
         if (riverSettings.rGenerationEnabled)
         {
+            generationInfo.Add("River Generator:");
             riverGenerator.setRiverSettings(riverSettings);
             // populate the levelCells 3d array with the river cells
             riverGenerator.populateCells(levelMap);
@@ -146,11 +154,13 @@ public class Level : MonoBehaviour
 
         if (walkpathSettings.wGenerationEnabled)
         {
+            generationInfo.Add("Walkpath Generator:");
             walkpathGenerator.setWalkpathSettings(walkpathSettings);
             // populate the levelCells 3d array with the river cells
             walkpathGenerator.populateCells(levelMap);
         }
 
+        generationInfo.Add("Set Tilemaps:");
         setTilemaps();
 
         sw.Stop();
@@ -159,8 +169,6 @@ public class Level : MonoBehaviour
         isGenerated = true;
 
         updateCamera();
-
-
     }
 
     private void setTilemaps()
@@ -300,6 +308,10 @@ public class Level : MonoBehaviour
         return grid.CellToWorld((Vector3Int)cellPosition);
     }
 
+    public List<string> getGenerationInfo()
+    {
+        return generationInfo;
+    }
 
     private void clear()
     {
@@ -316,6 +328,8 @@ public class Level : MonoBehaviour
             positions[x].Clear();
             tiles[x].Clear();
         }
+
+        generationInfo.Clear();
     }
 
     public int getCellZPosition(Vector2 worldPos)
