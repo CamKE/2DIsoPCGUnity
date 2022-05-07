@@ -18,6 +18,8 @@ public class WalkpathGenerator : PathGenerator
     private int walkpathMaxCount;
 
     public enum NumberOfWalkpaths { Low, Medium, High }
+    public static int numberOfWalkpathsCount = Enum.GetValues(typeof(NumberOfWalkpaths)).Length;
+
 
     WalkpathPathOptions.WalkpathSettings walkpathSettings;
 
@@ -46,7 +48,6 @@ public class WalkpathGenerator : PathGenerator
     {
         Tile tile = ScriptableObject.CreateInstance<Tile>();
         tile.sprite = atlas.GetSprite(tilename);
-        tile.colliderType = Tile.ColliderType.Grid;
 
         return tile;
     }

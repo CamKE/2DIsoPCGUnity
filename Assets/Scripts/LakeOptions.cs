@@ -46,4 +46,29 @@ public class LakeOptions : Options
 
         return new LakeSettings(terrainType, lGenerationEnabled, lNum, lMaxSize);
     }
+    
+    public LakeSettings createRandomisedSettings()
+    {
+        bool lGenerationEnabled = UnityEngine.Random.value > 0.5f;
+
+        LakeGenerator.NumberOfLakes lNum = (LakeGenerator.NumberOfLakes)UnityEngine.Random.Range(0, LakeGenerator.numberOfLakesCount);
+
+        LakeGenerator.MaxLakeSize lMaxSize = (LakeGenerator.MaxLakeSize)UnityEngine.Random.Range(0, LakeGenerator.maxLakeSizeCount);
+
+        return new LakeSettings(terrainType, lGenerationEnabled, lNum, lMaxSize);
+    }
+
+    public void updateFields(LakeSettings settings)
+    {
+        if (settings.lGenerationEnabled)
+        {
+            toggles[(int)LakeToggleOptionName.LakeGeneration].isOn = true;
+            dropdowns[(int)LakeDropdownName.LakeAmount].value = (int)settings.lNum;
+            dropdowns[(int)LakeDropdownName.LakeMaxSize].value = (int)settings.lMaxSize;
+        } else
+        {
+            toggles[(int)LakeToggleOptionName.LakeGeneration].isOn = false;
+        }
+    }
+
 }

@@ -23,7 +23,7 @@ public class LevelManager : MonoBehaviour
     // the playerController component of the player
     private PlayerController playerController;
 
-    public bool rangeHeightEnabled;
+    private bool rangeHeightEnabled;
 
     public int getCellZPosition(Vector2 worldPos)
     {

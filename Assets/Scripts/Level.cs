@@ -38,6 +38,8 @@ public class Level : MonoBehaviour
 
     List<TileBase>[] tiles;
 
+    int tilemapNamesCount = Enum.GetValues(typeof(TilemapNames)).Length;
+
     private enum TilemapNames { Terrain, TerrainOuterBounds1, TerrainOuterBounds2, Water }
     // Start is called before the first frame update
     void Start()
@@ -69,6 +71,12 @@ public class Level : MonoBehaviour
         cameraController = transform.GetChild(0).GetComponent<LevelCameraController>();
 
         cameraController.enabled = false;
+
+        for (int x = 0; x < tilemapNamesCount; x++)
+        {
+            positions[x] = new List<Vector3Int>();
+            tiles[x] = new List<TileBase>();
+        }
     }
 
     private Tilemap setupTilemap(Grid grid, string name, bool tilemapRendererEnabled)
@@ -112,14 +120,6 @@ public class Level : MonoBehaviour
         Stopwatch sw = new Stopwatch();
 
         sw.Start();
-
-        int numEnums = Enum.GetValues(typeof(TilemapNames)).Length;
-
-        for (int x = 0; x < numEnums; x++)
-        {
-            positions[x] = new List<Vector3Int>();
-            tiles[x] = new List<TileBase>();
-        }
 
         terrainGenerator.setTerrainSettings(terrainSettings);
 
@@ -172,6 +172,7 @@ public class Level : MonoBehaviour
         // terrain tiles
         Tile[] groundTiles = terrainGenerator.getGroundTiles();
         Tile[] accessoryTiles = terrainGenerator.getAccessoryTiles();
+        Tile lowerGroundTile = terrainGenerator.getLowerGroundTile();
 
         // river tile
         Tile riverTile = riverGenerator.getTile();
@@ -182,46 +183,51 @@ public class Level : MonoBehaviour
         // lake tile
         Tile lakeTile = lakeGenerator.getTile();
 
+        
         for (int x = 0; x < levelMap.width; x++)
         {
             for (int y = 0; y < levelMap.height; y++)
             {
                 Cell currentCell = levelMap.getCell(x, y);
+                Vector3Int currentCellPostion = currentCell.position;
                 switch (currentCell.status)
                 {
                     case Cell.CellStatus.TerrainCell:
-
-                        positions[(int)TilemapNames.Terrain].Add(currentCell.position);
+                        
+                        positions[(int)TilemapNames.Terrain].Add(currentCellPostion);
                         // select random accessory tile at 30% chance
-                        tiles[(int)TilemapNames.Terrain].Add(UnityEngine.Random.value > 0.2f ? groundTiles[currentCell.position.z % groundTiles.Length] : accessoryTiles[currentCell.position.x % accessoryTiles.Length]);
+                        tiles[(int)TilemapNames.Terrain].Add(UnityEngine.Random.value > 0.2f ? groundTiles[currentCellPostion.z % groundTiles.Length] : accessoryTiles[currentCellPostion.x % accessoryTiles.Length]);
                         // add tiles below current position
-                        for (int z = currentCell.position.z - 1; z >= 0; z--)
+                     
+                        if (currentCellPostion.z > 0)
                         {
-                            positions[(int)TilemapNames.Terrain].Add(new Vector3Int(currentCell.position.x, currentCell.position.y, z));
-                            tiles[(int)TilemapNames.Terrain].Add(groundTiles[0]);
+                            setTilesBelowPosition(currentCellPostion, lowerGroundTile, (int)TilemapNames.Terrain);
                         }
                         break;
                     case Cell.CellStatus.RiverCell:
                         // set river tile to be 1 lower than the lowest depth neighbour
-                        currentCell.position.z = levelMap.getMinDepth(currentCell) - 1;
-                        positions[(int)TilemapNames.Water].Add(currentCell.position);
+                        currentCellPostion.z = levelMap.getTerrainMinDepth(currentCell) - 1;
+                        positions[(int)TilemapNames.Water].Add(currentCellPostion);
                         tiles[(int)TilemapNames.Water].Add(riverTile);
+                        if (currentCellPostion.z > 0)
+                        {
+                            setTilesBelowPosition(currentCellPostion, lowerGroundTile, (int)TilemapNames.Terrain);
+                        }
                         break;
                     case Cell.CellStatus.LakeCell:
-                        currentCell.position.z -= 1;
-                        positions[(int)TilemapNames.Water].Add(currentCell.position);
+                        currentCellPostion.z -= 1;
+                        positions[(int)TilemapNames.Water].Add(currentCellPostion);
                         // select random accessory tile at 30% chance
                         tiles[(int)TilemapNames.Water].Add(lakeTile);
                         break;
                     case Cell.CellStatus.WalkpathCell:
-                        positions[(int)TilemapNames.Terrain].Add(currentCell.position);
+                        positions[(int)TilemapNames.Terrain].Add(currentCellPostion);
                         // select random accessory tile at 30% chance
                         tiles[(int)TilemapNames.Terrain].Add(walkpathTile);
                         // add tiles below current position
-                        for (int z = currentCell.position.z - 1; z >= 0; z--)
+                        if (currentCellPostion.z > 0)
                         {
-                            positions[(int)TilemapNames.Terrain].Add(new Vector3Int(currentCell.position.x, currentCell.position.y, z));
-                            tiles[(int)TilemapNames.Terrain].Add(groundTiles[0]);
+                            setTilesBelowPosition(currentCellPostion, lowerGroundTile, (int)TilemapNames.Terrain);
                         }
                         break;
                     default:
@@ -235,6 +241,25 @@ public class Level : MonoBehaviour
         {
             int tilemapNameIndex = (int)tilemapName;
             tilemaps[tilemapNameIndex].SetTiles(positions[tilemapNameIndex].ToArray(), tiles[tilemapNameIndex].ToArray());
+        }
+    }
+
+    private void setTilesBelowPosition(Vector3Int position, Tile tile, int tilemapIndex)
+    {
+        int test = (position.z % 3);
+
+        if (test == 0)
+        {
+            positions[tilemapIndex].Add(new Vector3Int(position.x, position.y, test));
+            tiles[tilemapIndex].Add(tile);
+        }
+        else
+        {
+            for (int z = position.z - test; z >= 0; z -= 3)
+            {
+                positions[tilemapIndex].Add(new Vector3Int(position.x, position.y, z));
+                tiles[tilemapIndex].Add(tile);
+            }
         }
     }
 
@@ -283,6 +308,13 @@ public class Level : MonoBehaviour
         foreach (Tilemap tilemap in tilemaps)
         {
             tilemap.ClearAllTiles();
+        }
+
+
+        for (int x = 0; x < tilemapNamesCount; x++)
+        {
+            positions[x].Clear();
+            tiles[x].Clear();
         }
     }
 

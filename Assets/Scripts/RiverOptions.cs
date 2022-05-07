@@ -45,4 +45,28 @@ public class RiverOptions : Options
 
         return new RiverSettings(terrainType, rGenerationEnabled, rNum, intersectionsEnabled);
     }
+    
+
+    public RiverSettings createRandomisedSettings()
+    {
+        bool rGenerationEnabled = UnityEngine.Random.value > 0.5f;
+        RiverGenerator.NumberOfRivers rNum = (RiverGenerator.NumberOfRivers)UnityEngine.Random.Range(0, RiverGenerator.numberOfRiversCount);
+        bool intersectionsEnabled = UnityEngine.Random.value > 0.5f;
+
+        return new RiverSettings(terrainType, rGenerationEnabled, rNum, intersectionsEnabled);
+    }
+
+    public void updateFields(RiverSettings settings)
+    {
+        if (settings.rGenerationEnabled)
+        {
+            toggles[(int)RiverToggleOptionName.RiverGeneration].isOn = true;
+            dropdowns[(int)RiverDropdownName.RiverAmount].value = (int)settings.rNum;
+            toggles[(int)RiverToggleOptionName.RiverIntersection].isOn = settings.intersectionsEnabled;
+        }
+        else
+        {
+            toggles[(int)RiverToggleOptionName.RiverGeneration].isOn = false;
+        }
+    }
 }

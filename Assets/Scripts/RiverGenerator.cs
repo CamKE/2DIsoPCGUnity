@@ -19,6 +19,7 @@ public class RiverGenerator : PathGenerator
     private int riverMaxCount;
 
     public enum NumberOfRivers { Low, Medium, High }
+    public static int numberOfRiversCount = Enum.GetValues(typeof(NumberOfRivers)).Length;
 
     RiverOptions.RiverSettings riverSettings;
 

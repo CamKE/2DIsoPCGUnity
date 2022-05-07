@@ -127,7 +127,7 @@ public class Map
     }
 
     // finds the minimum depth (z value) from surrounding tiles
-    public int getMinDepth(Cell currentNode)
+    public int getTerrainMinDepth(Cell currentNode)
     {
         int minDepth = currentNode.position.z;
 
@@ -138,6 +138,19 @@ public class Map
                 int neighbourDepth = neighbour.position.z;
                 minDepth = neighbourDepth < minDepth ? neighbourDepth : minDepth;
             }
+        }
+
+        return minDepth;
+    }
+
+    public int getMinDepth(Cell currentNode)
+    {
+        int minDepth = currentNode.position.z;
+
+        foreach (Cell neighbour in getNeighbours(currentNode))
+        {
+                int neighbourDepth = neighbour.position.z;
+                minDepth = neighbourDepth < minDepth ? neighbourDepth : minDepth;
         }
 
         return minDepth;

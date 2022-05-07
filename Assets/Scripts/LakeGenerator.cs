@@ -8,8 +8,10 @@ using UnityEngine.U2D;
 public class LakeGenerator
 {
     public enum NumberOfLakes { Low, Medium, High }
+    public static int numberOfLakesCount = Enum.GetValues(typeof(NumberOfLakes)).Length;
 
     public enum MaxLakeSize { Small, Medium, Large }
+    public static int maxLakeSizeCount = Enum.GetValues(typeof(MaxLakeSize)).Length;
 
     LakeOptions.LakeSettings lakeSettings;
 
@@ -25,12 +27,13 @@ public class LakeGenerator
 
     int lakeMaxCount;
 
-    float lMultiplier = 0.0034f;
+    float countMultiplier = 0.002f;
 
-    float sizeMultiplier = 0.05f;
+    float sizeMultiplier = 0.027f;
 
-    List<CellPair> existingLakes;
+    List<Rect> existingLakes;
 
+    // lake depth is an issue
     public LakeGenerator(SpriteAtlas atlas)
     {
         lakeTilesByType = new Dictionary<TerrainGenerator.TerrainType, Tile>();
@@ -45,9 +48,13 @@ public class LakeGenerator
 
         lakeTilesByType.Add(TerrainGenerator.TerrainType.Lava, ScriptableObject.CreateInstance<Tile>());
         lakeTilesByType[TerrainGenerator.TerrainType.Lava].sprite = atlas.GetSprite(lavaTileName);
+        lakeTilesByType[TerrainGenerator.TerrainType.Lava].colliderType = Tile.ColliderType.Grid;
 
         lakeTilesByType.Add(TerrainGenerator.TerrainType.Snow, ScriptableObject.CreateInstance<Tile>());
         lakeTilesByType[TerrainGenerator.TerrainType.Snow].sprite = atlas.GetSprite(iceTileName);
+        lakeTilesByType[TerrainGenerator.TerrainType.Snow].colliderType = Tile.ColliderType.Grid;
+
+
     }
 
     public void setLakeSettings(LakeOptions.LakeSettings lakeSettings)
@@ -57,13 +64,20 @@ public class LakeGenerator
 
     public void populateCells(Map map)
     {
-        lakeMaxCount = (int)Math.Ceiling(map.terrainCellCount * (lMultiplier * ((int)lakeSettings.lNum + 1)));
+        lakeMaxCount = (int)Math.Ceiling((map.terrainCellCount * countMultiplier * ((int)lakeSettings.lNum + 1)));
+
+        // size of lake affects how many lakes can be generated
+        Debug.Log(lakeMaxCount);
 
         lakeMaxSize = (int)Math.Ceiling(map.terrainCellCount * (sizeMultiplier * ((int)lakeSettings.lMaxSize + 1)));
 
+        lakeMaxSize = lakeMaxSize < lakeMinSize ? lakeMinSize : lakeMaxSize;
+
+        existingLakes = new List<Rect>();
+
         for (int count = 0; count < lakeMaxCount; count++)
         {
-            Vector2Int lakeDimensions = getDimensions(5, 2);
+            Vector2Int lakeDimensions = getDimensions(UnityEngine.Random.Range(lakeMinSize, lakeMaxSize), 2);
 
             if (!addLake(map, lakeDimensions))
             {
@@ -78,7 +92,6 @@ public class LakeGenerator
         Vector2Int startPosition;
         Cell startCell;
         Vector2Int endPosition;
-        Cell endCell;
         int searchCount = 0;
 
         while (searchCount < map.terrainCellCount)
@@ -91,22 +104,28 @@ public class LakeGenerator
                 continue;
             }
 
+;            // convert this from using cell positiions, to using rect, with min and max returned as cell poses
+            // then i can use the overlaps method to check if a rectangle is in another.
             // we may need to randomise this (e.g. put all the pairs into a list and randomly remove as used)
-            for (int x = -1; x < 2; x+=2)
+            for (int x = -1; x < 2; x +=2)
             {
                 for (int y = -1; y < 2; y += 2)
                 {
+                    int xOffset = x == 1 ? 0 : -x;
 
-                    endPosition = new Vector2Int(startPosition.x + ((lakeDimension.x) * x), startPosition.y + ((lakeDimension.y) * y));
-                    
-                    if (map.checkCell(endPosition))
+                    int yOffset = y == 1 ? 0 : -y;
+
+                    // rect max returns the max corner relative to the rectangle position (assuming rectangle pos is from 0,0)
+                    // rectint max returns the upper right corner relative to the rectangle position
+                    Rect newLake = new Rect(startPosition.x+xOffset, startPosition.y+yOffset, (lakeDimension.x) * x, (lakeDimension.y) * y);
+
+                    endPosition = new Vector2Int(startPosition.x + ((lakeDimension.x-1) * x), startPosition.y + ((lakeDimension.y-1) * y));
+                    if (map.checkCell(endPosition) && !lakesOverlapOrAdjacent(newLake))
                     {
                         Vector2Int direction = new Vector2Int(x, y);
-                        endCell = map.getCell(endPosition);
-                        CellPair newLake = new CellPair(startCell, endCell);
 
 
-                        // put the lake in the position
+                        existingLakes.Add(newLake);
 
                         placeLake(map, startPosition, endPosition, direction);
                         return true;
@@ -120,15 +139,16 @@ public class LakeGenerator
 
     private void placeLake(Map map, Vector2Int startPosition, Vector2Int endPosition, Vector2Int direction)
     {
-        for (int x = startPosition.x; x != endPosition.x; x += (1 * direction.x))
+        for (int x = startPosition.x; x != endPosition.x+ (1 * direction.x); x += (1 * direction.x))
         {
-            for (int y = startPosition.y; y != endPosition.y; y += (1 * direction.y))
+            for (int y = startPosition.y; y != endPosition.y+(1 * direction.y); y += (1 * direction.y))
             {
                 Cell cell = map.getCell(x, y);
                 // make sure that if lake is on the edge, we do not
                 // try to turn invalid cells into lake cells (for random shape map)
                 if (cell.status == Cell.CellStatus.TerrainCell)
                 {
+                    cell.position.z = map.getMinDepth(cell);
                     map.updateCellStatus(cell, Cell.CellStatus.LakeCell);
                 }
 
@@ -136,25 +156,72 @@ public class LakeGenerator
         }
     }
 
-    private bool lakesOverlap(CellPair newLake, Vector2Int direction)
+    // check if any lakes ovelap or are directly adjacent to the new one
+    private bool lakesOverlapOrAdjacent(Rect newLake)
     {
-        Rect lake = new Rect();
-        foreach (CellPair existingLake in existingLakes)
+        foreach (Rect existingLake in existingLakes)
         {
             // check if existing lake is inside new lake
-            if (existingLake.startCell.position.x > newLake.startCell.position.x && existingLake.startCell.position.y > newLake.startCell.position.y)
+            // overlaps should not allow adjacency
+            if (newLake.Overlaps(existingLake))
             {
-                if (existingLake.endCell.position.x < newLake.endCell.position.x && existingLake.endCell.position.y < newLake.endCell.position.y)
-                {
-                    // existing lake is inside new lake
-                    return true;
-                }
+                return true;
             }
 
-           // if (newLake.startCell.position.x - )
+            // check left side
+            if (isTouchingSide(newLake.xMin, existingLake))
             {
-
+                return true;
             }
+
+            // check right side
+            if (isTouchingSide(newLake.xMax, existingLake))
+            {
+                return true;
+            }
+
+            // check bottom
+            if (isTouchingSide(newLake.yMin, existingLake))
+            {
+                return true;
+            }
+
+            // check top
+            if (isTouchingSide(newLake.yMax, existingLake))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public bool isTouchingSide(float side, Rect checkLake)
+    {
+        // if the left right bottom or top of the lake to be checked is touching the side to be checked
+        if (side == checkLake.xMin || side == checkLake.xMax || side == checkLake.yMin || side == checkLake.yMax)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    private bool RectOverlap(Rect firstRect, Rect secondRect)
+    {
+        if (firstRect.x + firstRect.width * 0.5f < secondRect.x - secondRect.width * 0.5f)
+        {
+            return false;
+        }
+        if (secondRect.x + secondRect.width * 0.5f < firstRect.x - firstRect.width * 0.5f)
+        {
+            return false;
+        }
+        if (firstRect.y + firstRect.height * 0.5f < secondRect.y - secondRect.height * 0.5f)
+        {
+            return false;
+        }
+        if (secondRect.y + secondRect.height * 0.5f < firstRect.y - firstRect.height * 0.5f)
+        {
+            return false;
         }
         return true;
     }

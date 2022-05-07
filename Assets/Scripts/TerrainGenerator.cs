@@ -14,11 +14,13 @@ public class TerrainGenerator
     /// The terrain shape options.
     /// </summary>
     public enum TerrainShape { Square, Rectangle, Random };
+    public static int terrainShapeCount = Enum.GetValues(typeof(TerrainShape)).Length;
 
     /// <summary>
     /// The terrain type options.
     /// </summary>
     public enum TerrainType { Greenery, Dessert, Snow, Lava };
+    public static int terrainTypeCount = Enum.GetValues(typeof(TerrainType)).Length;
 
     /// <summary>
     /// The minimum size of a level specified by tile count.
@@ -43,7 +45,7 @@ public class TerrainGenerator
     private readonly string[] greeneryAccessoryTileNames = {"ISO_Tile_Dirt_01_GrassPatch_01",
         "ISO_Tile_Dirt_01_GrassPatch_02", "ISO_Tile_Dirt_01_GrassPatch_03"};
 
-    private readonly string[] desertGroundTileNames = { "ISO_Tile_Sand_01", "ISO_Tile_Sand_02", "ISO_Tile_Sand_03", "ISO_Tile_Sand_04" };
+    private readonly string[] desertGroundTileNames = { "ISO_Tile_Sand_01", "ISO_Tile_Sand_02" };
 
     private readonly string[] desertAccessoryTileNames = {"ISO_Tile_Sand_01_ToStone_01",
         "ISO_Tile_Sand_01_ToStone_02", "ISO_Tile_Sand_02_ToStone_01", "ISO_Tile_Sand_02_ToStone_02", "ISO_Tile_Sand_03_ToStone_01", "ISO_Tile_Sand_03_ToStone_02"};
@@ -56,6 +58,8 @@ public class TerrainGenerator
     private readonly string[] lavaGroundTileNames = { "ISO_Tile_LavaStone_01", "ISO_Tile_Tar_01" };
 
     private readonly string[] lavaAccessoryTileNames = { "ISO_Tile_LavaCracks_01", "ISO_Tile_LavaCracks_01 1" };
+
+    private readonly string[] lowerGroundTileNames = { "ISO_Tile_Dirt_01", "ISO_Tile_Sand_01", "ISO_Tile_Snow_01", "ISO_Tile_LavaStone_01" };
 
     Tile outerBoundsTile;
 
@@ -75,22 +79,33 @@ public class TerrainGenerator
 
             setTiles(groundTileNames, groundTiles, atlas);
             setTiles(accessoryTileNames, accessoryTiles, atlas);
+
         }
 
         private void setTiles(string[] names, Tile[] tiles, SpriteAtlas atlas)
         {
             for (int x = 0; x < tiles.Length; x++)
             {
-                tiles[x] = ScriptableObject.CreateInstance<Tile>();
-                tiles[x].sprite = atlas.GetSprite(names[x]);
+                tiles[x] = setTile(names[x], atlas);
             }
         }
+
+        private Tile setTile(string tileName, SpriteAtlas atlas)
+        {
+            Tile tile = ScriptableObject.CreateInstance<Tile>();
+            tile.sprite = atlas.GetSprite(tileName);
+
+            return tile;
+        }
     }
+
+    private Tile[] lowerGroundTiles;
 
     TerrainOptions.TerrainSettings terrainSettings;
 
     public TerrainGenerator(SpriteAtlas atlas)
     {
+        // doesnt have to be dictionaries, could just be lists. work on generalisation
         outerBoundsTile = ScriptableObject.CreateInstance<Tile>();
         outerBoundsTile.sprite = atlas.GetSprite("ISO_Tile_Flesh_01");
 
@@ -108,6 +123,24 @@ public class TerrainGenerator
         terrainTiles lavaTiles = new terrainTiles(lavaGroundTileNames, lavaAccessoryTileNames, atlas);
         terrainTilesByType.Add(TerrainType.Lava, lavaTiles);
 
+        setTiles(lowerGroundTileNames,out lowerGroundTiles, atlas);
+    }
+
+    private void setTiles(string[] names,out Tile[] tiles, SpriteAtlas atlas)
+    {
+        tiles = new Tile[names.Length];
+        for (int x = 0; x < tiles.Length; x++)
+        {
+            tiles[x] = setTile(names[x], atlas);
+        }
+    }
+
+    private Tile setTile(string tileName, SpriteAtlas atlas)
+    {
+        Tile tile = ScriptableObject.CreateInstance<Tile>();
+        tile.sprite = atlas.GetSprite(tileName);
+
+        return tile;
     }
 
     public Tile[] getGroundTiles()
@@ -119,10 +152,19 @@ public class TerrainGenerator
     {
         return terrainTilesByType[terrainSettings.tType].accessoryTiles;
     }
+    public Tile getLowerGroundTile()
+    {
+        return lowerGroundTiles[(int)terrainSettings.tType];
+    }
 
     public void setTerrainSettings(TerrainOptions.TerrainSettings terrainSettings)
     {
         this.terrainSettings = terrainSettings;
+    }
+
+    public void setRandomSettings()
+    {
+
     }
 
     public void populateCells(Map map)
@@ -137,6 +179,7 @@ public class TerrainGenerator
             setCellsExact(map, terrainSettings.tExactHeight);
         }
 
+        terrainSettings.updateTerrainSize(map.area);
     }
 
     public Map createMap()

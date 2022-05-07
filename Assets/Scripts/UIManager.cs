@@ -98,13 +98,14 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public void generateLevel()
     {
-        if (terrainOptions.heightRangeIsOnAndInvalid())
+        TerrainOptions.TerrainSettings terrainSettings =  terrainOptions.createUserSettings();
+
+        if (terrainSettings.heightRangeIsOnAndInvalid())
         {
             popupManager.showPopup("Invalid Terrain Height Range", "Terrain height minimum value cannot be greater than or equal to the maximum value.");
             return;
         }
 
-        TerrainOptions.TerrainSettings terrainSettings =  terrainOptions.createUserSettings();
         RiverOptions.RiverSettings riverSettings = riverOptions.createUserSettings();
         LakeOptions.LakeSettings lakeSettings = lakeOptions.createUserSettings();
         WalkpathPathOptions.WalkpathSettings walkpathSettings = walkpathPathOptions.createUserSettings();
@@ -112,18 +113,46 @@ public class UIManager : MonoBehaviour
         // generate the level
         levelManager.generate(terrainSettings, riverSettings, lakeSettings, walkpathSettings);
 
+        terrainOptions.updateTerrainSizeField(terrainSettings.tSize);
+
         foreach (Button button in levelInteractionButtons)
         {
             button.interactable = true;
+        }
+
+        if (terrainSettings.heightRangedEnabled)
+        {
+            levelInteractionButtons.First().interactable = false;
         }
     }
 
     /// <summary>
     /// Tell the level manager to generate the level with randomised settings.
     /// </summary>
-    public void randomlyGenerateLevel()
+    public void generateRandomLevel()
     {
+        TerrainOptions.TerrainSettings terrainSettings = terrainOptions.createRandomisedSettings();
+        RiverOptions.RiverSettings riverSettings = riverOptions.createRandomisedSettings();
+        LakeOptions.LakeSettings lakeSettings = lakeOptions.createRandomisedSettings();
+        WalkpathPathOptions.WalkpathSettings walkpathSettings = walkpathPathOptions.createRandomisedSettings();
 
+        // generate the level
+        levelManager.generate(terrainSettings, riverSettings, lakeSettings, walkpathSettings);
+
+        terrainOptions.updateFields(terrainSettings);
+        riverOptions.updateFields(riverSettings);
+        lakeOptions.updateFields(lakeSettings);
+        walkpathPathOptions.updateFields(walkpathSettings);
+
+        foreach (Button button in levelInteractionButtons)
+        {
+            button.interactable = true;
+        }
+
+        if (terrainSettings.heightRangedEnabled)
+        {
+            levelInteractionButtons.First().interactable = false;
+        }
     }
 
     /// <summary>
