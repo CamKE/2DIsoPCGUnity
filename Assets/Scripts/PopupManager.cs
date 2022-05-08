@@ -16,6 +16,9 @@ public class PopupManager : MonoBehaviour
     [SerializeField]
     private Text popupBody;
 
+    [SerializeField]
+    private RectTransform popupContent;
+
     /// <summary>
     /// Activates the popup with the given heading and body text.
     /// </summary>
@@ -23,10 +26,13 @@ public class PopupManager : MonoBehaviour
     /// <param name="messageBody">The body message of the popup to be shown.</param>
     public void showPopup(string messageHeading, string messageBody)
     {
-        // set the popup heading to be the given heading
-        popupHeading.text = messageHeading;
-        // set the popup body to be the given body
-        popupBody.text = messageBody;
+            // set the popup heading to be the given heading
+            popupHeading.text = messageHeading;
+            // set the popup body to be the given body
+            popupBody.text = messageBody;
+
+            popupContent.sizeDelta = new Vector2(0, popupBody.preferredHeight);
+
         // active the popup
         this.gameObject.SetActive(true);
     }

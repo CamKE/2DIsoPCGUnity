@@ -452,9 +452,4 @@ public class TerrainGenerator
             }
         }
     }
-
-    public void randomlyGenerate()
-    {
-
-    }
 }

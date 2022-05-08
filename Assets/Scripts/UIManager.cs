@@ -99,6 +99,8 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public void generateLevel()
     {
+        levelGenInfo = null;
+
         TerrainOptions.TerrainSettings terrainSettings =  terrainOptions.createUserSettings();
 
         if (terrainSettings.heightRangeIsOnAndInvalid())
@@ -137,6 +139,8 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public void generateRandomLevel()
     {
+        levelGenInfo = null;
+
         TerrainOptions.TerrainSettings terrainSettings = terrainOptions.createRandomisedSettings();
         RiverOptions.RiverSettings riverSettings = riverOptions.createRandomisedSettings();
         LakeOptions.LakeSettings lakeSettings = lakeOptions.createRandomisedSettings();

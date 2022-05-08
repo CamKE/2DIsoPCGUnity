@@ -67,18 +67,17 @@ public class LakeGenerator
     public void populateCells(Map map)
     {
         lakeMaxCount = (int)Math.Ceiling((map.terrainCellCount * countMultiplier * ((int)lakeSettings.lNum + 1)));
-        generationInfo.Add(lakeMaxCount + " max lake count calculated based on " + lakeSettings.lNum + " lake amount setting");
-
-        // size of lake affects how many lakes can be generated
-        Debug.Log(lakeMaxCount);
+        generationInfo.Add(lakeMaxCount + " max lake count calculated based on terrain size and " + lakeSettings.lNum + " lake amount setting");
 
         lakeMaxSize = (int)Math.Ceiling(map.terrainCellCount * (sizeMultiplier * ((int)lakeSettings.lMaxSize + 1)));
+        generationInfo.Add(lakeMaxSize + " max lake size calculated based on terrain size and" + lakeSettings.lMaxSize + " lake size setting");
 
         lakeMaxSize = lakeMaxSize < lakeMinSize ? lakeMinSize : lakeMaxSize;
 
         existingLakes = new List<Rect>();
 
-        for (int count = 0; count < lakeMaxCount; count++)
+        int count;
+        for (count = 0; count < lakeMaxCount; count++)
         {
             Vector2Int lakeDimensions = getDimensions(UnityEngine.Random.Range(lakeMinSize, lakeMaxSize), 2);
 
@@ -88,6 +87,7 @@ public class LakeGenerator
             }
             
         }
+        generationInfo.Add(count + " lakes generated");
     }
 
     private bool addLake(Map map, Vector2Int lakeDimension)

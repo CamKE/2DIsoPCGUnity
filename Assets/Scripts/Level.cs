@@ -138,7 +138,7 @@ public class Level : MonoBehaviour
         // if lake generation is enabled
         if (lakeSettings.lGenerationEnabled)
         {
-            generationInfo.Add("Lake Generator:");
+            generationInfo.Add("\n Lake Generator:");
             lakeGenerator.setLakeSettings(lakeSettings);
             // populate the levelCells 3d array with the lake cells
             lakeGenerator.populateCells(levelMap);
@@ -146,7 +146,7 @@ public class Level : MonoBehaviour
 
         if (riverSettings.rGenerationEnabled)
         {
-            generationInfo.Add("River Generator:");
+            generationInfo.Add("\n River Generator:");
             riverGenerator.setRiverSettings(riverSettings);
             // populate the levelCells 3d array with the river cells
             riverGenerator.populateCells(levelMap);
@@ -154,13 +154,13 @@ public class Level : MonoBehaviour
 
         if (walkpathSettings.wGenerationEnabled)
         {
-            generationInfo.Add("Walkpath Generator:");
+            generationInfo.Add("\n Walkpath Generator:");
             walkpathGenerator.setWalkpathSettings(walkpathSettings);
             // populate the levelCells 3d array with the river cells
             walkpathGenerator.populateCells(levelMap);
         }
 
-        generationInfo.Add("Set Tilemaps:");
+        generationInfo.Add("\n Set Tilemaps:");
         setTilemaps();
 
         sw.Stop();
