@@ -163,6 +163,7 @@ public class TerrainGenerator
 
     public void setTerrainSettings(TerrainOptions.TerrainSettings terrainSettings)
     {
+        generationInfo.Add("Using " + terrainSettings.tType + " terrain type");
         this.terrainSettings = terrainSettings;
     }
 
@@ -182,7 +183,7 @@ public class TerrainGenerator
 
         terrainSettings.updateTerrainSize(map.area);
 
-        generationInfo.Add(map.getBoundaryCellPositions().Count + " boundary cells found whilst populating map");
+        generationInfo.Add(map.getBoundaryCellPositions().Count + " boundary cells found from " + map.terrainCellCount + " terrain cells whilst populating map");
 
     }
 

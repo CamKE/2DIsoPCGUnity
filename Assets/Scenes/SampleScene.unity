@@ -2098,7 +2098,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e14dea78b8ad7c1429c92485373a56a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tipToShow: The number of rivers is relative to the terrain size.
+  tipToShow: ' Select the number of walkpaths relative to the remaining terrain size.'
 --- !u!114 &257154138
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2959,85 +2959,6 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 402938810}
-  m_CullTransparentMesh: 1
---- !u!1 &407985470
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 407985471}
-  - component: {fileID: 407985473}
-  - component: {fileID: 407985472}
-  m_Layer: 5
-  m_Name: Label
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &407985471
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 407985470}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 896576346}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 9, y: -0.5}
-  m_SizeDelta: {x: -28, y: -3}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &407985472
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 407985470}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 14
-    m_FontStyle: 0
-    m_BestFit: 1
-    m_MinSize: 10
-    m_MaxSize: 14
-    m_Alignment: 0
-    m_AlignByGeometry: 0
-    m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
-    m_LineSpacing: 1
-  m_Text: Enabled
---- !u!222 &407985473
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 407985470}
   m_CullTransparentMesh: 1
 --- !u!1 &409542233
 GameObject:
@@ -4180,9 +4101,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e14dea78b8ad7c1429c92485373a56a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tipToShow: Specify the size of the terrain in terms of number of tiles. This value
-    will be rounded for square and rectangular shaped levels. For randomly shaped
-    levels, this value will define the maximum possible area.
+  tipToShow: Specify the size of the terrain in terms of maximum tile count. This
+    value will be rounded to a square value for generating the map. Randomly shaped
+    levels tile count will vary.
 --- !u!1 &480631752
 GameObject:
   m_ObjectHideFlags: 0
@@ -5016,7 +4937,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tipToShow: Choose whether to specify the exact height of the terrain or a range
-    of height.
+    of height the terrain should be between.
 --- !u!1 &566307944
 GameObject:
   m_ObjectHideFlags: 0
@@ -5358,7 +5279,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e14dea78b8ad7c1429c92485373a56a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tipToShow: Turn on or off whether rivers are able to cross paths.
+  tipToShow: Turn on or off whether rivers are able to cross paths. Also affects
+    whether lakes can combine with rivers.
 --- !u!1 &589045603
 GameObject:
   m_ObjectHideFlags: 0
@@ -5451,7 +5373,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e14dea78b8ad7c1429c92485373a56a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tipToShow: The number of lakes is relative to the terrain size.
+  tipToShow: Select the number of lakes relative to the terrain size.
 --- !u!1 &591582203
 GameObject:
   m_ObjectHideFlags: 0
@@ -6121,7 +6043,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e14dea78b8ad7c1429c92485373a56a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tipToShow: Turn on or off river generation.
+  tipToShow: Turn on or off the creation of walkpaths.
 --- !u!114 &636386963
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7089,99 +7011,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 709873207}
   m_CullTransparentMesh: 1
---- !u!1 &714169358
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 714169359}
-  - component: {fileID: 714169361}
-  - component: {fileID: 714169360}
-  - component: {fileID: 714169362}
-  m_Layer: 5
-  m_Name: Heading
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &714169359
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 714169358}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1677599495}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -102.5, y: -15}
-  m_SizeDelta: {x: -285, y: 18}
-  m_Pivot: {x: 0.5, y: 1}
---- !u!114 &714169360
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 714169358}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 16
-    m_FontStyle: 0
-    m_BestFit: 1
-    m_MinSize: 10
-    m_MaxSize: 16
-    m_Alignment: 0
-    m_AlignByGeometry: 0
-    m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
-    m_LineSpacing: 1
-  m_Text: River Bridges
---- !u!222 &714169361
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 714169358}
-  m_CullTransparentMesh: 1
---- !u!114 &714169362
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 714169358}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e14dea78b8ad7c1429c92485373a56a4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tipToShow: Toggle on or off whether bridges can be generated across rivers.
 --- !u!1 &714572010
 GameObject:
   m_ObjectHideFlags: 0
@@ -7274,8 +7103,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e14dea78b8ad7c1429c92485373a56a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tipToShow: The lake size is relative to the terrain size. Lakes up to the selected
-    size will be generated.
+  tipToShow: Select the maximumum lake size relative to the terrain size. Lakes up
+    to the selected size will be generated.
 --- !u!1 &717638914
 GameObject:
   m_ObjectHideFlags: 0
@@ -8528,82 +8357,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 843382895}
   m_CullTransparentMesh: 1
---- !u!1 &860910445
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 860910446}
-  - component: {fileID: 860910448}
-  - component: {fileID: 860910447}
-  m_Layer: 5
-  m_Name: Background
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &860910446
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 860910445}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 1636479830}
-  m_Father: {fileID: 896576346}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 10, y: -10}
-  m_SizeDelta: {x: 20, y: 20}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &860910447
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 860910445}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!222 &860910448
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 860910445}
-  m_CullTransparentMesh: 1
 --- !u!1 &865208416
 GameObject:
   m_ObjectHideFlags: 0
@@ -8685,7 +8438,6 @@ RectTransform:
   m_Children:
   - {fileID: 1760502424}
   - {fileID: 804393903}
-  - {fileID: 1677599495}
   m_Father: {fileID: 631042566}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -8769,92 +8521,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 885104969}
   m_CullTransparentMesh: 1
---- !u!1 &896576345
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 896576346}
-  - component: {fileID: 896576348}
-  m_Layer: 5
-  m_Name: Toggle - River bridges
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &896576346
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 896576345}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 860910446}
-  - {fileID: 407985471}
-  m_Father: {fileID: 1677599495}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -85, y: 10}
-  m_SizeDelta: {x: -230, y: 20}
-  m_Pivot: {x: 0.5, y: 0}
---- !u!114 &896576348
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 896576345}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Navigation:
-    m_Mode: 3
-    m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
-  m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
-    m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
-  m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
-  m_AnimationTriggers:
-    m_NormalTrigger: Normal
-    m_HighlightedTrigger: Highlighted
-    m_PressedTrigger: Pressed
-    m_SelectedTrigger: Selected
-    m_DisabledTrigger: Disabled
-  m_Interactable: 1
-  m_TargetGraphic: {fileID: 860910447}
-  toggleTransition: 1
-  graphic: {fileID: 1636479831}
-  m_Group: {fileID: 0}
-  onValueChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_IsOn: 1
 --- !u!1 &898012635
 GameObject:
   m_ObjectHideFlags: 0
@@ -10935,8 +10601,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e14dea78b8ad7c1429c92485373a56a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tipToShow: Specify the shape of the terrain. Terrain size may be rounded depending
-    the selected shape.
+  tipToShow: Choose the shape of the terrain. Terrain size will vary for randomly
+    shaped levels. Higher terrain sizes are more likely to produce larger levels.
 --- !u!1 &1163487905
 GameObject:
   m_ObjectHideFlags: 0
@@ -11767,7 +11433,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e14dea78b8ad7c1429c92485373a56a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tipToShow: Turn on or off whether rivers are able to cross paths.
+  tipToShow: Turn on or off whether walkpaths are able to cross paths.
 --- !u!114 &1233351643
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14067,7 +13733,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e14dea78b8ad7c1429c92485373a56a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tipToShow: Turn on or off river generation.
+  tipToShow: Turn on or off the creation of rivers.
 --- !u!1 &1612076413
 GameObject:
   m_ObjectHideFlags: 0
@@ -14465,81 +14131,6 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1631146907}
-  m_CullTransparentMesh: 1
---- !u!1 &1636479829
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1636479830}
-  - component: {fileID: 1636479832}
-  - component: {fileID: 1636479831}
-  m_Layer: 5
-  m_Name: Checkmark
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1636479830
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1636479829}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 860910446}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 20, y: 20}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1636479831
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1636479829}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!222 &1636479832
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1636479829}
   m_CullTransparentMesh: 1
 --- !u!1 &1638668345
 GameObject:
@@ -14956,43 +14547,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1673705198}
   m_CullTransparentMesh: 1
---- !u!1 &1677599494
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1677599495}
-  m_Layer: 5
-  m_Name: River bridges
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!224 &1677599495
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1677599494}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 714169359}
-  - {fileID: 896576346}
-  m_Father: {fileID: 872007263}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.000061035156, y: -280.00003}
-  m_SizeDelta: {x: 303, y: 70}
-  m_Pivot: {x: 0.5, y: 1}
 --- !u!1 &1706674511
 GameObject:
   m_ObjectHideFlags: 0
@@ -15085,7 +14639,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e14dea78b8ad7c1429c92485373a56a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tipToShow: The number of rivers is relative to the terrain size.
+  tipToShow: ' Select the number of rivers relative to the remaining terrain size.'
 --- !u!1 &1706733522
 GameObject:
   m_ObjectHideFlags: 0
@@ -17175,7 +16729,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e14dea78b8ad7c1429c92485373a56a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tipToShow: Turn on or off lake generation
+  tipToShow: Turn on or off the creation of lakes.
 --- !u!1 &1949758239
 GameObject:
   m_ObjectHideFlags: 0
@@ -17268,7 +16822,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e14dea78b8ad7c1429c92485373a56a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tipToShow: Choose the type of terrain to be generated.
+  tipToShow: Choose the type of terrain to be generated. This will change the tiles
+    used in the level.
 --- !u!1 &1963699718
 GameObject:
   m_ObjectHideFlags: 0

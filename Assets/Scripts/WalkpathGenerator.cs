@@ -70,38 +70,42 @@ public class WalkpathGenerator : PathGenerator
     {
         List<Vector2Int> boundaryCellPositions = map.getBoundaryCellPositions();
 
-            walkpathMaxCount = (int)Math.Ceiling(map.terrainCellCount * (wMultiplier * ((int)walkpathSettings.wNum + 1)));
+        walkpathMaxCount = (int)Math.Ceiling(map.terrainCellCount * (wMultiplier * ((int)walkpathSettings.wNum + 1)));
+        generationInfo.Add(walkpathMaxCount + " max walkpath count calculated based on terrain size and " + walkpathSettings.wNum + " walkpath amount setting");
 
-            Heap<CellPair> cellPairs = new Heap<CellPair>(walkpathMaxCount);
+        Heap<CellPair> cellPairs = new Heap<CellPair>(walkpathMaxCount);
 
-            for (int count = 0; count < walkpathMaxCount; count++)
+        int count;
+        for (count = 0; count < walkpathMaxCount; count++)
+        {
+            CellPair pair = getReachableCells(map, boundaryCellPositions, cellPairs, walkpathSettings.intersectionsEnabled);
+
+            if (pair == null)
             {
-                CellPair pair = getReachableCells(map, boundaryCellPositions, cellPairs, walkpathSettings.intersectionsEnabled);
-
-                if (pair == null)
-                {
-                    break;
-                }
-
-                cellPairs.Add(pair);
-            
+                break;
             }
+
+            cellPairs.Add(pair);
+
+        }
 
         statusToCheck = Cell.CellStatus.RiverCell;
 
-            while (cellPairs.Count > 0)
+        while (cellPairs.Count > 0)
+        {
+            CellPair cellPair = cellPairs.RemoveFirst();
+            cellPair.startCell.isTraversable = true;
+            cellPair.endCell.isTraversable = true;
+
+            if (!findAStarPath(map, cellPair.startCell, cellPair.endCell, Cell.CellStatus.WalkpathCell, walkpathSettings.intersectionsEnabled))
             {
-                CellPair cellPair = cellPairs.RemoveFirst();
-                cellPair.startCell.isTraversable = true;
-                cellPair.endCell.isTraversable = true;
+                count--;
+                Debug.Log(cellPair.startCell.position + " to " + cellPair.endCell.position);
+                map.updateCellStatus(cellPair.startCell, Cell.CellStatus.InvalidCell);
+                map.updateCellStatus(cellPair.endCell, Cell.CellStatus.InvalidCell);
 
-                bool done = findAStarPath(map, cellPair.startCell, cellPair.endCell, Cell.CellStatus.WalkpathCell, walkpathSettings.intersectionsEnabled);
             }
-        
-    }
-
-    public void randomlyGenerate()
-    {
-
+        }
+        generationInfo.Add(count + " walkpaths generated");
     }
 }

@@ -164,7 +164,7 @@ public class Level : MonoBehaviour
         setTilemaps();
 
         sw.Stop();
-        Debug.Log($"level generated: {sw.ElapsedMilliseconds} ms");
+        generationInfo.Add("Level generated in " + sw.ElapsedMilliseconds + " ms");
 
         isGenerated = true;
 
@@ -176,6 +176,7 @@ public class Level : MonoBehaviour
         // set the array of positions and array of tiles from the level cells which are terrain
         // then populate the terrain tilemap with the tiles
 
+        generationInfo.Add("Setting the tiles in the tilemap based on the map object populated");
 
         // terrain tiles
         Tile[] groundTiles = terrainGenerator.getGroundTiles();
@@ -191,7 +192,6 @@ public class Level : MonoBehaviour
         // lake tile
         Tile lakeTile = lakeGenerator.getTile();
 
-        
         for (int x = 0; x < levelMap.width; x++)
         {
             for (int y = 0; y < levelMap.height; y++)

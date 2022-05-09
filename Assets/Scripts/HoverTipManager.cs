@@ -34,16 +34,20 @@ public class HoverTipManager : MonoBehaviour
     /// </summary>
     public static Action onMouseLoseFocus;
 
+    private const float tipWindowXOffset = 50.0f;
 
+    private const float fullHDWidth = 1920.0f;
 
     // start is called before the first frame update when the script is enabled
     private void Start()
     {
         // hide the tip upon application start
         hideTip();
+        // top left pivot
+        tipWindow.pivot = Vector2.up;
     }
 
-     // called when an instance of this class is created.
+    // called when an instance of this class is created.
     private void OnEnable()
     {
         // assign the function showTip to the onMouseHover delegate
@@ -75,7 +79,8 @@ public class HoverTipManager : MonoBehaviour
         tipWindow.gameObject.SetActive(true);
         // place the tip window slighty to the right
         // of the position where the tip was activated
-        tipWindow.transform.position = new Vector2(mousePos.x + tipWindow.sizeDelta.x * 0.6f, mousePos.y);
+        
+        tipWindow.transform.position = new Vector2(mousePos.x + (tipWindowXOffset * (Screen.width / fullHDWidth)), mousePos.y);
     }
 
     // Responsible for hiding the tip window

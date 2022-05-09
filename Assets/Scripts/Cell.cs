@@ -27,8 +27,8 @@ public class Cell : IHeapItem<Cell>
                 isTraversable = onBoundary ? false : true;
                 break;
             case CellStatus.RiverCell:
+            case CellStatus.WalkpathCell:
                 isTraversable = intersectionsEnabled;
-                isWaterBound = false;
                 break;
             default:
                 isTraversable = false;

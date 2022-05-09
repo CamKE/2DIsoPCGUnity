@@ -46,6 +46,8 @@ public class RiverGenerator : PathGenerator
         riverTilesByType.Add(TerrainGenerator.TerrainType.Snow, iceTile);
 
         this.generationInfo = generationInfo;
+
+        statusToCheck = Cell.CellStatus.WalkpathCell;
     }
 
     private Tile setupTile(SpriteAtlas atlas, string tilename)
@@ -59,7 +61,6 @@ public class RiverGenerator : PathGenerator
 
     public void setRiverSettings(RiverOptions.RiverSettings riverSettings)
     {
-        generationInfo.Add("step 4");
         this.riverSettings = riverSettings;
     }
 
@@ -70,12 +71,13 @@ public class RiverGenerator : PathGenerator
 
     public void populateCells(Map map)
     {
-        generationInfo.Add("step 5");
         riverMaxCount = (int)Math.Ceiling(map.terrainCellCount * (rMultiplier * ((int)riverSettings.rNum + 1)));
+        generationInfo.Add(riverMaxCount + " max river count calculated based on terrain size and " + riverSettings.rNum + " river amount setting");
 
         Heap<CellPair> cellPairs = new Heap<CellPair>(riverMaxCount);
 
-        for (int count = 0; count < riverMaxCount; count++)
+        int count;
+        for (count = 0; count < riverMaxCount; count++)
         {
             CellPair pair = getReachableCells(map, map.getBoundaryCellPositions(), cellPairs, riverSettings.intersectionsEnabled);
 
@@ -88,21 +90,19 @@ public class RiverGenerator : PathGenerator
 
         }
 
-      statusToCheck = Cell.CellStatus.WalkpathCell;
-
         while (cellPairs.Count > 0)
         {
             CellPair cellPair = cellPairs.RemoveFirst();
             cellPair.startCell.isTraversable = true;
             cellPair.endCell.isTraversable = true;
 
-            bool done = findAStarPath(map, cellPair.startCell, cellPair.endCell, Cell.CellStatus.RiverCell, riverSettings.intersectionsEnabled);
+            if (!findAStarPath(map, cellPair.startCell, cellPair.endCell, Cell.CellStatus.RiverCell, riverSettings.intersectionsEnabled))
+            {
+                count--;
+            }
         }
+
+        generationInfo.Add(count + " rivers generated");
     }
 
-
-    public void randomlyGenerate()
-    {
-
-    }
 }

@@ -127,7 +127,6 @@ public class LakeGenerator
                     {
                         Vector2Int direction = new Vector2Int(x, y);
 
-
                         existingLakes.Add(newLake);
 
                         placeLake(map, startPosition, endPosition, direction);
@@ -208,27 +207,6 @@ public class LakeGenerator
         return false;
     }
 
-    private bool RectOverlap(Rect firstRect, Rect secondRect)
-    {
-        if (firstRect.x + firstRect.width * 0.5f < secondRect.x - secondRect.width * 0.5f)
-        {
-            return false;
-        }
-        if (secondRect.x + secondRect.width * 0.5f < firstRect.x - firstRect.width * 0.5f)
-        {
-            return false;
-        }
-        if (firstRect.y + firstRect.height * 0.5f < secondRect.y - secondRect.height * 0.5f)
-        {
-            return false;
-        }
-        if (secondRect.y + secondRect.height * 0.5f < firstRect.y - firstRect.height * 0.5f)
-        {
-            return false;
-        }
-        return true;
-    }
-
     public Tile getTile()
     {
         return lakeTilesByType[lakeSettings.tType];
@@ -248,13 +226,5 @@ public class LakeGenerator
 
         // random orientation of width and height
         return UnityEngine.Random.value > 0.5f ? new Vector2Int(length, length * ratio) : new Vector2Int(length * ratio, length);
-    }
-
-    public void randomlyGenerate()
-    {
-        // fix dimension
-        // fix lake amount
-        // fix lake size
-        // fix lakes intersecting
     }
 }

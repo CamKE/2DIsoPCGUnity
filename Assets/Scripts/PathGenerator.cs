@@ -45,7 +45,7 @@ public class PathGenerator
 
                     foreach (Cell neighbour in neighbours)
                     {
-                        if (neighbour.isTraversable)
+                        if (neighbour.isTraversable && !neighbour.isWaterBound)
                         {
                             traversableNeighbourCount++;
                         }
