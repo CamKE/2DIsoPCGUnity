@@ -35,6 +35,9 @@ public class LevelEditor : Editor
     int numWalkpath;
     bool walkpathIntersectionsEnabled;
 
+    bool randomGenerationPressed;
+    bool levelGenerationPressed;
+
     LevelManager levelManager;
 
     TerrainOptions terrainOptions;
@@ -42,10 +45,8 @@ public class LevelEditor : Editor
     LakeOptions lakeOptions;
     WalkpathPathOptions walkpathPathOptions;
 
-    void Awake()
-    {
-        Debug.Log("hello");
-    }
+    string levelGenInfo;
+    Vector2 scrollPos = new Vector2();
 
     private void OnEnable()
     {
@@ -127,8 +128,21 @@ public class LevelEditor : Editor
             walkpathIntersectionsEnabled = GUILayout.Toggle(walkpathIntersectionsEnabled, "Walkpath Intersection");
         }
 
+        
         EditorGUILayout.BeginHorizontal();
-        if (GUILayout.Button("Randomise Level"))
+        randomGenerationPressed = GUILayout.Button("Randomise Level");
+        levelGenerationPressed = GUILayout.Button("Generate Level");
+        EditorGUILayout.EndHorizontal();
+
+        addHeading("Level Generation Information");
+
+        EditorGUILayout.BeginHorizontal();
+        scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.ExpandWidth(true), GUILayout.Height(150));
+        GUILayout.Label(levelGenInfo);
+        EditorGUILayout.EndScrollView();
+        EditorGUILayout.EndHorizontal();
+
+        if (randomGenerationPressed)
         {
             TerrainOptions.TerrainSettings terrainSettings = terrainOptions.createRandomisedSettings();
             RiverOptions.RiverSettings riverSettings = riverOptions.createRandomisedSettings();
@@ -136,14 +150,74 @@ public class LevelEditor : Editor
             WalkpathPathOptions.WalkpathSettings walkpathSettings = walkpathPathOptions.createRandomisedSettings();
 
             levelManager.generate(terrainSettings, riverSettings, lakeSettings, walkpathSettings);
+
+            terrainSize = terrainSettings.tSize;
+            terrainType = (int)terrainSettings.tType;
+            heightRangeEnabled = terrainSettings.heightRangedEnabled;
+
+            if (heightRangeEnabled)
+            {
+                minHeight = terrainSettings.tMinHeight;
+                maxHeight = terrainSettings.tMaxHeight;
+            } else
+            {
+                exactHeightValue = terrainSettings.tExactHeight;
+            }
+
+            terrainShape = (int)terrainSettings.tShape;
+
+            riverGenerationEnabled = riverSettings.rGenerationEnabled;
+
+            if (riverGenerationEnabled)
+            {
+                numRiver = (int)riverSettings.rNum;
+                riverIntersectionsEnabled = riverSettings.intersectionsEnabled;
+            }
+
+            lakeGenerationEnabled = lakeSettings.lGenerationEnabled;
+
+            if (lakeGenerationEnabled)
+            {
+                numLake = (int)lakeSettings.lNum;
+                maxLakeSize = (int)lakeSettings.lMaxSize;
+            }
+
+            walkpathGenerationEnabled = walkpathSettings.wGenerationEnabled;
+
+            if (walkpathGenerationEnabled)
+            {
+                numWalkpath = (int)walkpathSettings.wNum;
+                walkpathIntersectionsEnabled = walkpathSettings.intersectionsEnabled;
+            }
+
+            foreach (string generationStep in levelManager.getGenerationInfo())
+            {
+                levelGenInfo += generationStep + "\n";
+            }
         }
 
-        if (GUILayout.Button("Generate Level"))
+        if (levelGenerationPressed)
         {
-            //levelManager.generate();
-        }
-        EditorGUILayout.EndHorizontal();
+            TerrainOptions.TerrainSettings terrainSettings = terrainOptions.createUserSettings(terrainType, heightRangeEnabled, terrainSize, terrainShape, minHeight, maxHeight, exactHeightValue);
 
+            if (terrainSettings.heightRangeIsOnAndInvalid())
+            {
+                EditorUtility.DisplayDialog("Invalid Terrain Height Range", "Terrain height minimum value cannot be greater than or equal to the maximum value.", "Ok");
+            }
+            else
+            {
+                RiverOptions.RiverSettings riverSettings = riverOptions.createUserSettings(riverGenerationEnabled, numRiver, riverIntersectionsEnabled);
+                LakeOptions.LakeSettings lakeSettings = lakeOptions.createUserSettings(lakeGenerationEnabled, numLake, maxLakeSize);
+                WalkpathPathOptions.WalkpathSettings walkpathSettings = walkpathPathOptions.createUserSettings(walkpathGenerationEnabled, numWalkpath, walkpathIntersectionsEnabled);
+
+                levelManager.generate(terrainSettings, riverSettings, lakeSettings, walkpathSettings);
+            }
+
+            foreach (string generationStep in levelManager.getGenerationInfo())
+            {
+                levelGenInfo += generationStep + "\n";
+            }
+        }
     }
 
     private void addHeading(string heading, bool mainHeading = false)

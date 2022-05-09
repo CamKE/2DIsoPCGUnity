@@ -84,12 +84,12 @@ public class TerrainOptions : Options
     {
         // variables set here as this method is always called after submission of the options
         terrainType = (TerrainGenerator.TerrainType)dropdowns[((int)TerrainDropdownName.TerrainType)].value;
-        bool heightRangedEnabled = toggles[(int)TerrainToggleOptionName.TerrainRangeHeight].isOn;
+        bool heightRangeEnabled = toggles[(int)TerrainToggleOptionName.TerrainRangeHeight].isOn;
 
         int tSize = int.Parse(inputFields[((int)TerrainSliderInputName.TerrainSize)].text);
         TerrainGenerator.TerrainShape tShape = (TerrainGenerator.TerrainShape)dropdowns[((int)TerrainDropdownName.TerrainShape)].value;
 
-        if (heightRangedEnabled)
+        if (heightRangeEnabled)
         {
             int tMinHeight = int.Parse(inputFields[((int)TerrainSliderInputName.TerrainRangeHeightMin)].text);
             int tMaxHeight = int.Parse(inputFields[((int)TerrainSliderInputName.TerrainRangeHeightMax)].text);
@@ -101,6 +101,20 @@ public class TerrainOptions : Options
             int tExactHeight = int.Parse(inputFields[((int)TerrainSliderInputName.TerrainExactHeight)].text);
 
             return new TerrainSettings(tSize, terrainType, tExactHeight, tShape);
+        }
+    }
+    public TerrainSettings createUserSettings(int terrainType, bool heightRangeEnabled, int tSize, int tShape, int tMinHeight, int tMaxHeight, int tExactHeight)
+    {
+        // variables set here as this method is always called after submission of the options
+        Options.terrainType = (TerrainGenerator.TerrainType)terrainType;
+
+        if (heightRangeEnabled)
+        {
+            return new TerrainSettings(tSize, Options.terrainType, tMinHeight, tMaxHeight, (TerrainGenerator.TerrainShape)tShape);
+        }
+        else
+        {
+            return new TerrainSettings(tSize, Options.terrainType, tExactHeight, (TerrainGenerator.TerrainShape)tShape);
         }
     }
 

@@ -46,6 +46,11 @@ public class WalkpathPathOptions : Options
         return new WalkpathSettings(terrainType, wGenerationEnabled, wNum, intersectionsEnabled);
     }
 
+    public WalkpathSettings createUserSettings(bool walkpathGenerationEnabled, int numWalkpath, bool walkpathIntersectionsEnabled)
+    {
+        return new WalkpathSettings(terrainType, walkpathGenerationEnabled, (WalkpathGenerator.NumberOfWalkpaths)numWalkpath, walkpathIntersectionsEnabled);
+    }
+
     public WalkpathSettings createRandomisedSettings()
     {
         bool wGenerationEnabled = UnityEngine.Random.value > 0.5f;

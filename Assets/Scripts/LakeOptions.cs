@@ -46,7 +46,12 @@ public class LakeOptions : Options
 
         return new LakeSettings(terrainType, lGenerationEnabled, lNum, lMaxSize);
     }
-    
+
+    public LakeSettings createUserSettings(bool lakeGenerationEnabled, int numLake, int maxLakeSize)
+    {
+        return new LakeSettings(terrainType, lakeGenerationEnabled, (LakeGenerator.NumberOfLakes)numLake, (LakeGenerator.MaxLakeSize)maxLakeSize);
+    }
+
     public LakeSettings createRandomisedSettings()
     {
         bool lGenerationEnabled = UnityEngine.Random.value > 0.5f;

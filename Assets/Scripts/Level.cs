@@ -91,35 +91,6 @@ public class Level : MonoBehaviour
             clear();
     }
 
-    private Tilemap setupTilemap(Grid grid, string name, bool tilemapRendererEnabled)
-    {
-        Tilemap tilemap = new GameObject(name).AddComponent<Tilemap>();
-
-        tilemap.gameObject.AddComponent<TilemapRenderer>();
-        tilemap.transform.SetParent(grid.gameObject.transform);
-        // move tile anchor from the button of the tile, to the front point of the tile (in the z)
-        tilemap.tileAnchor = new Vector3(0, 0, -2);
-
-        var terrainTilemapRenderer = tilemap.GetComponent<TilemapRenderer>();
-
-        terrainTilemapRenderer.enabled = tilemapRendererEnabled;
-        terrainTilemapRenderer.mode = TilemapRenderer.Mode.Individual;
-
-        return tilemap;
-    }
-
-    private Tilemap setupCollidableTilemap(Grid grid, string name, bool tilemapRendererEnabled, float colliderYOffset = 0)
-    {
-        Tilemap tilemap = setupTilemap(grid, name, tilemapRendererEnabled);
-        tilemap.gameObject.AddComponent<TilemapCollider2D>();
-        tilemap.gameObject.AddComponent<Rigidbody2D>();
-        tilemap.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
-        //tilemap.gameObject.AddComponent<CompositeCollider2D>();
-        tilemap.GetComponent<TilemapCollider2D>().offset = new Vector2(0, colliderYOffset);
-
-        return tilemap;
-    }
-
     public void setCameraActive(bool value)
     {
         cameraController.gameObject.SetActive(value);

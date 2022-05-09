@@ -45,7 +45,11 @@ public class RiverOptions : Options
 
         return new RiverSettings(terrainType, rGenerationEnabled, rNum, intersectionsEnabled);
     }
-    
+
+    public RiverSettings createUserSettings(bool rGenerationEnabled, int numRiver, bool intersectionsEnabled)
+    {
+        return new RiverSettings(terrainType, rGenerationEnabled, (RiverGenerator.NumberOfRivers)numRiver, intersectionsEnabled);
+    }
 
     public RiverSettings createRandomisedSettings()
     {
