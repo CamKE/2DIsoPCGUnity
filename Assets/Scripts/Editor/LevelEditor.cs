@@ -13,18 +13,55 @@ public class LevelEditor : Editor
 {
     //EditorUtility.DisplayDialog("This is a test", "Test message body", "Close");
     GUIStyle headingStyle;
+
     int terrainSize;
     int terrainType;
-    bool exactHeight;
-    bool heightRange;
+    bool exactHeightEnabled;
+    bool heightRangeEnabled;
     int exactHeightValue;
     int minHeight;
     int maxHeight;
+    int terrainShape;
+
+    bool riverGenerationEnabled;
+    int numRiver;
+    bool riverIntersectionsEnabled;
+
+    bool lakeGenerationEnabled;
+    int numLake;
+    int maxLakeSize;
+
+    bool walkpathGenerationEnabled;
+    int numWalkpath;
+    bool walkpathIntersectionsEnabled;
+
+    LevelManager levelManager;
+
+    TerrainOptions terrainOptions;
+    RiverOptions riverOptions;
+    LakeOptions lakeOptions;
+    WalkpathPathOptions walkpathPathOptions;
+
+    void Awake()
+    {
+        Debug.Log("hello");
+    }
+
+    private void OnEnable()
+    {
+            levelManager = (LevelManager)target;
+
+            terrainOptions = new TerrainOptions();
+            riverOptions = new RiverOptions();
+            lakeOptions = new LakeOptions();
+            walkpathPathOptions = new WalkpathPathOptions();
+
+            levelManager.setupLevelFromInspector();
+    }
 
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
-        LevelManager levelManager = (LevelManager)target;
 
         headingStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontStyle = FontStyle.Bold };
 
@@ -34,15 +71,15 @@ public class LevelEditor : Editor
 
         terrainSize = EditorGUILayout.IntSlider("Terrain Size", terrainSize, TerrainGenerator.terrainMinSize, TerrainGenerator.terrainMaxSize);
         
-        string[] terraintypes = Enum.GetNames(typeof(TerrainGenerator.TerrainType));
-        terrainType = EditorGUILayout.Popup("Terrain type", terrainType, terraintypes);
+        string[] terrainTypes = Enum.GetNames(typeof(TerrainGenerator.TerrainType));
+        terrainType = EditorGUILayout.Popup("Terrain Type", terrainType, terrainTypes);
 
         EditorGUILayout.BeginHorizontal();
-        exactHeight = GUILayout.Toggle(!heightRange, "Exact Height");
-        heightRange = GUILayout.Toggle(!exactHeight, "Height Range");
+        exactHeightEnabled = GUILayout.Toggle(!heightRangeEnabled, "Exact Height");
+        heightRangeEnabled = GUILayout.Toggle(!exactHeightEnabled, "Height Range");
         EditorGUILayout.EndHorizontal();
 
-        if (exactHeight)
+        if (exactHeightEnabled)
         {
             exactHeightValue = EditorGUILayout.IntSlider("Exact Height", exactHeightValue, TerrainGenerator.terrainMinHeight, TerrainGenerator.terrainMaxHeight);
         }
@@ -52,10 +89,53 @@ public class LevelEditor : Editor
             maxHeight = EditorGUILayout.IntSlider("Maxiumum Height", maxHeight, TerrainGenerator.terrainMinHeight, TerrainGenerator.terrainMaxHeight);
         }
 
+        string[] terrainShapes = Enum.GetNames(typeof(TerrainGenerator.TerrainShape));
+        terrainShape = EditorGUILayout.Popup("Terrain Shape", terrainShape, terrainShapes);
+
+        addHeading("Water Bodies Options");
+
+        riverGenerationEnabled = GUILayout.Toggle(riverGenerationEnabled, "River Generation");
+
+        if (riverGenerationEnabled)
+        {
+            string[] numRivers = Enum.GetNames(typeof(RiverGenerator.NumberOfRivers));
+            numRiver = EditorGUILayout.Popup("Number of Rivers", numRiver, numRivers);
+
+            riverIntersectionsEnabled = GUILayout.Toggle(riverIntersectionsEnabled, "River Intersection");
+        }
+
+        lakeGenerationEnabled = GUILayout.Toggle(lakeGenerationEnabled, "Lake Generation");
+
+        if (lakeGenerationEnabled)
+        {
+            string[] numLakes = Enum.GetNames(typeof(LakeGenerator.NumberOfLakes));
+            numLake = EditorGUILayout.Popup("Number of Lakes", numLake, numLakes);
+
+            string[] maxLakeSizes = Enum.GetNames(typeof(LakeGenerator.MaxLakeSize));
+            maxLakeSize = EditorGUILayout.Popup("Maximum Lake Size", maxLakeSize, maxLakeSizes);
+        }
+
+        addHeading("Walkpath Options");
+
+        walkpathGenerationEnabled = GUILayout.Toggle(walkpathGenerationEnabled, "Walkpath Generation");
+
+        if (walkpathGenerationEnabled)
+        {
+            string[] numWalkpaths = Enum.GetNames(typeof(WalkpathGenerator.NumberOfWalkpaths));
+            numWalkpath = EditorGUILayout.Popup("Number of Walkpaths", numWalkpath, numWalkpaths);
+
+            walkpathIntersectionsEnabled = GUILayout.Toggle(walkpathIntersectionsEnabled, "Walkpath Intersection");
+        }
+
         EditorGUILayout.BeginHorizontal();
         if (GUILayout.Button("Randomise Level"))
         {
+            TerrainOptions.TerrainSettings terrainSettings = terrainOptions.createRandomisedSettings();
+            RiverOptions.RiverSettings riverSettings = riverOptions.createRandomisedSettings();
+            LakeOptions.LakeSettings lakeSettings = lakeOptions.createRandomisedSettings();
+            WalkpathPathOptions.WalkpathSettings walkpathSettings = walkpathPathOptions.createRandomisedSettings();
 
+            levelManager.generate(terrainSettings, riverSettings, lakeSettings, walkpathSettings);
         }
 
         if (GUILayout.Button("Generate Level"))

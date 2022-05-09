@@ -24,6 +24,11 @@ public class LevelManager : MonoBehaviour
     private PlayerController playerController;
 
     private bool rangeHeightEnabled;
+    
+    public void setupLevelFromInspector()
+    {
+        level.setup(true);
+    }
 
     public int getCellZPosition(Vector2 worldPos)
     {
@@ -122,6 +127,5 @@ public class LevelManager : MonoBehaviour
             // delete the player
             Destroy(player);
         }
-
     }
 }

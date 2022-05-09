@@ -32,6 +32,7 @@ public class Level : MonoBehaviour
 
     private LevelCameraController cameraController;
 
+    [SerializeField]
     private Tilemap[] tilemaps;
 
     List<Vector3Int>[] positions;
@@ -45,43 +46,49 @@ public class Level : MonoBehaviour
 
     private enum TilemapNames { Terrain, TerrainOuterBounds1, TerrainOuterBounds2, Water }
     // Start is called before the first frame update
+
+    bool fromInspector;
+
     void Start()
     {
-        isGenerated = false;
+        setup();
+    }
 
-        grid = transform.GetComponent<Grid>();
+    public void setup(bool fromInspector = false)
+    {
+            isGenerated = false;
 
-        int numEnum = Enum.GetValues(typeof(TilemapNames)).Length;
-        tilemaps = new Tilemap[numEnum];
-        positions = new List<Vector3Int>[numEnum];
-        tiles = new List<TileBase>[numEnum];
+            grid = transform.GetComponent<Grid>();
 
-        tilemaps[(int)TilemapNames.Terrain] = setupTilemap(grid, "Terrain", true);
+            int numEnum = Enum.GetValues(typeof(TilemapNames)).Length;
+            positions = new List<Vector3Int>[numEnum];
+            tiles = new List<TileBase>[numEnum];
 
-        tilemaps[(int)TilemapNames.TerrainOuterBounds1] = setupCollidableTilemap(grid, "TerrainOuterBounds1", false, 0.785f);
-        tilemaps[(int)TilemapNames.TerrainOuterBounds2] = setupCollidableTilemap(grid, "TerrainOuterBounds2", false);
+            generationInfo = new List<string>();
 
-        tilemaps[(int)TilemapNames.Water] = setupCollidableTilemap(grid, "Water", true, 1.125f);
+            terrainGenerator = new TerrainGenerator(atlas, generationInfo);
 
-        generationInfo = new List<string>();
+            riverGenerator = new RiverGenerator(atlas, generationInfo);
 
-        terrainGenerator = new TerrainGenerator(atlas, generationInfo);
+            lakeGenerator = new LakeGenerator(atlas, generationInfo);
 
-        riverGenerator = new RiverGenerator(atlas, generationInfo);
+            walkpathGenerator = new WalkpathGenerator(atlas, generationInfo);
 
-        lakeGenerator = new LakeGenerator(atlas, generationInfo);
+            for (int x = 0; x < tilemapNamesCount; x++)
+            {
+                positions[x] = new List<Vector3Int>();
+                tiles[x] = new List<TileBase>();
+            }
 
-        walkpathGenerator = new WalkpathGenerator(atlas, generationInfo);
+            if (!fromInspector)
+            {
+            cameraController = transform.GetChild(0).GetComponent<LevelCameraController>();
 
-        cameraController = transform.GetChild(0).GetComponent<LevelCameraController>();
+            cameraController.enabled = false;
+            }
 
-        cameraController.enabled = false;
-
-        for (int x = 0; x < tilemapNamesCount; x++)
-        {
-            positions[x] = new List<Vector3Int>();
-            tiles[x] = new List<TileBase>();
-        }
+            this.fromInspector = fromInspector;
+            clear();
     }
 
     private Tilemap setupTilemap(Grid grid, string name, bool tilemapRendererEnabled)
@@ -168,7 +175,10 @@ public class Level : MonoBehaviour
 
         isGenerated = true;
 
-        updateCamera();
+        if (!fromInspector)
+        {
+            updateCamera();
+        }
     }
 
     private void setTilemaps()
@@ -340,5 +350,4 @@ public class Level : MonoBehaviour
 
         return levelMap.getCell((Vector2Int)gridPos).position.z;
     }
-
 }
