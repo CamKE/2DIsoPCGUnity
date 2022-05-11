@@ -1,10 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Tilemaps;
-using UnityEngine.U2D;
-using UnityEditor;
-using System;
 
 /// <summary>
 /// Responsible for all operations to do with creating, managing and destroying the level and elements within it.
@@ -38,9 +33,9 @@ public class LevelManager : MonoBehaviour
     /// <summary>
     /// Generate the level. temporary setup.
     /// </summary>
-    public void generate(TerrainOptions.TerrainSettings terrainSettings, RiverOptions.RiverSettings riverSettings, LakeOptions.LakeSettings lakeSettings, WalkpathPathOptions.WalkpathSettings walkpathSettings)
+    public void generate(TerrainSettings terrainSettings, RiverSettings riverSettings, LakeSettings lakeSettings, WalkpathSettings walkpathSettings)
     {
-        rangeHeightEnabled = terrainSettings.heightRangedEnabled;
+        rangeHeightEnabled = terrainSettings.heightRangeEnabled;
 
         level.generate(terrainSettings, riverSettings, lakeSettings, walkpathSettings);
     }

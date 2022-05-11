@@ -1,12 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.U2D;
-using System.Diagnostics;
-using Debug = UnityEngine.Debug;
-using System.Linq;
+
 
 public class RiverGenerator : PathGenerator
 {
@@ -21,7 +18,7 @@ public class RiverGenerator : PathGenerator
     public enum NumberOfRivers { Low, Medium, High }
     public static int numberOfRiversCount = Enum.GetValues(typeof(NumberOfRivers)).Length;
 
-    RiverOptions.RiverSettings riverSettings;
+    RiverSettings riverSettings;
 
     private const float rMultiplier = 0.0015f;
 
@@ -36,6 +33,7 @@ public class RiverGenerator : PathGenerator
 
         riverTilesByType.Add(TerrainGenerator.TerrainType.Greenery, waterTile);
         riverTilesByType.Add(TerrainGenerator.TerrainType.Dessert, waterTile);
+        riverTilesByType.Add(TerrainGenerator.TerrainType.Skin, waterTile);
 
         Tile lavaTile = setupTile(atlas, lavaTileName);
 
@@ -59,7 +57,7 @@ public class RiverGenerator : PathGenerator
         return tile;
     }
 
-    public void setRiverSettings(RiverOptions.RiverSettings riverSettings)
+    public void setRiverSettings(RiverSettings riverSettings)
     {
         this.riverSettings = riverSettings;
     }

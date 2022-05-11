@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -19,7 +18,7 @@ public class TerrainGenerator
     /// <summary>
     /// The terrain type options.
     /// </summary>
-    public enum TerrainType { Greenery, Dessert, Snow, Lava };
+    public enum TerrainType { Greenery, Dessert, Snow, Lava, Skin };
     public static int terrainTypeCount = Enum.GetValues(typeof(TerrainType)).Length;
 
     /// <summary>
@@ -59,7 +58,11 @@ public class TerrainGenerator
 
     private readonly string[] lavaAccessoryTileNames = { "ISO_Tile_LavaCracks_01", "ISO_Tile_LavaCracks_01 1" };
 
-    private readonly string[] lowerGroundTileNames = { "ISO_Tile_Dirt_01", "ISO_Tile_Sand_01", "ISO_Tile_Snow_01", "ISO_Tile_LavaStone_01" };
+    private readonly string[] skinGroundTileNames = { "ISO_Tile_Flesh_01", "ISO_Tile_Skin_01" };
+
+    private readonly string[] skinAccessoryTileNames = { "ISO_Tile_Flesh_01_Var01", "ISO_Tile_Skin_01_Smooth", "ISO_Tile_Skin_01_Smooth_Alt"};
+
+    private readonly string[] lowerGroundTileNames = { "ISO_Tile_Dirt_01", "ISO_Tile_Sand_01", "ISO_Tile_Snow_01", "ISO_Tile_LavaStone_01", "ISO_Tile_Skin_01" };
 
     Tile outerBoundsTile;
 
@@ -103,13 +106,13 @@ public class TerrainGenerator
 
     private Tile[] lowerGroundTiles;
 
-    TerrainOptions.TerrainSettings terrainSettings;
+    TerrainSettings terrainSettings;
 
     public TerrainGenerator(SpriteAtlas atlas, List<string> generationInfo)
     {
         // doesnt have to be dictionaries, could just be lists. work on generalisation
         outerBoundsTile = ScriptableObject.CreateInstance<Tile>();
-        outerBoundsTile.sprite = atlas.GetSprite("ISO_Tile_Flesh_01");
+        outerBoundsTile.sprite = atlas.GetSprite("ISO_Tile_Template_01");
 
         terrainTilesByType = new Dictionary<TerrainType, terrainTiles>();
 
@@ -124,6 +127,9 @@ public class TerrainGenerator
 
         terrainTiles lavaTiles = new terrainTiles(lavaGroundTileNames, lavaAccessoryTileNames, atlas);
         terrainTilesByType.Add(TerrainType.Lava, lavaTiles);
+
+        terrainTiles skinTiles = new terrainTiles(skinGroundTileNames, skinAccessoryTileNames, atlas);
+        terrainTilesByType.Add(TerrainType.Skin, skinTiles);
 
         setTiles(lowerGroundTileNames,out lowerGroundTiles, atlas);
 
@@ -161,7 +167,7 @@ public class TerrainGenerator
         return lowerGroundTiles[(int)terrainSettings.tType];
     }
 
-    public void setTerrainSettings(TerrainOptions.TerrainSettings terrainSettings)
+    public void setTerrainSettings(TerrainSettings terrainSettings)
     {
         generationInfo.Add("Using " + terrainSettings.tType + " terrain type");
         this.terrainSettings = terrainSettings;
@@ -170,7 +176,7 @@ public class TerrainGenerator
     public void populateCells(Map map)
     {
         // define all the terrain cells
-        if (terrainSettings.heightRangedEnabled)
+        if (terrainSettings.heightRangeEnabled)
         {
             generationInfo.Add("Populating the map with cell heights between " + terrainSettings.tMinHeight + " and " + terrainSettings.tMaxHeight);
             setCellsRange(map, terrainSettings.tMinHeight, terrainSettings.tMaxHeight); ;

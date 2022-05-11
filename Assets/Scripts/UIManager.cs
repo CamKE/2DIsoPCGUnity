@@ -1,9 +1,6 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 // this class can be heavily refactored to group serialised fields and loop setup
@@ -101,7 +98,7 @@ public class UIManager : MonoBehaviour
     {
         levelGenInfo = null;
 
-        TerrainOptions.TerrainSettings terrainSettings =  terrainOptions.createUserSettings();
+        TerrainSettings terrainSettings =  terrainOptions.createUserSettingsFromOptions();
 
         if (terrainSettings.heightRangeIsOnAndInvalid())
         {
@@ -109,9 +106,9 @@ public class UIManager : MonoBehaviour
             return;
         }
 
-        RiverOptions.RiverSettings riverSettings = riverOptions.createUserSettings();
-        LakeOptions.LakeSettings lakeSettings = lakeOptions.createUserSettings();
-        WalkpathPathOptions.WalkpathSettings walkpathSettings = walkpathPathOptions.createUserSettings();
+        RiverSettings riverSettings = riverOptions.createUserSettingsFromOptions();
+        LakeSettings lakeSettings = lakeOptions.createUserSettingsFromOptions();
+        WalkpathSettings walkpathSettings = walkpathPathOptions.createUserSettingsFromOptions();
 
         // generate the level
         levelManager.generate(terrainSettings, riverSettings, lakeSettings, walkpathSettings);
@@ -123,7 +120,7 @@ public class UIManager : MonoBehaviour
             button.interactable = true;
         }
 
-        if (terrainSettings.heightRangedEnabled)
+        if (terrainSettings.heightRangeEnabled)
         {
             levelInteractionButtons.First().interactable = false;
         }
@@ -141,10 +138,10 @@ public class UIManager : MonoBehaviour
     {
         levelGenInfo = null;
 
-        TerrainOptions.TerrainSettings terrainSettings = terrainOptions.createRandomisedSettings();
-        RiverOptions.RiverSettings riverSettings = riverOptions.createRandomisedSettings();
-        LakeOptions.LakeSettings lakeSettings = lakeOptions.createRandomisedSettings();
-        WalkpathPathOptions.WalkpathSettings walkpathSettings = walkpathPathOptions.createRandomisedSettings();
+        TerrainSettings terrainSettings = new TerrainSettings();
+        RiverSettings riverSettings = new RiverSettings(terrainSettings.tType);
+        LakeSettings lakeSettings = new LakeSettings(terrainSettings.tType);
+        WalkpathSettings walkpathSettings = new WalkpathSettings(terrainSettings.tType);
 
         // generate the level
         levelManager.generate(terrainSettings, riverSettings, lakeSettings, walkpathSettings);
@@ -159,7 +156,7 @@ public class UIManager : MonoBehaviour
             button.interactable = true;
         }
 
-        if (terrainSettings.heightRangedEnabled)
+        if (terrainSettings.heightRangeEnabled)
         {
             levelInteractionButtons.First().interactable = false;
         }

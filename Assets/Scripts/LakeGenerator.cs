@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -13,7 +12,7 @@ public class LakeGenerator
     public enum MaxLakeSize { Small, Medium, Large }
     public static int maxLakeSizeCount = Enum.GetValues(typeof(MaxLakeSize)).Length;
 
-    LakeOptions.LakeSettings lakeSettings;
+    LakeSettings lakeSettings;
 
     Dictionary<TerrainGenerator.TerrainType, Tile> lakeTilesByType;
 
@@ -47,6 +46,8 @@ public class LakeGenerator
 
         lakeTilesByType.Add(TerrainGenerator.TerrainType.Greenery, waterTile);
         lakeTilesByType.Add(TerrainGenerator.TerrainType.Dessert, waterTile);
+        lakeTilesByType.Add(TerrainGenerator.TerrainType.Skin, waterTile);
+
 
         lakeTilesByType.Add(TerrainGenerator.TerrainType.Lava, ScriptableObject.CreateInstance<Tile>());
         lakeTilesByType[TerrainGenerator.TerrainType.Lava].sprite = atlas.GetSprite(lavaTileName);
@@ -59,7 +60,7 @@ public class LakeGenerator
         this.generationInfo = generationInfo;
     }
 
-    public void setLakeSettings(LakeOptions.LakeSettings lakeSettings)
+    public void setLakeSettings(LakeSettings lakeSettings)
     {
         this.lakeSettings = lakeSettings;
     }
@@ -100,9 +101,8 @@ public class LakeGenerator
         while (searchCount < map.terrainCellCount)
         {
             startPosition = (Vector2Int)map.getRandomCell();
-            startCell = map.getCell(startPosition);
 
-            if (map.isBoundaryCell(startPosition) || startCell.isWaterBound)
+            if (!map.isValidCell(startPosition))
             {
                 continue;
             }
@@ -123,7 +123,7 @@ public class LakeGenerator
                     Rect newLake = new Rect(startPosition.x+xOffset, startPosition.y+yOffset, (lakeDimension.x) * x, (lakeDimension.y) * y);
 
                     endPosition = new Vector2Int(startPosition.x + ((lakeDimension.x-1) * x), startPosition.y + ((lakeDimension.y-1) * y));
-                    if (map.checkCell(endPosition) && !lakesOverlapOrAdjacent(newLake))
+                    if (map.isValidCell(endPosition) && !lakesOverlapOrAdjacent(newLake))
                     {
                         Vector2Int direction = new Vector2Int(x, y);
 
@@ -156,6 +156,9 @@ public class LakeGenerator
 
             }
         }
+        map.updateCellStatus(map.getCell(startPosition), Cell.CellStatus.InvalidCell);
+        map.updateCellStatus(map.getCell(endPosition), Cell.CellStatus.InvalidCell);
+
     }
 
     // check if any lakes ovelap or are directly adjacent to the new one

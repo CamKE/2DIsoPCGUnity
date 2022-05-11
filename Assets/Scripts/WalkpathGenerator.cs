@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -11,9 +10,10 @@ public class WalkpathGenerator : PathGenerator
 {
     Dictionary<TerrainGenerator.TerrainType, Tile> pathTilesByType;
 
-    private readonly string snowPathTileName = "ISO_Tile_Stone_03";
     private readonly string pathTileName = "ISO_Tile_Stone_02";
-    private readonly string lavaPathTileName = "ISO_Tile_Brick_Stone_02_01";
+    private readonly string lavaPathTileName = "ISO_Tile_Stone_01";
+    private readonly string desertPathTileName = "ISO_Tile_Stone_03";
+    private readonly string skinPathTileName = "ISO_Deco_Tooth_01_";
 
     private int walkpathMaxCount;
 
@@ -21,7 +21,7 @@ public class WalkpathGenerator : PathGenerator
     public static int numberOfWalkpathsCount = Enum.GetValues(typeof(NumberOfWalkpaths)).Length;
 
 
-    WalkpathPathOptions.WalkpathSettings walkpathSettings;
+    WalkpathSettings walkpathSettings;
 
     private const float wMultiplier = 0.0025f;
 
@@ -35,15 +35,20 @@ public class WalkpathGenerator : PathGenerator
         Tile pathTile = setupTile(atlas, pathTileName);
 
         pathTilesByType.Add(TerrainGenerator.TerrainType.Greenery, pathTile);
-        pathTilesByType.Add(TerrainGenerator.TerrainType.Dessert, pathTile);
+
+        Tile desertPathTile = setupTile(atlas, desertPathTileName);
+
+        pathTilesByType.Add(TerrainGenerator.TerrainType.Dessert, desertPathTile);
 
         Tile lavaPathTile = setupTile(atlas, lavaPathTileName);
 
         pathTilesByType.Add(TerrainGenerator.TerrainType.Lava, lavaPathTile);
 
-        Tile snowPathTile = setupTile(atlas, snowPathTileName);
+        pathTilesByType.Add(TerrainGenerator.TerrainType.Snow, pathTile);
 
-        pathTilesByType.Add(TerrainGenerator.TerrainType.Snow, snowPathTile);
+        Tile skinPathTile = setupTile(atlas, skinPathTileName);
+
+        pathTilesByType.Add(TerrainGenerator.TerrainType.Skin, skinPathTile);
 
         this.generationInfo = generationInfo;
     }
@@ -56,7 +61,7 @@ public class WalkpathGenerator : PathGenerator
         return tile;
     }
 
-    public void setWalkpathSettings(WalkpathPathOptions.WalkpathSettings walkpathSettings)
+    public void setWalkpathSettings(WalkpathSettings walkpathSettings)
     {
         this.walkpathSettings = walkpathSettings;
     }
@@ -100,10 +105,6 @@ public class WalkpathGenerator : PathGenerator
             if (!findAStarPath(map, cellPair.startCell, cellPair.endCell, Cell.CellStatus.WalkpathCell, walkpathSettings.intersectionsEnabled))
             {
                 count--;
-                Debug.Log(cellPair.startCell.position + " to " + cellPair.endCell.position);
-                map.updateCellStatus(cellPair.startCell, Cell.CellStatus.InvalidCell);
-                map.updateCellStatus(cellPair.endCell, Cell.CellStatus.InvalidCell);
-
             }
         }
         generationInfo.Add(count + " walkpaths generated");

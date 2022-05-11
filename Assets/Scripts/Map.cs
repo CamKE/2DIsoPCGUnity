@@ -1,7 +1,4 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class Map
@@ -149,8 +146,12 @@ public class Map
 
         foreach (Cell neighbour in getNeighbours(currentNode))
         {
+            if (neighbour.status != Cell.CellStatus.InvalidCell)
+            {
                 int neighbourDepth = neighbour.position.z;
                 minDepth = neighbourDepth < minDepth ? neighbourDepth : minDepth;
+            }
+
         }
 
         return minDepth;
@@ -223,7 +224,7 @@ public class Map
         }
     }
 
-    public bool checkCell(Vector2Int cellPosition)
+    public bool isValidCell(Vector2Int cellPosition)
     {
 
         if (cellPosition.x >= 0 && cellPosition.x < width)

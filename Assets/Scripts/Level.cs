@@ -1,9 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.U2D;
 using System.Diagnostics;
-using Debug = UnityEngine.Debug;
 using UnityEngine.Tilemaps;
 using System;
 
@@ -96,7 +94,7 @@ public class Level : MonoBehaviour
         cameraController.gameObject.SetActive(value);
     }
 
-    public void generate(TerrainOptions.TerrainSettings terrainSettings, RiverOptions.RiverSettings riverSettings, LakeOptions.LakeSettings lakeSettings, WalkpathPathOptions.WalkpathSettings walkpathSettings)
+    public void generate(TerrainSettings terrainSettings, RiverSettings riverSettings, LakeSettings lakeSettings, WalkpathSettings walkpathSettings)
     {
        // Debug.Log("NEW RUN");
         clear();
