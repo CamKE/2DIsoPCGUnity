@@ -1,9 +1,17 @@
 using UnityEngine;
 
+/// <summary>
+/// Represents a single space on the map for a tile to be potentially placed.
+/// </summary>
 public class Cell : IHeapItem<Cell>
 {
-
+    /// <summary>
+    /// The position of the cell on the map, including its depth (z).
+    /// </summary>
     public Vector3Int position;
+    /// <summary>
+    /// The parent of the current cell. Used for path generation.
+    /// </summary>
     public Cell parent;
     public int hCost;
     public int gCost;

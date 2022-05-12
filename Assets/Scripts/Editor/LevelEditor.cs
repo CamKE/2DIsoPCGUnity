@@ -41,8 +41,8 @@ public class LevelEditor : Editor
     private bool walkpathIntersectionsEnabled;
 
     // state of the generation buttons (pressed or not pressed)
-    private bool randomGenerationPressed;
-    private bool levelGenerationPressed;
+    private bool randomiseLevelPressed;
+    private bool generateLevelPressed;
 
     // holds a reference to the levelManager object
     private LevelManager levelManager;
@@ -189,8 +189,8 @@ public class LevelEditor : Editor
     {
         // add randomise level and generate level buttons. horizontal layout
         EditorGUILayout.BeginHorizontal();
-        randomGenerationPressed = GUILayout.Button("Randomise Level");
-        levelGenerationPressed = GUILayout.Button("Generate Level");
+        randomiseLevelPressed = GUILayout.Button("Randomise Level");
+        generateLevelPressed = GUILayout.Button("Generate Level");
         EditorGUILayout.EndHorizontal();
     }
 
@@ -200,117 +200,169 @@ public class LevelEditor : Editor
         // sub heading
         addHeading("Level Generation Information");
 
+        // level gen scroll window
         levelGenInfoScrollPos = EditorGUILayout.BeginScrollView(levelGenInfoScrollPos, GUILayout.ExpandWidth(true), GUILayout.Height(150));
         GUILayout.Label(levelGenInfo);
         EditorGUILayout.EndScrollView();
     }
 
+    // updates the levelGenInfo string. called after level generation
     private void updateLevelGenInfo()
     {
+        // reset to null
         levelGenInfo = null;
+
+        // concatenate the steps into a single string seperated by newlines
         foreach (string generationStep in levelManager.getGenerationInfo())
         {
             levelGenInfo += generationStep + "\n";
         }
     }
 
+    // updates the options with the values used for random generation
     private void updateInspectorOptions(TerrainSettings terrainSettings, RiverSettings riverSettings, LakeSettings lakeSettings, WalkpathSettings walkpathSettings)
     {
+        /*
+         * Set terrain settings
+         */
         terrainSize = terrainSettings.tSize;
         terrainType = (int)terrainSettings.tType;
 
         heightRangeEnabled = terrainSettings.heightRangeEnabled;
 
+        // if height range is on
         if (heightRangeEnabled)
         {
+            // set min and max height values used
             minHeight = terrainSettings.tMinHeight;
             maxHeight = terrainSettings.tMaxHeight;
         }
         else
+        // otherwise
         {
+            // set exact height value used
             exactHeightValue = terrainSettings.tExactHeight;
         }
 
         terrainShape = (int)terrainSettings.tShape;
 
+        /*
+        * Set river settings
+        */
         riverGenerationEnabled = riverSettings.rGenerationEnabled;
 
+        // if river generation is on
         if (riverGenerationEnabled)
         {
+            // set the values used
             numRiver = (int)riverSettings.rNum;
             riverIntersectionsEnabled = riverSettings.intersectionsEnabled;
         }
 
+        /*
+        * Set river settings
+        */
         lakeGenerationEnabled = lakeSettings.lGenerationEnabled;
 
+        // if lake generation is on
         if (lakeGenerationEnabled)
         {
+            // set the values used
             numLake = (int)lakeSettings.lNum;
             maxLakeSize = (int)lakeSettings.lMaxSize;
         }
 
+        /*
+        * Set river settings
+        */
         walkpathGenerationEnabled = walkpathSettings.wGenerationEnabled;
 
+        // if walkpath generation is on
         if (walkpathGenerationEnabled)
         {
+            // set the values used
             numWalkpath = (int)walkpathSettings.wNum;
             walkpathIntersectionsEnabled = walkpathSettings.intersectionsEnabled;
         }
     }
 
+    // check to see if any of the generation buttons have been pressed
     private void checkGenerationButtonPressed()
     {
-        if (randomGenerationPressed || levelGenerationPressed)
+        // if random generation or generate level have been pressed
+        if (randomiseLevelPressed || generateLevelPressed)
         {
+            // variables for the settings
             TerrainSettings terrainSettings;
             RiverSettings riverSettings;
             LakeSettings lakeSettings;
             WalkpathSettings walkpathSettings;
+
+            // used to prevent level generation is height range is invalid (if on)
             bool generateLevel;
 
-            if (randomGenerationPressed)
+            // if random generation was pressed
+            if (randomiseLevelPressed)
             {
+                // set the settings to random values. no settings are given (other than
+                // the terrain type from terrainSettings), so settings will be randomised.
                 terrainSettings = new TerrainSettings();
                 riverSettings = new RiverSettings(terrainSettings.tType);
                 lakeSettings = new LakeSettings(terrainSettings.tType);
                 walkpathSettings = new WalkpathSettings(terrainSettings.tType);
 
+                // update the inspector with the settings used
                 updateInspectorOptions(terrainSettings, riverSettings, lakeSettings, walkpathSettings);
+                // set the generate level flag to true
                 generateLevel = true;
             } else
+            // otherwise generate level was pressed
             {
+                // set the settings to the inspector options
                 terrainSettings = new TerrainSettings((TerrainGenerator.TerrainType)terrainType, heightRangeEnabled, terrainSize, (TerrainGenerator.TerrainShape)terrainShape, minHeight, maxHeight, exactHeightValue);
                 riverSettings = new RiverSettings((TerrainGenerator.TerrainType)terrainType, riverGenerationEnabled, (RiverGenerator.NumberOfRivers)numRiver, riverIntersectionsEnabled);
                 lakeSettings = new LakeSettings((TerrainGenerator.TerrainType)terrainType, lakeGenerationEnabled, (LakeGenerator.NumberOfLakes)numLake, (LakeGenerator.MaxLakeSize)maxLakeSize);
                 walkpathSettings = new WalkpathSettings((TerrainGenerator.TerrainType)terrainType, walkpathGenerationEnabled, (WalkpathGenerator.NumberOfWalkpaths)numWalkpath, walkpathIntersectionsEnabled);
 
+                // if the height range toggle was on and the min and max values given were
+                // invalid
                 if (terrainSettings.heightRangeIsOnAndInvalid())
                 {
+                    // show popup with message
                     EditorUtility.DisplayDialog("Invalid Terrain Height Range", "Terrain height minimum value cannot be greater than or equal to the maximum value.", "Ok");
+                    // set the generate level flag to false
                     generateLevel = false;
                 }
                 else
+                // otherwise, continue to generation
                 {
+                    // update the terrain size option in the inspector with the value used
                     terrainSize = terrainSettings.tSize;
+                    // set the generate level flag to true
                     generateLevel = true;
                 }
             }
 
+            // if generate level is on
             if (generateLevel)
             {
+                // generate
                 levelManager.generate(terrainSettings, riverSettings, lakeSettings, walkpathSettings);
 
+                // update the generation info
                 updateLevelGenInfo();
             }
         }
     }
 
-    private void addHeading(string heading, bool mainHeading = false)
+    // adds a heading to the inspector
+    private void addHeading(string headingText, bool mainHeading = false)
     {
+        // add a space above the heading
         EditorGUILayout.Space();
+        // change font size based on the mainHeading bool
         headingStyle.fontSize = mainHeading ? 15 : 13;
-        EditorGUILayout.LabelField(heading, headingStyle, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+        // add the heading based on the headingText
+        EditorGUILayout.LabelField(headingText, headingStyle, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
     }
-
-
 }
