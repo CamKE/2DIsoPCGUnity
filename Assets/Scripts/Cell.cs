@@ -6,54 +6,100 @@ using UnityEngine;
 public class Cell : IHeapItem<Cell>
 {
     /// <summary>
-    /// The position of the cell on the map, including its depth (z).
+    /// The position of the cell on the Map, including its depth (z).
     /// </summary>
     public Vector3Int position;
     /// <summary>
     /// The parent of the current cell. Used for path generation.
     /// </summary>
     public Cell parent;
+    /// <summary>
+    /// The estimated cost of traversal from the cell to the end goal cell.
+    /// </summary>
     public int hCost;
+    /// <summary>
+    /// The cost of traversal between the start cell and the cell.
+    /// </summary>
     public int gCost;
+    /// <summary>
+    /// Denotes whether the cell is able to be travelled across.
+    /// </summary>
     public bool isTraversable;
+    /// <summary>
+    /// Enumeration of cell states. Used to distinguish the various cells from eachother.
+    /// </summary>
     public enum CellStatus { ValidCell, InvalidCell, TerrainCell, LakeCell, RiverCell, WalkpathCell }
+    /// <summary>
+    /// Denotes the cells current state.
+    /// </summary>
     public CellStatus status;
-    int heapIndex;
+    // the position of the cell in the heap
+    private int heapIndex;
+    /// <summary>
+    /// Denotes whether the cell is on the boundary; that is, if the cell neighours an invalid cell or is at the end of the map.
+    /// </summary>
     public bool onBoundary;
+    /// <summary>
+    /// Denotes whether the cell is a water boundary; that is , if the cell is adjacent to water.
+    /// </summary>
     public bool isWaterBound;
 
-    // update bool based on cell status
+    /// <summary>
+    /// Sets the cell's status to a new status.
+    /// </summary>
+    /// <param name="newStatus">The new status to set the cell to.</param>
+    /// <param name="intersectionsEnabled">Whether intersections are enabled. For path generation. Optional parameter.</param>
     public void setCellStatus(CellStatus newStatus, bool intersectionsEnabled = false)
     {
+        // set the new status
         status = newStatus;
+
+        // check the status
         switch (newStatus)
         {
+            // if it is a valid or terrain cell
             case CellStatus.ValidCell:
             case CellStatus.TerrainCell:
-                isTraversable = onBoundary ? false : true;
+                // if the cell is on the boundary, then it cannot be traversed
+                isTraversable = !onBoundary;
                 break;
+            // if it is a river or walkpath cell
             case CellStatus.RiverCell:
             case CellStatus.WalkpathCell:
+                // if intersections are enabled, then the cell can be traversed
                 isTraversable = intersectionsEnabled;
                 break;
+            // otherwise for any other cell status (invalid, lake)
             default:
+                // set to false
                 isTraversable = false;
                 break;
         }
     }
-    
 
+    /// <summary>
+    /// Constructor for Cell. Must set an initial postions and status.
+    /// </summary>
+    /// <param name="position">The position of the cell on the Map, including its depth (z).</param>
+    /// <param name="status">Denotes the cells current state.</param>
     public Cell(Vector3Int position, CellStatus status = CellStatus.ValidCell)
     {
         this.position = position;
         setCellStatus(status);
     }
 
+    /// <summary>
+    /// Calculates the f cost, which is a sum of the g cost and h cost.
+    /// </summary>
+    /// <returns>The f cost.</returns>
     public int fCost()
     {
         return gCost + hCost;
     }
 
+    /// <summary>
+    /// Getter and setter for the heap index.
+    /// </summary>
     public int HeapIndex
     {
         get
