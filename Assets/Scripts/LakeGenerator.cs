@@ -94,7 +94,6 @@ public class LakeGenerator
     private bool addLake(Map map, Vector2Int lakeDimension)
     {
         Vector2Int startPosition;
-        Cell startCell;
         Vector2Int endPosition;
         int searchCount = 0;
 
@@ -123,7 +122,7 @@ public class LakeGenerator
                     Rect newLake = new Rect(startPosition.x+xOffset, startPosition.y+yOffset, (lakeDimension.x) * x, (lakeDimension.y) * y);
 
                     endPosition = new Vector2Int(startPosition.x + ((lakeDimension.x-1) * x), startPosition.y + ((lakeDimension.y-1) * y));
-                    if (map.isValidCell(endPosition) && !lakesOverlapOrAdjacent(newLake))
+                    if (map.isValidCell(endPosition) && !lakesOverlapOrAdjacent(newLake) && !lakeOnEdge(map, newLake, xOffset, yOffset))
                     {
                         Vector2Int direction = new Vector2Int(x, y);
 
@@ -135,6 +134,24 @@ public class LakeGenerator
                 }
             }
             searchCount++;
+        }
+        return false;
+    }
+
+
+    private bool lakeOnEdge(Map map, Rect lake, int xOffset, int yOffset)
+    {
+        if (map.shape == TerrainGenerator.TerrainShape.Random)
+        {
+            List<Vector2Int> boundaryCellPositions = map.getBoundaryCellPositions();
+            Vector2 offset = new Vector2(xOffset, yOffset);
+            foreach (Vector2 cellPosition in boundaryCellPositions)
+            {
+                if (lake.Contains(cellPosition + offset, true))
+                {
+                    return true;
+                }
+            }
         }
         return false;
     }
@@ -156,9 +173,6 @@ public class LakeGenerator
 
             }
         }
-        map.updateCellStatus(map.getCell(startPosition), Cell.CellStatus.InvalidCell);
-        map.updateCellStatus(map.getCell(endPosition), Cell.CellStatus.InvalidCell);
-
     }
 
     // check if any lakes ovelap or are directly adjacent to the new one
@@ -168,7 +182,7 @@ public class LakeGenerator
         {
             // check if existing lake is inside new lake
             // overlaps should not allow adjacency
-            if (newLake.Overlaps(existingLake))
+            if (newLake.Overlaps(existingLake, true))
             {
                 return true;
             }

@@ -206,7 +206,7 @@ public class TerrainGenerator
             case TerrainGenerator.TerrainShape.Rectangle:
                 // 2:1, 3:1, or 4:1 ratio
                 mapDimensions = getDimensions(terrainSettings.tSize, UnityEngine.Random.Range(2, 4));
-                map = new Map(mapDimensions.x, mapDimensions.y);
+                map = new Map(mapDimensions.x, mapDimensions.y, terrainSettings.tShape);
                 checkForBoundaryCell += map.checkForBoundaryCell;
                 break;
             // for random shape
@@ -220,7 +220,7 @@ public class TerrainGenerator
             // default shape is square 
             default:
                 mapDimensions = getDimensions(terrainSettings.tSize);
-                map = new Map(mapDimensions.x, mapDimensions.y);
+                map = new Map(mapDimensions.x, mapDimensions.y, terrainSettings.tShape);
                 checkForBoundaryCell += map.checkForBoundaryCell;
                 break;
         }
@@ -238,7 +238,7 @@ public class TerrainGenerator
         Vector2Int dimensions = getDimensions(terrainSize);
         
         // set all cells invalid initially
-        Map map = new Map(dimensions.x, dimensions.x, Cell.CellStatus.InvalidCell);
+        Map map = new Map(dimensions.x, dimensions.x, terrainSettings.tShape, Cell.CellStatus.InvalidCell);
 
         Cell centerCell = map.getCell(new Vector2Int(dimensions.x / 2, dimensions.x / 2));
 

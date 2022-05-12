@@ -47,127 +47,162 @@ public class LevelEditor : Editor
     // holds a reference to the levelManager object
     private LevelManager levelManager;
 
-    /*
-     * CONTINUE HEREEEEEEEE
-     *
-     */
+    // holds the text for the level generation information
+    private string levelGenInfo;
+    // scroll position for the level gen info scroll view
+    Vector2 levelGenInfoScrollPos = new Vector2();
 
-    string levelGenInfo;
-    Vector2 scrollPos = new Vector2();
-
+    // called when the script is activated (when object is clicked in inspector. Object is 
+    // deactivated when not clicked)
     private void OnEnable()
     {
+            // get reference to LevelManage object
             levelManager = (LevelManager)target;
+            // setup the level
             levelManager.setupLevelFromInspector();
     }
 
+    /// <summary>
+    /// Function from built in editor class. Implemented to make the custom inspector, adding custom
+    /// GUI elements.
+    /// </summary>
+    // this function is looped
     public override void OnInspectorGUI()
     {
+        // draw the level manager default inspector first
         DrawDefaultInspector();
-
+        // create a new style for heading
         headingStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontStyle = FontStyle.Bold };
-
+        // create main heading
         addHeading("Level Generation Options", true);
-
+        // add the options
         addTerrainOptions();
-
         addWaterBodiesOptions();
-
         addWalkpathOptions();
-
+        // add the buttons
         addGenerationButtons();
-
+        // add the level gen information
         addLevelGenInfoSection();
-
+        // check the status of the buttons
         checkGenerationButtonPressed();
     }
 
+    // responsible for adding all terrain generation options
     private void addTerrainOptions()
     {
+        // terrain options sub heading
         addHeading("Terrain Options");
 
+        // add slider for terrain size
         terrainSize = EditorGUILayout.IntSlider("Terrain Size", terrainSize, TerrainGenerator.terrainMinSize, TerrainGenerator.terrainMaxSize);
 
+        // dropdown for terrain type
         string[] terrainTypes = Enum.GetNames(typeof(TerrainGenerator.TerrainType));
         terrainType = EditorGUILayout.Popup("Terrain Type", terrainType, terrainTypes);
 
+        // toggles for terrain height. only one can be active at a time. horizontal layout
         EditorGUILayout.BeginHorizontal();
         exactHeightEnabled = GUILayout.Toggle(!heightRangeEnabled, "Exact Height");
         heightRangeEnabled = GUILayout.Toggle(!exactHeightEnabled, "Height Range");
         EditorGUILayout.EndHorizontal();
-
+        
+        // checks which height toggle is on
+        // for exact height
         if (exactHeightEnabled)
         {
+            // show the exact height slider
             exactHeightValue = EditorGUILayout.IntSlider("Exact Height", exactHeightValue, TerrainGenerator.terrainMinHeight, TerrainGenerator.terrainMaxHeight);
         }
         else
+        // otherwise for height range
         {
+            // show the min and max height sliders
             minHeight = EditorGUILayout.IntSlider("Minimum Height", minHeight, TerrainGenerator.terrainMinHeight, TerrainGenerator.terrainMaxHeight);
             maxHeight = EditorGUILayout.IntSlider("Maxiumum Height", maxHeight, TerrainGenerator.terrainMinHeight, TerrainGenerator.terrainMaxHeight);
         }
 
+        // dropdown for terrain shape
+        // get options based on terrainshape enum in terrain generator
         string[] terrainShapes = Enum.GetNames(typeof(TerrainGenerator.TerrainShape));
         terrainShape = EditorGUILayout.Popup("Terrain Shape", terrainShape, terrainShapes);
     }
 
+    // responsible for adding all water body options
     private void addWaterBodiesOptions()
     {
+        // sub heading
         addHeading("Water Bodies Options");
 
+        // river gen enabled toggle
         riverGenerationEnabled = GUILayout.Toggle(riverGenerationEnabled, "River Generation");
 
+        // if river gen enabled
         if (riverGenerationEnabled)
         {
+            // show number of rivers dropdown
             string[] numRivers = Enum.GetNames(typeof(RiverGenerator.NumberOfRivers));
             numRiver = EditorGUILayout.Popup("Number of Rivers", numRiver, numRivers);
 
+            // show intersection toggle
             riverIntersectionsEnabled = GUILayout.Toggle(riverIntersectionsEnabled, "River Intersection");
         }
 
+        // lake gen enabled toggle
         lakeGenerationEnabled = GUILayout.Toggle(lakeGenerationEnabled, "Lake Generation");
 
+        // if lake gen enabled
         if (lakeGenerationEnabled)
         {
+            // show number of lakes dropdown
             string[] numLakes = Enum.GetNames(typeof(LakeGenerator.NumberOfLakes));
             numLake = EditorGUILayout.Popup("Number of Lakes", numLake, numLakes);
 
+            // show max lake size dropdown
             string[] maxLakeSizes = Enum.GetNames(typeof(LakeGenerator.MaxLakeSize));
             maxLakeSize = EditorGUILayout.Popup("Maximum Lake Size", maxLakeSize, maxLakeSizes);
         }
     }
 
+    // responsible for adding walkpath options
     private void addWalkpathOptions()
     {
+        // sub heading
         addHeading("Walkpath Options");
 
+        // enabled toggle
         walkpathGenerationEnabled = GUILayout.Toggle(walkpathGenerationEnabled, "Walkpath Generation");
 
+        // if enabled
         if (walkpathGenerationEnabled)
         {
+            // show dropdown
             string[] numWalkpaths = Enum.GetNames(typeof(WalkpathGenerator.NumberOfWalkpaths));
             numWalkpath = EditorGUILayout.Popup("Number of Walkpaths", numWalkpath, numWalkpaths);
 
+            // show intersection toggle
             walkpathIntersectionsEnabled = GUILayout.Toggle(walkpathIntersectionsEnabled, "Walkpath Intersection");
         }
     }
 
+    // adds the generation buttons to the custom inspector
     private void addGenerationButtons()
     {
+        // add randomise level and generate level buttons. horizontal layout
         EditorGUILayout.BeginHorizontal();
         randomGenerationPressed = GUILayout.Button("Randomise Level");
         levelGenerationPressed = GUILayout.Button("Generate Level");
         EditorGUILayout.EndHorizontal();
     }
 
+    // adds the level generation information section
     private void addLevelGenInfoSection()
     {
+        // sub heading
         addHeading("Level Generation Information");
 
-        EditorGUILayout.BeginHorizontal();
-        scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.ExpandWidth(true), GUILayout.Height(150));
+        levelGenInfoScrollPos = EditorGUILayout.BeginScrollView(levelGenInfoScrollPos, GUILayout.ExpandWidth(true), GUILayout.Height(150));
         GUILayout.Label(levelGenInfo);
         EditorGUILayout.EndScrollView();
-        EditorGUILayout.EndHorizontal();
     }
 
     private void updateLevelGenInfo()

@@ -15,7 +15,9 @@ public class Map
 
     public readonly int area;
 
-    public Map(int mapWidth, int mapHeight, Cell.CellStatus status = Cell.CellStatus.ValidCell)
+    public readonly TerrainGenerator.TerrainShape shape;
+
+    public Map(int mapWidth, int mapHeight, TerrainGenerator.TerrainShape shape, Cell.CellStatus status = Cell.CellStatus.ValidCell)
     {
         map = new Cell[mapWidth, mapHeight];
         width = mapWidth;
@@ -32,7 +34,7 @@ public class Map
         }
 
         boundaryCellPositions = new List<Vector2Int>();
-
+        this.shape = shape;
     }
 
     public void updateCellStatus(Cell currentCell, Cell.CellStatus status, bool intersectionsEnabled = false)
@@ -226,23 +228,22 @@ public class Map
 
     public bool isValidCell(Vector2Int cellPosition)
     {
-
         if (cellPosition.x >= 0 && cellPosition.x < width)
         {
             if (cellPosition.y >= 0 && cellPosition.y < height)
             {
                 Cell cell = getCell(cellPosition);
-                if (!isBoundaryCell((Vector2Int)cellPosition) && !cell.isWaterBound)
+                if (cell.status == Cell.CellStatus.TerrainCell && !isBoundaryCell(cell) && !cell.isWaterBound)
                 {
-                    return cell.status == Cell.CellStatus.TerrainCell;
+                    return true;
                 }
             }
         }
         return false;
     }
 
-    public bool isBoundaryCell(Vector2Int cellPosition)
+    public bool isBoundaryCell(Cell cell)
     {
-        return boundaryCellPositions.Contains(cellPosition);
+        return boundaryCellPositions.Contains((Vector2Int)cell.position);
     }
 }
