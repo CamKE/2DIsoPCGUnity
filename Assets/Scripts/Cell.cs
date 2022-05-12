@@ -112,14 +112,22 @@ public class Cell : IHeapItem<Cell>
         }
     }
 
-   
+   /// <summary>
+   /// Used to order cells in the heap based on lowest fCost or hCost first. Used during path generation.
+   /// </summary>
+   /// <param name="otherCell">The cell to compare to.</param>
+   /// <returns>The priority of the cell relative to the other cell. -1 for lower priority, 0 for same priority, and 1 for higher priority.</returns>
     public int CompareTo(Cell otherCell)
     {
+        // compare the f cost of both cells
         int compare = fCost().CompareTo(otherCell.fCost());
+        // if they have the same f cost
         if (compare == 0)
         {
+            // compare g costs
             compare = hCost.CompareTo(otherCell.hCost);
         }
+
         // we want items with higher priority (larger values) to 
         // go lower down the tree and vice versa, so we return 
         // the inverse

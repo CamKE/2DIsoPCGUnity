@@ -3,7 +3,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 /// <summary>
-/// Enables game objects to have text displayed providing useful information when hovered over.
+/// Enables game objects to have text displayed providing useful information when hovered over. Written by following
+/// <seealso href="https://www.youtube.com/watch?v=FVqtmTWd8Zk">this tutorial.</seealso>
 /// </summary>
 /// <remarks>
 /// <para>
@@ -11,8 +12,8 @@ using UnityEngine.EventSystems;
 /// to be displayed when the object is hovered over.
 /// </para>
 /// <para>
-/// The <see cref="IPointerEnterHandler">IPointerEnterHandler</see> and <see cref="IPointerExitHandler">IPointerExitHandler</see>
-/// are used to detect when the mouse enter and exits the gameobject associated with the <c>HoverTip</c> instance.
+/// The IPointerEnterHandler and IPointerExitHandler
+/// are used to detect when the mouse enter and exits the gameobject associated with the HoverTip instance.
 /// </para>
 /// </remarks>
 public class HoverTip : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler

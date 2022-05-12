@@ -1,25 +1,31 @@
 using System;
 
-/*
- * Binary Heap
- * Class written by Sebastian Lague (https://www.youtube.com/watch?v=3Dw5d7PlcTM)
- */
-// T representing an object type
+/// <summary>
+/// A binary heap written by Sebastian Lague. 
+/// <seealso href="https://www.youtube.com/watch?v=3Dw5d7PlcTM">Heap video</seealso>
+/// </summary>
+/// <typeparam name="T">The type of object to be sorted in the heap.</typeparam>
 public class Heap<T> where T : IHeapItem<T>
 {
 	// array holding the items in the heap
-	T[] items;
+	private T[] items;
 	// the number of items in the heap
-	int currentItemCount;
+	private int currentItemCount;
 
-	// constructor taking in the max size of the heap
+	/// <summary>
+	/// Constructor taking in the max size of the heap.
+	/// </summary>
+	/// <param name="maxHeapSize">The maxiumum possible size of the heap.</param>
 	public Heap(int maxHeapSize)
 	{
 		// create the array with size given
 		items = new T[maxHeapSize];
 	}
 
-	// add a new item to the heap
+	/// <summary>
+	/// Adds a new item to the heap and sorts it.
+	/// </summary>
+	/// <param name="item">The item to be added to the heap.</param>
 	public void Add(T item)
 	{
 		// set the index of the item to the current count (e.g. 0 when array is empty)
@@ -33,12 +39,20 @@ public class Heap<T> where T : IHeapItem<T>
 		currentItemCount++;
 	}
 
+	/// <summary>
+	/// Retrieve an item from the heap at the given index.
+	/// </summary>
+	/// <param name="index">The index position of the item to retrieve.</param>
+	/// <returns></returns>
 	public T getItem(int index)
     {
 		return items[index];
     }
 
-	// remove the first item from the heap
+	/// <summary>
+	/// Removes the first item from the heap and sorts the heap.
+	/// </summary>
+	/// <returns>The first item in the heap.</returns>
 	public T RemoveFirst()
 	{
 		// get the first item
@@ -55,13 +69,18 @@ public class Heap<T> where T : IHeapItem<T>
 		return firstItem;
 	}
 
-	// update the position of the item
+	/// <summary>
+	/// Updates the heap position of the item given.
+	/// </summary>
+	/// <param name="item">The item to update the position for.</param>
 	public void UpdateItem(T item)
 	{
 		SortUp(item);
 	}
 
-	// get the number of items in the heap
+	/// <summary>
+	/// Gets the number of items in the heap.
+	/// </summary>
 	public int Count
 	{
 		get
@@ -70,7 +89,11 @@ public class Heap<T> where T : IHeapItem<T>
 		}
 	}
 
-	// check if item is in the heap
+	/// <summary>
+	/// Checks if the given item is in the heap.
+	/// </summary>
+	/// <param name="item">The item to find.</param>
+	/// <returns>True if the item is in the heap, false if it is not.</returns>
 	public bool Contains(T item)
 	{
 		// check if the item at the index of the item to be checked is
@@ -79,7 +102,7 @@ public class Heap<T> where T : IHeapItem<T>
 	}
 
 	// sort the items position down the heap
-	void SortDown(T item)
+	private void SortDown(T item)
 	{
 		while (true)
 		{
@@ -125,19 +148,17 @@ public class Heap<T> where T : IHeapItem<T>
 					// position relative to its children
 					return;
 				}
-
 			}
 			else
 			{
 				// the parent has no children, no need to sort
 				return;
 			}
-
 		}
 	}
 
 	// sort the items position up the heap
-	void SortUp(T item)
+	private void SortUp(T item)
 	{
 		// get the index of the parent
 		int parentIndex = (item.HeapIndex - 1) / 2;
@@ -157,15 +178,16 @@ public class Heap<T> where T : IHeapItem<T>
 			}
 			else
 			{
+				// get out of the loop
 				break;
 			}
-
+			// get the new parent of the item
 			parentIndex = (item.HeapIndex - 1) / 2;
 		}
 	}
 
-	// swaps two items
-	void Swap(T itemA, T itemB)
+	// swaps two items positions in the heap
+	private void Swap(T itemA, T itemB)
 	{
 		// put item b at item a's index
 		items[itemA.HeapIndex] = itemB;
@@ -180,11 +202,16 @@ public class Heap<T> where T : IHeapItem<T>
 	}
 }
 
-// interface to make items in the heap capable of storing an index
-// which will then be compared by priority for ordering
+/// <summary>
+/// An interface to make items in the heap required to store an index which will then be compared by priority for ordering.
+/// </summary>
+/// <typeparam name="T">The type of object to be sorted in the heap.</typeparam>
 public interface IHeapItem<T> : IComparable<T>
 {
-	int HeapIndex
+	/// <summary>
+	/// Getter and setter for the heap index.
+	/// </summary>
+	public int HeapIndex
 	{
 		get;
 		set;
