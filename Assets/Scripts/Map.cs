@@ -96,26 +96,41 @@ public class Map
             }
         }
 
-        // if the 
+        // if the status of the cell is a river or lake cell
         if (status == Cell.CellStatus.RiverCell || status == Cell.CellStatus.LakeCell)
         {
+            // foreach of the cells neighbours
             foreach (Cell neighbour in getNeighbours(currentCell))
             {
+                // if the status of the neighbour is a terraincell
                 if (neighbour.status == Cell.CellStatus.TerrainCell)
                 {
+                    // set it as a water boundary
                     neighbour.isWaterBound = true;
                 }
             }
         }
+
+        // set the new cell status and whether or not intersections are enabled
         currentCell.setCellStatus(status, intersectionsEnabled);
-        //foreach get neighbours here
     }
 
+    /// <summary>
+    /// Get a cell from the map at the given Vector2Int position.
+    /// </summary>
+    /// <param name="cellPosition">The postion of the cell in VectorInt format.</param>
+    /// <returns>The cell at the position.</returns>
     public Cell getCell(Vector2Int cellPosition)
     {
         return map[cellPosition.x, cellPosition.y];
     }
 
+    /// <summary>
+    /// Get a cell from the map at the given x and y int positions.
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
     public Cell getCell(int x, int y)
     {
         return map[x, y];
