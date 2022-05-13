@@ -44,6 +44,9 @@ public class LevelEditor : Editor
     private bool randomiseLevelPressed;
     private bool generateLevelPressed;
 
+    // button to clear level
+    private bool clearLevelPressed;
+
     // holds a reference to the levelManager object
     private LevelManager levelManager;
 
@@ -81,10 +84,18 @@ public class LevelEditor : Editor
         addWalkpathOptions();
         // add the buttons
         addGenerationButtons();
+        // add clear level button
+        clearLevelPressed = GUILayout.Button("Clear Level");
         // add the level gen information
         addLevelGenInfoSection();
         // check the status of the buttons
         checkGenerationButtonPressed();
+        // check clear level button pressed
+        if (clearLevelPressed)
+        {
+            levelManager.clearLevel();
+            levelGenInfo = null;
+        }
     }
 
     // responsible for adding all terrain generation options

@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+// Credit to Comp-3 Interative for the tutorial
 /// <summary>
 /// Enables game objects to have text displayed providing useful information when hovered over. Written by following
 /// <seealso href="https://www.youtube.com/watch?v=FVqtmTWd8Zk">this tutorial.</seealso>

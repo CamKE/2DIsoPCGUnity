@@ -73,7 +73,7 @@ public class LevelCameraController : MonoBehaviour
     }
 
     /// <summary>
-    /// Setter for the <see cref="originalMouseDownPosition"/>, used by the <see cref="UIManager"/>
+    /// Setter for the originalMouseDownPosition, used by the UIManager
     /// </summary>
     public void setOriginalMouseDownPosition()
     {

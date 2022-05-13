@@ -19,16 +19,14 @@ public class PlayerController : MonoBehaviour
 
     // the offset for the player sprite pivot to position the sprite relative
     // to the players feet instead of the sprite center
-    private readonly Vector2 pivotOffset = new Vector2(0, -0.15f);
+    private readonly Vector2 pivotOffset = new Vector3(0, -0.15f);
 
     // i use this instead of taking the grid center to world, as the grid center looks off. instead i take the grid cell positon
     // and offset it by 0.25
-    private readonly Vector2 tileCenterOffset = new Vector2(0,0.25f);
+    private readonly Vector2 tileCenterOffset = new Vector3(0,0.25f);
 
     // make sure player is sorted properly
-    private readonly Vector3 playerZOffset = new Vector3(0, 0, 0.5f);
-
-    private Vector2 playerWorldPosition;
+    private readonly float playerZOffset = 0.5f;
 
     private const float tileZIncrement = 0.25f;
 
@@ -93,9 +91,9 @@ public class PlayerController : MonoBehaviour
     {
         Vector2 movement = getMovement();
 
-        float currentCellZValue = levelManager.getCellZPosition(getWorldPositionOnGrid());
+        float currentCellZValue = levelManager.getMapZPosition(getWorldPositionOnGrid());
 
-        float previousZValue = transform.position.z - playerZOffset.z;
+        float previousZValue = transform.position.z - playerZOffset;
 
         if (currentCellZValue == previousZValue)
         {
@@ -115,7 +113,7 @@ public class PlayerController : MonoBehaviour
     {
         Vector2 playerWorldPositionOnGrid = transform.position;
 
-        float zValue = transform.position.z - playerZOffset.z;
+        float zValue = transform.position.z - playerZOffset;
 
         playerWorldPositionOnGrid.y -= zValue * tileZIncrement;
 
@@ -134,16 +132,11 @@ public class PlayerController : MonoBehaviour
         return new Vector2(horizontalMovement, verticalMovement);
     }
 
-    // update the players position at the height given based on the world pos
-    public void updatePlayerPosition(int zValue)
-    {   //zval time tile height difference at each z increment
-        Vector3 newPos = new Vector3(playerWorldPosition.x, playerWorldPosition.y + (zValue * tileZIncrement), zValue) + playerZOffset;
-        this.transform.position = newPos;
-    }
-
-    public void setWorldPosition(Vector2 newWorldpos)
+    public void setPlayerPosition(Vector2 newWorldPos, int zValueOnMap)
     {
-        playerWorldPosition = newWorldpos + tileCenterOffset + pivotOffset;
+        Vector2 playerWorldPosition = newWorldPos + tileCenterOffset + pivotOffset;
+        Vector3 newPos = new Vector3(playerWorldPosition.x, playerWorldPosition.y + (zValueOnMap * tileZIncrement), zValueOnMap + playerZOffset);
+        this.transform.position = newPos;
     }
 
     //if the player moves left, flip the sprite, if he moves right, flip it back, stay if no input is made

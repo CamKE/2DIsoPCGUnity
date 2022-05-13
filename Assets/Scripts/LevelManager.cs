@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Responsible for all operations to do with creating, managing and destroying the level and elements within it.
+/// Responsible for all operations to do with the level and the player. Used by the UIManager (generation in project build) and the LevelEditor (generation in unity editor).
 /// </summary>
 public class LevelManager : MonoBehaviour
 {
@@ -18,32 +18,43 @@ public class LevelManager : MonoBehaviour
     // the playerController component of the player
     private PlayerController playerController;
 
+    // whether or not specifying a range of height is on
     private bool rangeHeightEnabled;
     
+    /// <summary>
+    /// Calls the setup function from the level as the inspector (by setting isFromInspector bool to true).
+    /// </summary>
     public void setupLevelFromInspector()
     {
         level.setup(true);
     }
 
-    public int getCellZPosition(Vector2 worldPos)
+    /// <summary>
+    /// Get the z position from the map at the given world position from level.
+    /// </summary>
+    /// <param name="worldPos">The world position to get the map z value for.</param>
+    /// <returns>The z position at the world position on the map.</returns>
+    public int getMapZPosition(Vector2 worldPos)
     {
-        return level.getCellZPosition(worldPos);
+        return level.getMapZPosition(worldPos);
     }
 
     /// <summary>
-    /// Generate the level. temporary setup.
+    /// Generate the level with the given settings. Passes the settings onto level.
     /// </summary>
+    /// <param name="terrainSettings">The settings for the terrain generator.</param>
+    /// <param name="riverSettings">The settings for the river generator.</param>
+    /// <param name="lakeSettings">The settings for the lake generator.</param>
+    /// <param name="walkpathSettings">The settings for the walkpath generator</param>
     public void generate(TerrainSettings terrainSettings, RiverSettings riverSettings, LakeSettings lakeSettings, WalkpathSettings walkpathSettings)
     {
+        // set the range height enabled to the terrain setting value
         rangeHeightEnabled = terrainSettings.heightRangeEnabled;
 
         level.generate(terrainSettings, riverSettings, lakeSettings, walkpathSettings);
     }
 
     // whether or not the player character has been instantiated
-    // had a bool var before, but this seems to make more sense, as we cannot
-    // store the playercontroller before instatiation as the instance controller 
-    // will be different from the one before instantiation, therefore by default
     // we know the player is instantiated if its playercontroller var is set
     private bool isPlayerInstatiated()
     {
@@ -51,9 +62,8 @@ public class LevelManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Create the player and put them into the level at the given position.
+    /// Instantiate the player (if they are not already) and put them into the level at a random position.
     /// </summary>
-    /// <param name="position">Where the player should be placed on the level</param>
     public void setupPlayer()
     {
         // if the player is not instantiated
@@ -65,24 +75,26 @@ public class LevelManager : MonoBehaviour
             // store the ref to the player component playerController
             playerController = player.GetComponent<PlayerController>();
 
+            // give the playercontroller a reference to the level manager
             playerController.setLevelManager(this);
-
         }
 
+        // set the movement action based on the height type of the terrain
         playerController.setDoMovement(rangeHeightEnabled);
         // make sure the player object is enabled
         setPlayerActive(true);
+        // get a random terrain cell to place the player on
+        Vector3Int randomCell = level.getRandomTerrainCellPosition();
 
-        Vector3Int randomCell = level.getRandomCell();
-
-        playerController.setWorldPosition(level.getGridPosition(((Vector2Int)randomCell)));
-        playerController.updatePlayerPosition(randomCell.z);
- 
+        // get the players x,y world position on the level grid at the random cell x,y position
+        Vector2 playerWorldPositionOnGrid = level.getGridWorldPosition(((Vector2Int)randomCell));
+        // place the player at the world position, and give it the z value of the random cell
+        playerController.setPlayerPosition(playerWorldPositionOnGrid, randomCell.z);
     }
 
     /// <summary>
     /// Used by the UI manager to update the level camera's active status when swapping between
-    /// level generation and demo user interfaces
+    /// level generation and demo user interfaces.
     /// </summary>
     /// <param name="value">The boolean value to set the level camera's active status to.</param>
     public void setLevelCameraActive(bool value)
@@ -93,7 +105,7 @@ public class LevelManager : MonoBehaviour
 
     /// <summary>
     /// Used by the UI manager to update the player's active status when swapping between
-    /// level generation and demo user interfaces
+    /// level generation and demo user interfaces.
     /// </summary>
     /// <param name="value">The boolean value to set the player's active status to.</param>
     public void setPlayerActive(bool value)
@@ -101,15 +113,29 @@ public class LevelManager : MonoBehaviour
         // set the player's active status to the given value
         player.SetActive(value);
         
+        // if we are disabling the player controller
         if (!value)
         {
+            // clear the action
             playerController.clearDoMovement();
         }
     }
 
+    /// <summary>
+    /// Get the level generation information from the level.
+    /// </summary>
+    /// <returns>The level generation steps.</returns>
     public List<string> getGenerationInfo()
     {
         return level.getGenerationInfo();
+    }
+
+    /// <summary>
+    /// Clear the level.
+    /// </summary>
+    public void clearLevel()
+    {
+        level.clear();
     }
 
     // runs before the application is quit 

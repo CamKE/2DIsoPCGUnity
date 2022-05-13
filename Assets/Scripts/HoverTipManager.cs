@@ -4,8 +4,8 @@ using TMPro;
 
 // Credit to Comp-3 Interative for the tutorial
 /// <summary>
-/// This class is responsible for managing the functionality of the
-/// <see cref="HoverTip"/>.
+/// This class is responsible for managing the functionality of the hovetip.
+/// Written by following <seealso href="https://www.youtube.com/watch?v=FVqtmTWd8Zk">this tutorial.</seealso>
 /// </summary>
 public class HoverTipManager : MonoBehaviour
 {
@@ -32,8 +32,10 @@ public class HoverTipManager : MonoBehaviour
     /// </summary>
     public static Action onMouseLoseFocus;
 
+    // offset in the x direction for the tip window
     private const float tipWindowXOffset = 50.0f;
 
+    // pixel width of a full hd image
     private const float fullHDWidth = 1920.0f;
 
     // start is called before the first frame update when the script is enabled

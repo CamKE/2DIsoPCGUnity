@@ -1,30 +1,63 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Describes the layout of the level. Set by the generators, and then used to populate the tilemaps.
+/// </summary>
 public class Map
 {
+    // 2D array of cells; the main component of the map
     private Cell[,] map;
 
+    // the positions of the cells on the edge of the map
     private List<Vector2Int> boundaryCellPositions;
 
+    /// <summary>
+    /// Getter and setter for the current number of terrain cells on the map.
+    /// </summary>
     public int terrainCellCount { get; private set; }
 
+    /// <summary>
+    /// The width of the map's 2D array.
+    /// </summary>
     public readonly int width;
 
+    /// <summary>
+    /// The height of the map's 2D array.
+    /// </summary>
     public readonly int height;
 
+    /// <summary>
+    /// The maps width multiplied by the maps height.
+    /// </summary>
     public readonly int area;
 
+    /// <summary>
+    /// The shape of the map's terrain.
+    /// </summary>
     public readonly TerrainGenerator.TerrainShape shape;
 
+    /// <summary>
+    /// Constructor for the Map. Fills the map with new cells with the given status (optional).
+    /// </summary>
+    /// <param name="mapWidth">The width of the map's 2D array.</param>
+    /// <param name="mapHeight">The height of the map's 2D array.</param>
+    /// <param name="shape">The shape of the map's terrain.</param>
+    /// <param name="status">The status to set all cells to initially.</param>
     public Map(int mapWidth, int mapHeight, TerrainGenerator.TerrainShape shape, Cell.CellStatus status = Cell.CellStatus.ValidCell)
     {
+        // create the 2D array of cells
         map = new Cell[mapWidth, mapHeight];
+
+        // set the dimensions
         width = mapWidth;
         height = mapHeight;
         area = mapWidth * mapHeight;
 
-        // set all cells to be invalid initially
+        // give the level the shape
+        this.shape = shape;
+
+        // create the cells and set their statuses
         for (int x = 0; x < mapWidth; x++)
         {
             for (int y = 0; y < mapHeight; y++)
@@ -33,26 +66,37 @@ public class Map
             }
         }
 
+        // create the list of boundary cell positions
         boundaryCellPositions = new List<Vector2Int>();
-        this.shape = shape;
     }
 
+    /// <summary>
+    /// Update the given cells status to a new status, and optinally specify whether intersections are on for cells along paths. 
+    /// </summary>
+    /// <param name="currentCell">The cell to be updated.</param>
+    /// <param name="status">The new status.</param>
+    /// <param name="intersectionsEnabled">Whether or not a cell can be intersected. Used for path generation.</param>
     public void updateCellStatus(Cell currentCell, Cell.CellStatus status, bool intersectionsEnabled = false)
     {
+        // if the new status is not the same as the old
         if (currentCell.status != status)
         {
+            // if the new status is a terrain cell
             if (status == Cell.CellStatus.TerrainCell)
             {
+                // increment the terrain cell count
                 terrainCellCount++;
             }
 
+            // if the old status is a terrain cell
             if (currentCell.status == Cell.CellStatus.TerrainCell)
             {
+                // decrement the count
                 terrainCellCount--;
             }
         }
 
-
+        // if the 
         if (status == Cell.CellStatus.RiverCell || status == Cell.CellStatus.LakeCell)
         {
             foreach (Cell neighbour in getNeighbours(currentCell))
@@ -212,7 +256,7 @@ public class Map
         return boundaryCellPositions;
     }
 
-    public Vector3Int getRandomCell()
+    public Vector3Int getRandomTerrainCellPosition()
     {
         while (true)
         {
