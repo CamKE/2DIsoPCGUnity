@@ -152,7 +152,7 @@ public class LakeGenerator
             startPosition = (Vector2Int)map.getRandomTerrainCellPosition();
 
             // if the cell at the start position is not valid
-            if (!map.isValidCell(startPosition))
+            if (!map.isValidCellPosition(startPosition))
             {
                 // move onto the next iteration, find another start position
                 continue;
@@ -181,7 +181,7 @@ public class LakeGenerator
                     endPosition = new Vector2Int(startPosition.x + ((lakeDimension.x - 1) * direction.x), startPosition.y + ((lakeDimension.y - 1) * direction.y));
 
                     // if the end position is valid and the lake does not overlap others and the lake is not on the edge of the terrain
-                    if (map.isValidCell(endPosition) && !lakesOverlapOrAdjacent(newLake) && !lakeOnEdge(map, newLake, xOffset, yOffset))
+                    if (map.isValidCellPosition(endPosition) && !lakesOverlapOrAdjacent(newLake) && !lakeOnEdge(map, newLake, xOffset, yOffset))
                     {
                         // put the lake in the map
                         placeLake(map, startPosition, endPosition, direction);

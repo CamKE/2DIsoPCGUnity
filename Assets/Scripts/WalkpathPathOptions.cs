@@ -15,7 +15,7 @@ public class WalkpathPathOptions : Options
 
         // setup walkpath generation toggle
         int walkpathGenerationEnum = (int)WalkpathToggleOptionName.WalkpathGeneration;
-        setupToggle(toggles[walkpathGenerationEnum], toggleOptions[walkpathGenerationEnum]);
+        setupToggleWithOption(toggles[walkpathGenerationEnum], toggleOptions[walkpathGenerationEnum]);
     }
 
     public WalkpathSettings createUserSettingsFromOptions()

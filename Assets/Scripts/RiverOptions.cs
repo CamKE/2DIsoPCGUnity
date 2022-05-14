@@ -15,7 +15,7 @@ public class RiverOptions : Options
 
         // setup river generation toggle
         int riverGenerationEnum = (int)RiverToggleOptionName.RiverGeneration;
-        setupToggle(toggles[riverGenerationEnum], toggleOptions[riverGenerationEnum]);
+        setupToggleWithOption(toggles[riverGenerationEnum], toggleOptions[riverGenerationEnum]);
     }
 
     public RiverSettings createUserSettingsFromOptions()

@@ -23,7 +23,7 @@ public class LakeOptions : Options
 
         // setup toggle
         int lakeGenerationEnum = (int)LakeToggleOptionName.LakeGeneration;
-        setupToggle(toggles[lakeGenerationEnum], toggleOptions[lakeGenerationEnum]);
+        setupToggleWithOption(toggles[lakeGenerationEnum], toggleOptions[lakeGenerationEnum]);
     }
 
     /// <summary>

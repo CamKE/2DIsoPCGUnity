@@ -294,43 +294,60 @@ public class Map
         cell.onBoundary = true;
     }
 
+    /// <summary>
+    /// Get the list of boundary cell positions.
+    /// </summary>
+    /// <returns>The list of boundary cell positions.</returns>
     public List<Vector2Int> getBoundaryCellPositions()
     {
         return boundaryCellPositions;
     }
 
+    /// <summary>
+    /// Get a random terrain cells position.
+    /// </summary>
+    /// <returns>A random terrain cell position.</returns>
     public Vector3Int getRandomTerrainCellPosition()
     {
+        // only exit once a terrain cell position has been retrieved
         while (true)
         {
-            // random range is max exclusive
+            // get a random cell position. random range is max exclusive
             Vector2Int cellPosition = new Vector2Int(UnityEngine.Random.Range(0, width), UnityEngine.Random.Range(0, height));
 
+            // if the position retrieved is a terrain cell
             if (getCell(cellPosition).status == Cell.CellStatus.TerrainCell)
             {
+                // return the cell
                 return getCell(cellPosition).position;
             }
         }
     }
 
-    public bool isValidCell(Vector2Int cellPosition)
+    /// <summary>
+    /// Checks whether the given position is a free terrain cell not on any bound.
+    /// </summary>
+    /// <param name="position">The position to be checked.</param>
+    /// <returns>Whether or not the there is a valid cell at the given position.</returns>
+    public bool isValidCellPosition(Vector2Int position)
     {
-        if (cellPosition.x >= 0 && cellPosition.x < width)
+        // make sure the position is in the x range of the map
+        if (position.x >= 0 && position.x < width)
         {
-            if (cellPosition.y >= 0 && cellPosition.y < height)
+            // make sure the position is in the y range of the map
+            if (position.y >= 0 && position.y < height)
             {
-                Cell cell = getCell(cellPosition);
-                if (cell.status == Cell.CellStatus.TerrainCell && !isBoundaryCell(cell) && !cell.isWaterBound)
+                // get the cell at the position
+                Cell cell = getCell(position);
+                // if its a terrain cell and not any boundary cell
+                if (cell.status == Cell.CellStatus.TerrainCell && !cell.onBoundary && !cell.isWaterBound)
                 {
+                    // its a valid cell position
                     return true;
                 }
             }
         }
+        // its not a valid cell position
         return false;
-    }
-
-    public bool isBoundaryCell(Cell cell)
-    {
-        return boundaryCellPositions.Contains((Vector2Int)cell.position);
     }
 }

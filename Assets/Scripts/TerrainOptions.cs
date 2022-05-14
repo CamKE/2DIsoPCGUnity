@@ -29,7 +29,7 @@ public class TerrainOptions : Options
         // setup toggles
         for (int i = 0; i < toggles.Count; i++)
         {
-            setupToggle(toggles[i], toggleOptions[i]);
+            setupToggleWithOption(toggles[i], toggleOptions[i]);
         }
 
     }
