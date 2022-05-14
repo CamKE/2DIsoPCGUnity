@@ -4,6 +4,7 @@ using UnityEngine.U2D;
 using System.Diagnostics;
 using UnityEngine.Tilemaps;
 using System;
+using System.Linq;
 
 /// <summary>
 /// Handles all aspects to do with the level.
@@ -11,7 +12,7 @@ using System;
 public class Level : MonoBehaviour
 {
     // a 2D representation of the level
-    private Map levelMap;
+    private Map map;
 
     // generators for terrain, river, lake and walkpath
     private TerrainGenerator terrainGenerator;
@@ -136,11 +137,11 @@ public class Level : MonoBehaviour
         terrainGenerator.setTerrainSettings(terrainSettings);
 
         // create the level map based on the terrain shape setting
-        levelMap = terrainGenerator.createMap();
+        map = terrainGenerator.createMap();
         // populate the map with terrain cells 
-        terrainGenerator.populateCells(levelMap);
+        terrainGenerator.populateCells(map);
         // set the the outer bounds to create the map boundary
-        terrainGenerator.setOuterBounds(levelMap, ref positions[(int)TilemapNames.TerrainOuterBounds2], ref tiles[(int)TilemapNames.TerrainOuterBounds2], ref positions[(int)TilemapNames.TerrainOuterBounds1], ref tiles[(int)TilemapNames.TerrainOuterBounds1]);
+        terrainGenerator.setOuterBounds(map, ref positions[(int)TilemapNames.TerrainOuterBounds2], ref tiles[(int)TilemapNames.TerrainOuterBounds2], ref positions[(int)TilemapNames.TerrainOuterBounds1], ref tiles[(int)TilemapNames.TerrainOuterBounds1]);
 
         // if lake generation is enabled
         if (lakeSettings.lGenerationEnabled)
@@ -150,7 +151,7 @@ public class Level : MonoBehaviour
             // set the lake settings in the lake generator
             lakeGenerator.setLakeSettings(lakeSettings);
             // populate the map with lake cells 
-            lakeGenerator.populateCells(levelMap);
+            lakeGenerator.populateCells(map);
         }
 
         // if river generation is enabled
@@ -161,7 +162,7 @@ public class Level : MonoBehaviour
             // set the river settings in the river generator
             riverGenerator.setRiverSettings(riverSettings);
             // populate the map with river cells 
-            riverGenerator.populateCells(levelMap);
+            riverGenerator.populateCells(map);
         }
 
         // if walkpath generation is enabled
@@ -172,7 +173,7 @@ public class Level : MonoBehaviour
             // set the walkpath settings in the walkpath generator
             walkpathGenerator.setWalkpathSettings(walkpathSettings);
             // populate the map with walkpath cells 
-            walkpathGenerator.populateCells(levelMap);
+            walkpathGenerator.populateCells(map);
         }
 
         // add the generation heading to the info list
@@ -217,12 +218,12 @@ public class Level : MonoBehaviour
         bool setTile;
 
         // go through all cells in the map
-        for (int x = 0; x < levelMap.width; x++)
+        for (int x = 0; x < map.width; x++)
         {
-            for (int y = 0; y < levelMap.height; y++)
+            for (int y = 0; y < map.height; y++)
             {
                 // get the cell at the x,y position
-                Cell currentCell = levelMap.getCell(x, y);
+                Cell currentCell = map.getCell(x, y);
                 // we want to set the tile being searched (by default)
                 setTile = true;
 
@@ -243,7 +244,7 @@ public class Level : MonoBehaviour
                         // set the index to the water tilemap
                         currentTilemapIndex = (int)TilemapNames.Water;
                         // set river tile to be 1 lower than the lowest depth terrain neighbour
-                        currentCell.position.z = levelMap.getMinDepth(currentCell, true) - 1;
+                        currentCell.position.z = map.getMinDepth(currentCell, true) - 1;
                         break;
                     // if its a lake cell
                     case Cell.CellStatus.LakeCell:
@@ -349,7 +350,7 @@ public class Level : MonoBehaviour
     /// <returns>The position of a terrain cell.</returns>
     public Vector3Int getRandomTerrainCellPosition()
     {
-        return levelMap.getRandomTerrainCellPosition();
+        return map.getRandomTerrainCellPosition();
     }
 
     /// <summary>
@@ -404,9 +405,9 @@ public class Level : MonoBehaviour
         Vector3Int cellPosOnGrid = grid.WorldToCell(worldPos);
 
         // ensure the cellPosition stays within the bounds of the map.
-        cellPosOnGrid.Clamp(new Vector3Int(0, 0, 0), new Vector3Int(levelMap.width - 1, levelMap.height - 1, TerrainGenerator.terrainMaxHeight));
+        cellPosOnGrid.Clamp(new Vector3Int(0, 0, 0), new Vector3Int(map.width - 1, map.height - 1, TerrainGenerator.terrainMaxHeight));
 
         // return the z position at the cell position
-        return levelMap.getCell((Vector2Int)cellPosOnGrid).position.z;
+        return map.getCell((Vector2Int)cellPosOnGrid).position.z;
     }
 }

@@ -350,4 +350,13 @@ public class Map
         // its not a valid cell position
         return false;
     }
+
+    /// <summary>
+    /// Update the list of boundary cells with a modified list.
+    /// </summary>
+    /// <param name="newboundaryCellPositions">The new list of boundary cell positions.</param>
+    public void updateBoundaryCellPositionList(List<Vector2Int> newboundaryCellPositions)
+    {
+        boundaryCellPositions = newboundaryCellPositions;
+    }
 }

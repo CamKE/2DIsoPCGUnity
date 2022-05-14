@@ -3,121 +3,150 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// 
+/// Responsible for creating all path related elements in the level.
 /// </summary>
 public class PathGenerator
 {
     // status which is exempt from traversable checks
     protected Cell.CellStatus statusToCheck;
 
-    protected CellPair getReachableCells(Map map, List<Vector2Int> boundaryCellList, Heap<CellPair> cellPairs, bool intersectionsEnabled)
+    /// <summary>
+    /// Gets a pair of start and end cells for which a path can be generated.
+    /// </summary>
+    /// <param name="map">The levels 2D array of cells.</param>
+    /// <param name="existingCellPairs">The current chosen cell pairs. Used to ensure paths do not cross if
+    /// intersections are disabled.</param>
+    /// <param name="intersectionsEnabled">Whether or not intersections are enabled.</param>
+    /// <returns>A pair of start and end cells for which a path can be generated.</returns>
+    protected CellPair getReachableCells(Map map, Heap<CellPair> existingCellPairs, bool intersectionsEnabled)
     {
+        // the x,y position of the boundary cell to be checked
         Vector2Int boundaryCellXYPosition;
+        // the number of traversable neighbours a cell has
         int traversableNeighbourCount;
 
-        Cell[] cellPair = new Cell[2];
-        bool riverNodesFound = false;
+        // get the boundary cell positions
+        List<Vector2Int> boundaryCellList = map.getBoundaryCellPositions();
 
-        List<Vector2Int> boundaryCellListClone;
+        // temporary storage for the cells to be validated
+        Cell[] cellPair = new Cell[2];
+        // whether of not a pair of cells have been found
+        bool pairFound = false;
+
+        // a clone of the list of boundary cells. we want to make modifications to the list which can be undone
+        List<Vector2Int> boundaryCellListClone = null;
+        // the number of searches done
         int searchCount = 0;
 
-        // limit search count to prevent infinite searching for non-existent valid cell pair  (temporary solution)
-        while (!riverNodesFound && searchCount < 1000)
+        // limit search count to an abritrary value to prevent infinite searching for non-existent valid cell pair.
+        // not an optimal solution but works well. Need to revisit
+        while (!pairFound && searchCount < 1000)
         {
-
+            // make a clone of the boundary cell list
             boundaryCellListClone = new List<Vector2Int>(boundaryCellList);
 
+            // get 2 cells
             for (int x = 0; x < 2; x++)
             {
+                // loop until cell is found or boundary cell count reaches 0 (at which point we cannot find a pair, so return null result)
                 while (true)
                 {
+                    // if the list is empty
                     if (boundaryCellListClone.Count == 0)
                     {
+                        // no valid cell could be found, return null result
                         return null;
                     }
+                    // retrieve a random boundary cell
                     boundaryCellXYPosition = boundaryCellListClone[UnityEngine.Random.Range(0, boundaryCellListClone.Count - 1)];
-
+                    // get the cell at the position
                     Cell cellToCheck = map.getCell(boundaryCellXYPosition);
-
+                    // set the number of traversable neighbours to 0
                     traversableNeighbourCount = 0;
-
+                    // get the neighbours of the cell to check
                     List<Cell> neighbours = map.getNeighbours(cellToCheck);
-
+                    
+                    // for each of the neighbours
                     foreach (Cell neighbour in neighbours)
                     {
+                        // if the neighbour is traversable and not a water bound
                         if (neighbour.isTraversable && !neighbour.isWaterBound)
                         {
+                            // increment the count
                             traversableNeighbourCount++;
                         }
                     }
 
-                    Cell cell = map.getCell(boundaryCellXYPosition);
-
-                    if (traversableNeighbourCount > 0 && cell.status == Cell.CellStatus.TerrainCell)
+                    //if the count is more than 0 and the cell is a terrain cell
+                    if (traversableNeighbourCount > 0 && cellToCheck.status == Cell.CellStatus.TerrainCell)
                     {
-                        //Debug.Log(boundaryCellList.Count);
-
+                        // remove the cell from the temporary clone list
                         boundaryCellListClone.Remove(boundaryCellXYPosition);
-                        // remove adjacent boundary cells from list, we dont want the possibility
-                        // of a 2 cell river
 
-                        foreach (Cell neighbour in map.getNeighbours(cell))
+                        // remove adjacent boundary cells from list, we dont want the possibility
+                        // of retrieving them
+                        foreach (Cell neighbour in neighbours)
                         {
-                            //no need to check contain first, will just return false if not in list
+                            // no need to check contain first, will just return false if not in list
                             boundaryCellListClone.Remove((Vector2Int)neighbour.position);
                         }
 
-                        cellPair[x] = cell;
+                        // add the cell to the temporary cell pair array
+                        cellPair[x] = cellToCheck;
+                        // break out of the while loop
                         break;
                     }
 
+                    // otherwise, it is an invalid cell. remove it from both the temporary
+                    // list and the actual list (omit from future searches)
                     boundaryCellListClone.Remove(boundaryCellXYPosition);
                     boundaryCellList.Remove(boundaryCellXYPosition);
                 }
             }
+            // set path found to true by default
+            pairFound = true;
 
-
-            riverNodesFound = true;
-
-            for (int x = 0; x < cellPairs.Count; x++)
+            // if intersections are not enabled (not allowed)
+            if (!intersectionsEnabled)
             {
-                //bool intersects = lineSegmentsIntersect(cellPair[0].position, cellPair[1].position, rivers[x].First(), rivers[x].Last());
-                if (!intersectionsEnabled && doIntersect(cellPair[0].position, cellPair[1].position, cellPairs.getItem(x).startCell.position, cellPairs.getItem(x).endCell.position))
+                // for each of the cell pairs in the heap
+                for (int x = 0; x < existingCellPairs.Count; x++)
                 {
-                    riverNodesFound = false;
-                    //Debug.Log("there is an intersection, pick another pair of nodes");
-                    break;
+                    // if this cell pair intersects with the existing cell pair at position x in the heap
+                    if (doIntersect(cellPair[0].position, cellPair[1].position, existingCellPairs.getItem(x).startCell.position, existingCellPairs.getItem(x).endCell.position))
+                    {
+                        // then it cannot be a valid pair, as we are not allowing intersections
+                        pairFound = false;
+                        // break out of the loop
+                        break;
+                    }
                 }
             }
 
+            // increment search count
             searchCount++;
         }
 
-        if (searchCount == 1000)
+        // if a pair is not found
+        if (!pairFound)
         {
+            // no valid pair could be found, return null result
             return null;
         }
         else
+        // otherwise
         {
-            foreach (Cell cell in cellPair)
-            {
-                Vector2Int cellPosition = (Vector2Int)cell.position;
+            // update the boundary cell list
+            map.updateBoundaryCellPositionList(boundaryCellListClone);
 
-                boundaryCellList.Remove(cellPosition);
-                // remove adjacent boundary cells from list, we dont want the possibility
-                // of a 2 cell river
-                foreach (Cell neighbour in map.getNeighbours(cell))
-                {
-                    //no need to check contain first, will just return false if not in list
-                    boundaryCellList.Remove((Vector2Int)neighbour.position);
-                }
-            }
-
+            // return the pair
             return new CellPair(cellPair[0], cellPair[1], GetDistance(cellPair[0], cellPair[1]));
         }
 
     }
 
+    // Credit/Author: https://www.geeksforgeeks.org/orientation-3-ordered-points/
+    // for details of below formula.
     // The main function that returns true if line segment 'p1q1'
     // and 'p2q2' intersect.
     private static Boolean doIntersect(Vector3Int p1, Vector3Int q1, Vector3Int p2, Vector3Int q2)
@@ -149,6 +178,7 @@ public class PathGenerator
         return false; // Doesn't fall in any of the above cases
     }
 
+    // Credit/Author: https://www.geeksforgeeks.org/orientation-3-ordered-points/
     // Given three collinear points p, q, r, the function checks if
     // point q lies on line segment 'pr'
     private static Boolean onSegment(Vector3Int p, Vector3Int q, Vector3Int r)
@@ -160,6 +190,7 @@ public class PathGenerator
         return false;
     }
 
+    // Credit/Author: https://www.geeksforgeeks.org/orientation-3-ordered-points/
     // To find orientation of ordered triplet (p, q, r).
     // The function returns following values
     // 0 --> p, q and r are collinear
@@ -167,8 +198,6 @@ public class PathGenerator
     // 2 --> Counterclockwise
     private static int orientation(Vector3Int p, Vector3Int q, Vector3Int r)
     {
-        // See https://www.geeksforgeeks.org/orientation-3-ordered-points/
-        // for details of below formula.
         int val = (q.y - p.y) * (r.x - q.x) -
                 (q.x - p.x) * (r.y - q.y);
 
@@ -177,13 +206,22 @@ public class PathGenerator
         return (val > 0) ? 1 : 2; // clock or counterclock wise
     }
 
-    protected bool findAStarPath(Map map, Cell startNode, Cell endNode, Cell.CellStatus status, bool intersectionsEnabled)
+    /// <summary>
+    /// Based on the a* algorithm. Used to find a path between a pair of cells.
+    /// </summary>
+    /// <param name="map"></param>
+    /// <param name="startCell"></param>
+    /// <param name="endCell"></param>
+    /// <param name="status"></param>
+    /// <param name="intersectionsEnabled"></param>
+    /// <returns></returns>
+    protected bool findAStarPath(Map map, Cell startCell, Cell endCell, Cell.CellStatus status, bool intersectionsEnabled)
     {
         Heap<Cell> openList = new Heap<Cell>(map.area);
         HashSet<Cell> closedList = new HashSet<Cell>();
         Cell currentNode;
   
-        openList.Add(startNode);
+        openList.Add(startCell);
 
         while (openList.Count > 0)
         {
@@ -191,11 +229,11 @@ public class PathGenerator
 
             closedList.Add(currentNode);
 
-            if (currentNode == endNode)
+            if (currentNode == endCell)
             {
-                currentNode = endNode;
+                currentNode = endCell;
 
-                while (currentNode != startNode)
+                while (currentNode != startCell)
                 {
                     // change the level cells map
 
@@ -234,7 +272,7 @@ public class PathGenerator
 
                     neighbourNode.gCost = newNeighbourGCost;
 
-                    neighbourNode.hCost = GetDistance(neighbourNode, endNode);
+                    neighbourNode.hCost = GetDistance(neighbourNode, endCell);
 
                     neighbourNode.parent = currentNode;
 

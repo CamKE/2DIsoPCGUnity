@@ -44,8 +44,6 @@ public class RiverGenerator : PathGenerator
         riverTilesByType.Add(TerrainGenerator.TerrainType.Snow, iceTile);
 
         this.generationInfo = generationInfo;
-
-        statusToCheck = Cell.CellStatus.WalkpathCell;
     }
 
     private Tile setupTile(SpriteAtlas atlas, string tilename)
@@ -77,7 +75,7 @@ public class RiverGenerator : PathGenerator
         int count;
         for (count = 0; count < riverMaxCount; count++)
         {
-            CellPair pair = getReachableCells(map, map.getBoundaryCellPositions(), cellPairs, riverSettings.intersectionsEnabled);
+            CellPair pair = getReachableCells(map, cellPairs, riverSettings.intersectionsEnabled);
 
             if (pair == null)
             {

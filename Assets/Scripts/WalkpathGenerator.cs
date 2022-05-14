@@ -73,8 +73,6 @@ public class WalkpathGenerator : PathGenerator
 
     public void populateCells(Map map)
     {
-        List<Vector2Int> boundaryCellPositions = map.getBoundaryCellPositions();
-
         walkpathMaxCount = (int)Math.Ceiling(map.terrainCellCount * (wMultiplier * ((int)walkpathSettings.wNum + 1)));
         generationInfo.Add(walkpathMaxCount + " max walkpath count calculated based on terrain size and " + walkpathSettings.wNum + " walkpath amount setting");
 
@@ -83,7 +81,7 @@ public class WalkpathGenerator : PathGenerator
         int count;
         for (count = 0; count < walkpathMaxCount; count++)
         {
-            CellPair pair = getReachableCells(map, boundaryCellPositions, cellPairs, walkpathSettings.intersectionsEnabled);
+            CellPair pair = getReachableCells(map, cellPairs, walkpathSettings.intersectionsEnabled);
 
             if (pair == null)
             {
@@ -93,8 +91,6 @@ public class WalkpathGenerator : PathGenerator
             cellPairs.Add(pair);
 
         }
-
-        statusToCheck = Cell.CellStatus.RiverCell;
 
         while (cellPairs.Count > 0)
         {
