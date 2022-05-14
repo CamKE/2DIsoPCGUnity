@@ -96,6 +96,9 @@ public class Level : MonoBehaviour
             cameraController = transform.GetChild(0).GetComponent<LevelCameraController>();
             // disable it by default
             cameraController.enabled = false;
+
+            // in the event any levels were generated in the inspector before entering play mode
+            clear();
         }
 
         // set the fromInspector bool
@@ -220,8 +223,6 @@ public class Level : MonoBehaviour
             {
                 // get the cell at the x,y position
                 Cell currentCell = levelMap.getCell(x, y);
-                // get the cells position
-                Vector3Int currentCellPosition = currentCell.position;
                 // we want to set the tile being searched (by default)
                 setTile = true;
 
@@ -231,7 +232,7 @@ public class Level : MonoBehaviour
                     // if its a terrain cell
                     case Cell.CellStatus.TerrainCell:
                         // set the terrain tile to use for the cell on the map. select random accessory tile at 30% chance
-                        currentTile = UnityEngine.Random.value > 0.2f ? groundTiles[currentCellPosition.z % groundTiles.Length] : accessoryTiles[currentCellPosition.x % accessoryTiles.Length];
+                        currentTile = UnityEngine.Random.value > 0.2f ? groundTiles[currentCell.position.z % groundTiles.Length] : accessoryTiles[currentCell.position.x % accessoryTiles.Length];
                         // set the index to the terrain tilemap
                         currentTilemapIndex = (int)TilemapNames.Terrain;
                         break;
@@ -242,7 +243,7 @@ public class Level : MonoBehaviour
                         // set the index to the water tilemap
                         currentTilemapIndex = (int)TilemapNames.Water;
                         // set river tile to be 1 lower than the lowest depth terrain neighbour
-                        currentCellPosition.z = levelMap.getTerrainMinDepth(currentCell) - 1;
+                        currentCell.position.z = levelMap.getMinDepth(currentCell, true) - 1;
                         break;
                     // if its a lake cell
                     case Cell.CellStatus.LakeCell:
@@ -251,7 +252,7 @@ public class Level : MonoBehaviour
                         // set the index to the water tilemap
                         currentTilemapIndex = (int)TilemapNames.Water;
                         // set lake tile z value 1 below its current value
-                        currentCellPosition.z -= 1;
+                        currentCell.position.z -= 1;
                         break;
                     // if its a walkpath cell
                     case Cell.CellStatus.WalkpathCell:
@@ -270,7 +271,7 @@ public class Level : MonoBehaviour
                 if (setTile)
                 {
                     // add the position of the cell to the corresponding tilemap
-                    positions[currentTilemapIndex].Add(currentCellPosition);
+                    positions[currentTilemapIndex].Add(currentCell.position);
                     // add the tile to the corresponding tilemap
                     tiles[currentTilemapIndex].Add(currentTile);
                     // set terrain tiles for the cells below the current cell. only done if it is a boundary cell
@@ -297,7 +298,9 @@ public class Level : MonoBehaviour
         Vector3Int position = cell.position;
 
         // if the cell is a boundary cell and its depth is greater than 0 
-        if (cell.onBoundary && position.z > 0)
+        // added if its a water bound too to prevent gaps in terrain when
+        // terrain is significantly higher than an adjacent body of water
+        if ((cell.onBoundary || cell.isWaterBound) && position.z > 0)
         {
             // there is space below the cell, calculate the depth of the cell 
             // to be placed directly below the current cell

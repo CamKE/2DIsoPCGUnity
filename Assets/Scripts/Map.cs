@@ -128,142 +128,170 @@ public class Map
     /// <summary>
     /// Get a cell from the map at the given x and y int positions.
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
+    /// <param name="x">The x position of the cell.</param>
+    /// <param name="y">The y position of the cell.</param>
     /// <returns></returns>
     public Cell getCell(int x, int y)
     {
         return map[x, y];
     }
 
+    /// <summary>
+    /// Creates a new cell at the position with the given status.
+    /// </summary>
+    /// <param name="cellPosition">The position to create the cell.</param>
+    /// <param name="status">The status of the cell.</param>
     private void addCell(Vector2Int cellPosition, Cell.CellStatus status)
     {
         map[cellPosition.x, cellPosition.y] = new Cell((Vector3Int)cellPosition, status);
     }
 
-    public Cell[,] getAll()
+    /// <summary>
+    /// Retrieve the  von Neumann neighborhood neighbours of the cells given at a
+    /// manhattan distance of 1.
+    /// </summary>
+    /// <param name="currentCell">The cell to get the neighbours for.</param>
+    /// <returns>The list of all neighbouring cells.</returns>
+    public List<Cell> getNeighbours(Cell currentCell)
     {
-        return map;
-    }
-
-    public List<Cell> getNeighbours(Cell currentNode)
-    {
+        // create the neighbouring cells list
         List<Cell> neighbours = new List<Cell>();
 
-        Vector3Int currentNodePosition = currentNode.position;
+        // get the position of the current cell
+        Vector3Int currentCellPosition = currentCell.position;
 
-        // left
-        if (currentNodePosition.x > 0)
+        /*
+         * Retrieve neighbour in each of the 4 directions and add them to the list.
+         */
+
+        // left neighbour
+        if (currentCellPosition.x > 0)
         {
-            Cell cell = getCell(currentNodePosition.x - 1, currentNodePosition.y);
+            Cell cell = getCell(currentCellPosition.x - 1, currentCellPosition.y);
             neighbours.Add(cell);
 
         }
 
-        // right
-        if (currentNodePosition.x < width - 1)
+        // right neighbour
+        if (currentCellPosition.x < width - 1)
         {
-            Cell cell = getCell(currentNodePosition.x + 1, currentNodePosition.y);
+            Cell cell = getCell(currentCellPosition.x + 1, currentCellPosition.y);
             neighbours.Add(cell);
         }
 
-        // top
-        if (currentNodePosition.y < height - 1)
+        // top neighbour
+        if (currentCellPosition.y < height - 1)
         {
-            Cell cell = getCell(currentNodePosition.x, currentNodePosition.y + 1);
+            Cell cell = getCell(currentCellPosition.x, currentCellPosition.y + 1);
             neighbours.Add(cell);
         }
 
-        // bottom
-        if (currentNodePosition.y > 0)
+        // bottom neighbour
+        if (currentCellPosition.y > 0)
         {
-            Cell cell = getCell(currentNodePosition.x, currentNodePosition.y - 1);
+            Cell cell = getCell(currentCellPosition.x, currentCellPosition.y - 1);
             neighbours.Add(cell);
         }
 
         return neighbours;
     }
 
-    // finds the minimum depth (z value) from surrounding tiles
-    public int getTerrainMinDepth(Cell currentNode)
+    /// <summary>
+    /// Finds the minimum depth (z value) from the cells surrounding the cell given.
+    /// </summary>
+    /// <param name="currentCell">The cell to find the minimum depth for.</param>
+    /// <param name="onlyTerrainCells">Whether or not only terrain cells should be checked.</param>
+    /// <returns>The minimum depth amongst the cell and its neighbours.</returns>
+    public int getMinDepth(Cell currentCell, bool onlyTerrainCells = false)
     {
-        int minDepth = currentNode.position.z;
+        // set the initial minimum depth to be the current cells depth
+        int minDepth = currentCell.position.z;
+        // flag to determine if the neighbours depth should be checked
+        bool validNeighbour;
 
-        foreach (Cell neighbour in getNeighbours(currentNode))
+        // for each of the cells neighbours
+        foreach (Cell neighbour in getNeighbours(currentCell))
         {
-            if (neighbour.status == Cell.CellStatus.TerrainCell)
+            // set the flag based on the onlyterraincells bool
+            validNeighbour = onlyTerrainCells ? neighbour.status == Cell.CellStatus.TerrainCell : neighbour.status != Cell.CellStatus.InvalidCell;
+
+            // if the neighbouring cell is a valid neighbour
+            if (validNeighbour)
             {
-                int neighbourDepth = neighbour.position.z;
-                minDepth = neighbourDepth < minDepth ? neighbourDepth : minDepth;
-            }
-        }
-
-        return minDepth;
-    }
-
-    public int getMinDepth(Cell currentNode)
-    {
-        int minDepth = currentNode.position.z;
-
-        foreach (Cell neighbour in getNeighbours(currentNode))
-        {
-            if (neighbour.status != Cell.CellStatus.InvalidCell)
-            {
-                int neighbourDepth = neighbour.position.z;
-                minDepth = neighbourDepth < minDepth ? neighbourDepth : minDepth;
+                // compare the neighbours depth to the current minimum depth.
+                // set the min depth to the lowest value
+                minDepth = neighbour.position.z < minDepth ? neighbour.position.z : minDepth;
             }
 
         }
-
         return minDepth;
     }
 
+    /// <summary>
+    /// Check if a given cell on a randomly shaped map is a boundary cell. 
+    /// </summary>
+    /// <param name="cell">The cell to be checked.</param>
     public void checkForBoundaryCellRandom(Cell cell)
     {
-        int validTileCount = 0;
-
+        // number of valid tiles amongst the cells neighbours
+        int validNeighbourCount = 0;
+        
+        // get the neighbours of the cell
         List<Cell> neighbours = getNeighbours(cell);
 
-        if (neighbours.Count < 4)
+        // if there are not 4 neighbours
+        if (neighbours.Count != 4)
         {
             // its a boundary tile
-            addBoundaryCellPosition((Vector2Int)cell.position);
+            addBoundaryCellPosition(cell);
         }
         else
+        // otherwise
         {
+            // for each of the cells neighbour
             foreach (Cell neighbour in neighbours)
             {
-                if (neighbour.status == Cell.CellStatus.ValidCell || neighbour.status == Cell.CellStatus.TerrainCell)
+                // if the cell is invalid
+                if (neighbour.status == Cell.CellStatus.InvalidCell)
                 {
-                    validTileCount++;
+                    // there can no longer be 4 valid neighbours, break.
+                    break;
                 }
+                // its a valid neighbour, increment the count
+                validNeighbourCount++;
             }
-            if (validTileCount < 4)
+            // if there are not 4 valid neighbours
+            if (validNeighbourCount != 4)
             {
                 // its a boundary tile
-                addBoundaryCellPosition((Vector2Int)cell.position);
+                addBoundaryCellPosition(cell);
             }
         }
     }
 
+    /// <summary>
+    /// Check if a given cell on a square or rectangular map is a boundary cell.
+    /// </summary>
+    /// <param name="cell">The cell to be checked.</param>
     public void checkForBoundaryCell(Cell cell)
     {
+        // get the neighbours of the cell
         List<Cell> neighbours = getNeighbours(cell);
-        // remove this if want to revert
 
-        if (neighbours.Count < 4)
+        // if there are not 4 neighbours
+        if (neighbours.Count != 4)
         {
             // its a boundary tile
-            addBoundaryCellPosition((Vector2Int)cell.position);
+            addBoundaryCellPosition(cell);
         }
-
     }
 
-
-    public void addBoundaryCellPosition(Vector2Int position)
+    // add a boundary cell's position to the list of boundary cell positions
+    // also set the cells onBoundary flag to true
+    private void addBoundaryCellPosition(Cell cell)
     {
-        boundaryCellPositions.Add(position);
-        getCell(position).onBoundary = true;
+        boundaryCellPositions.Add((Vector2Int)cell.position);
+        cell.onBoundary = true;
     }
 
     public List<Vector2Int> getBoundaryCellPositions()

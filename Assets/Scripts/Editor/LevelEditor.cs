@@ -237,63 +237,67 @@ public class LevelEditor : Editor
          * Set terrain settings
          */
         terrainSize = terrainSettings.tSize;
-        terrainType = (int)terrainSettings.tType;
 
-        heightRangeEnabled = terrainSettings.heightRangeEnabled;
-
-        // if height range is on
-        if (heightRangeEnabled)
+        if (randomiseLevelPressed)
         {
-            // set min and max height values used
-            minHeight = terrainSettings.tMinHeight;
-            maxHeight = terrainSettings.tMaxHeight;
-        }
-        else
-        // otherwise
-        {
-            // set exact height value used
-            exactHeightValue = terrainSettings.tExactHeight;
-        }
+            terrainType = (int)terrainSettings.tType;
 
-        terrainShape = (int)terrainSettings.tShape;
+            heightRangeEnabled = terrainSettings.heightRangeEnabled;
 
-        /*
-        * Set river settings
-        */
-        riverGenerationEnabled = riverSettings.rGenerationEnabled;
+            // if height range is on
+            if (heightRangeEnabled)
+            {
+                // set min and max height values used
+                minHeight = terrainSettings.tMinHeight;
+                maxHeight = terrainSettings.tMaxHeight;
+            }
+            else
+            // otherwise
+            {
+                // set exact height value used
+                exactHeightValue = terrainSettings.tExactHeight;
+            }
 
-        // if river generation is on
-        if (riverGenerationEnabled)
-        {
-            // set the values used
-            numRiver = (int)riverSettings.rNum;
-            riverIntersectionsEnabled = riverSettings.intersectionsEnabled;
-        }
+            terrainShape = (int)terrainSettings.tShape;
 
-        /*
-        * Set river settings
-        */
-        lakeGenerationEnabled = lakeSettings.lGenerationEnabled;
+            /*
+            * Set river settings
+            */
+            riverGenerationEnabled = riverSettings.rGenerationEnabled;
 
-        // if lake generation is on
-        if (lakeGenerationEnabled)
-        {
-            // set the values used
-            numLake = (int)lakeSettings.lNum;
-            maxLakeSize = (int)lakeSettings.lMaxSize;
-        }
+            // if river generation is on
+            if (riverGenerationEnabled)
+            {
+                // set the values used
+                numRiver = (int)riverSettings.rNum;
+                riverIntersectionsEnabled = riverSettings.intersectionsEnabled;
+            }
 
-        /*
-        * Set river settings
-        */
-        walkpathGenerationEnabled = walkpathSettings.wGenerationEnabled;
+            /*
+            * Set river settings
+            */
+            lakeGenerationEnabled = lakeSettings.lGenerationEnabled;
 
-        // if walkpath generation is on
-        if (walkpathGenerationEnabled)
-        {
-            // set the values used
-            numWalkpath = (int)walkpathSettings.wNum;
-            walkpathIntersectionsEnabled = walkpathSettings.intersectionsEnabled;
+            // if lake generation is on
+            if (lakeGenerationEnabled)
+            {
+                // set the values used
+                numLake = (int)lakeSettings.lNum;
+                maxLakeSize = (int)lakeSettings.lMaxSize;
+            }
+
+            /*
+            * Set river settings
+            */
+            walkpathGenerationEnabled = walkpathSettings.wGenerationEnabled;
+
+            // if walkpath generation is on
+            if (walkpathGenerationEnabled)
+            {
+                // set the values used
+                numWalkpath = (int)walkpathSettings.wNum;
+                walkpathIntersectionsEnabled = walkpathSettings.intersectionsEnabled;
+            }
         }
     }
 
@@ -322,8 +326,6 @@ public class LevelEditor : Editor
                 lakeSettings = new LakeSettings(terrainSettings.tType);
                 walkpathSettings = new WalkpathSettings(terrainSettings.tType);
 
-                // update the inspector with the settings used
-                updateInspectorOptions(terrainSettings, riverSettings, lakeSettings, walkpathSettings);
                 // set the generate level flag to true
                 generateLevel = true;
             } else
@@ -347,8 +349,6 @@ public class LevelEditor : Editor
                 else
                 // otherwise, continue to generation
                 {
-                    // update the terrain size option in the inspector with the value used
-                    terrainSize = terrainSettings.tSize;
                     // set the generate level flag to true
                     generateLevel = true;
                 }
@@ -359,7 +359,8 @@ public class LevelEditor : Editor
             {
                 // generate
                 levelManager.generate(terrainSettings, riverSettings, lakeSettings, walkpathSettings);
-
+                // update the inspector with the settings used
+                updateInspectorOptions(terrainSettings, riverSettings, lakeSettings, walkpathSettings);
                 // update the generation info
                 updateLevelGenInfo();
             }

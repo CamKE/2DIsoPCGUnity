@@ -24,12 +24,14 @@ public class TerrainGenerator
     /// <summary>
     /// The minimum size of a level specified by tile count.
     /// </summary>
-    public const int terrainMinSize = 50;
+    //increased from 50
+    public const int terrainMinSize = 150;
 
     /// <summary>
     /// The maximum size of a level specified by tile count.
     /// </summary>
-    public const int terrainMaxSize = 1500;
+    // increased from 1500
+    public const int terrainMaxSize = 2000;
 
     public const int terrainMinHeight = 0;
 
@@ -214,7 +216,7 @@ public class TerrainGenerator
                 // generate a random shape
                 // possibly return some other 2d structure that can grow like a list
                 // convert the 2d list of levelcellstatus to a 3d array 
-                map = createRandomLevelShapeBFS(terrainSettings.tSize);
+                map = createRandomLevelShapeBFS();
                 checkForBoundaryCell += map.checkForBoundaryCellRandom;
                 break;
             // default shape is square 
@@ -232,10 +234,10 @@ public class TerrainGenerator
         return map;
     }
 
-    private Map createRandomLevelShapeBFS(int terrainSize)
+    private Map createRandomLevelShapeBFS()
     {
         // get the square size.
-        Vector2Int dimensions = getDimensions(terrainSize);
+        Vector2Int dimensions = getDimensions(terrainSettings.tSize);
         
         // set all cells invalid initially
         Map map = new Map(dimensions.x, dimensions.x, terrainSettings.tShape, Cell.CellStatus.InvalidCell);
@@ -258,6 +260,10 @@ public class TerrainGenerator
 
         float validTileChance = 1.0f;
         // the rate at which each additional tile reduces the valid tile chance 
+        // we need this value to adjust with the terrain size. the larger the
+        // terrain, the lower the falloff rate. currently 10% falloff regardless
+        // of levelsize, resulting in levels which are significantly smaller than 
+        // the given size setting
         float chanceFalloffRate = 0.1f;
 
         while (openSet.Count > 0)
@@ -289,7 +295,7 @@ public class TerrainGenerator
             if (UnityEngine.Random.value < validTileChance && (validTileCount > 0 && invalidTileCount == 0 ))                                                                                                                                                                                                                                                                                                                                                   
             {
                map.updateCellStatus(currentCell, Cell.CellStatus.ValidCell);
-                validTileChance -= (chanceFalloffRate / (float)terrainSize);
+                validTileChance -= (chanceFalloffRate / (float)terrainSettings.tSize);
 
             }
 
