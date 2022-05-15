@@ -6,6 +6,10 @@ This is a procedural generator for producing 2D isometric perspective levels to 
 |:----------------------------------:|
 | [![PreviewScreenshot](https://user-images.githubusercontent.com/37081579/168493637-656c601f-67c3-4898-a99f-e7e2f9d12891.png)](https://camke.itch.io/2d-isometric-procedural-generation) |
 
+| Click here for API Documentation |
+|:----------------------------------:|
+| [![ApiDocPreviewScreenshot](https://user-images.githubusercontent.com/37081579/168494435-5d4937a7-4871-4689-87e5-864bcdf3a7b6.png)](https://camke.github.io/api/Global.html) |
+
 ## Level Generation Screen
 
 ### Controls
