@@ -1,11 +1,6 @@
 # 2D Isometric Procedural Content Generation System in Unity
 
-Explain what the project is here. Use the example below to apply correct formatting.
-
-!(./resources/PreviewScreenshot.png?raw=true "Title")
-!(./Documentation/resources/PreviewScreenshot.png?raw=true "Title")
-
-Welcome text here and overview.
+This is a procedural generator for producing 2D isometric perspective levels to be used in game projects.
 
 | Click here for WebGL Online Version |
 |:----------------------------------:|
@@ -15,143 +10,47 @@ Welcome text here and overview.
 
 ### Controls
 
-1. [Install DocFX](https://dotnet.github.io/docfx/tutorial/docfx_getting_started.html#2-use-docfx-as-a-command-line-tool).
-2. Copy the `Documentation/` folder to your Unity project:
+	- Minus button: Used to incrementally zoom out of the level. Can also use mouse scrollwheel or trackpad.
+    - Plus button: Used to incrementally zoom into the level. Can also use mouse scrollwheel or trackpad.
+    - Recenter: Reposition the camera to have the level in full view.
+    - Level Info: Displays the level generation steps.
+    - Randomise Level: Generate a level using randomised settings.
+    - Generate Level: Generate a level using user settings.
+    - Demo Level: Control a player on the level (currently disabled for varying height levels due to collision bound issues).
 
-    ```diff
-      .
-      ├── Assets
-    + ├── Documentation
-      ├── Package
-      ├── ProjectSettings
-      └── README.md
-    ```
+### Options
 
-3. Edit the following properties in `Documentation/docfx.json`, keep the others as it is:
+*Note: You can also hover over the option heading to see what the it does.*
 
-    ```javascript
-      {
-        "build": {
-          "globalMetadata": // Edit your documentation website info, see: https://dotnet.github.io/docfx/tutorial/docfx.exe_user_manual.html#322-reserved-metadata
-          {
-            "_appTitle": "Example Unity documentation",
-            "_appFooter": "Example Unity documentation",
-            "_enableSearch": true
-          },
-          "sitemap":
-          {
-            "baseUrl": "https://normanderwan.github.io/DocFxForUnity" // The URL of your documentation website
-          }
-      }
-    ```
+#### Terrain
 
-    It's the configuration file of your documentation.
-    See <https://dotnet.github.io/docfx/tutorial/docfx.exe_user_manual.html#3-docfxjson-format> for more details.
+    - Terrain Size: Specify the size of the terrain in terms of maximum tile count. This value will be rounded to a square value for generating the map. Randomly shaped levels tile count will vary.
+    - Terrain Type: Choose the type of terrain to be generated. This will change the tiles used in the level.
+    - Terrain Height: Choose whether to specify the exact height of the terrain or a range of height the terrain should be between.
+    - Terrain Height: Choose whether to specify the exact height of the terrain or a range of height the terrain should be between.
+        - Exact Height: Specify the exact height the terrain should be.
+        - Height Range: Specify the minimum and maximum height the terrain should be between.
+    - Terrain Shape: Choose the shape of the terrain. Terrain size will vary for randomly shaped levels. Higher terrain sizes are more likely to produce larger levels.
 
-4. Edit `Documentation/filterConfig.yml`:
+#### Water Bodies
 
-    ```yaml
-    apiRules:
-    - include: # The namespaces to generate
-        uidRegex: ^Your\.Namespace1
-        type: Namespace
-    - include:
-        uidRegex: ^Your\.Namespace2
-        type: Namespace
-    - exclude:
-        uidRegex: .* # Every other namespaces are ignored
-        type: Namespace
-    ```
+    - River Generation: Turn on or off the creation of rivers.
+        - Number of Rivers: Select the number of rivers relative to the remaining terrain size.
+        - River Intersection: Turn on or off whether rivers are able to cross paths. Also affects whether lakes can combine  with rivers.
+    - Lake Generation: Turn on or off the creation of lakes.
+        - Number of Lakes: Select the number of lakes relative to the terrain size.
+        - Maximum Lake Size: Select the maximumum lake size relative to the terrain size. Lakes up to the selected size will  be generated.
+		
+#### Walkpath
 
-    It tells DocFX which namespaces you want to generate the documentation.
-    See <https://dotnet.github.io/docfx/tutorial/howto_filter_out_unwanted_apis_attributes.html> for more details.
+    - Walkpath Generation: Turn on or off the creation of walkpaths.
+        - Number of Walkpaths: Select the number of walkpaths relative to the remaining terrain size.
+        - Walkpath Intersection: Turn on or off whether walkpaths are able to cross paths.
 
-5. Document your classes and methods. See <https://docs.microsoft.com/en-us/dotnet/csharp/codedoc> for more details.
+## Demo Screen
 
-6. (Optional) Add your manual pages:
-    - Write a Markdown file for each page in `Documentation/manual/`.
-    - Keep a list of these pages on `Documentation/manual/toc.yml`.
+### Controls
 
-7. (Optional) Add resources such as images:
-    - Copy them to `Documentation/resources/`.
-    - Reference them on your docs or manual pages.
-    - See <https://dotnet.github.io/docfx/tutorial/links_and_cross_references.html#link-to-a-file-using-relative-path> for more details.
-
-8. (Optional) Document your namespaces:
-    - For each namespace, add a `Assets/Scripts/Your/Namespace1/Your.Namespace1.md` file:
-
-        ```yaml
-        ---
-        uid: Your.Namespace1
-        summary: Description of the Your.Namespace1 namespace.
-        ---
-        ```
-    - See <https://dotnet.github.io/docfx/tutorial/intro_overwrite_files.html> to know how it works.
-
-9. Generate your documentation:
-    - On a command line opened on your project, run:
-
-        ```bash
-        cp README.md Documentation/index.md
-        docfx Documentation/docfx.json --serve
-        ```
-
-    - The generated website will be visible at <http://localhost:8080>.
-
-If you want to have a more similar look to the Unity documentation, see this UnityFX template for DocFX:
-<https://github.com/code-beans/UnityFX>.
-
-## Generate automatically your documentation
-
-If you're using GitHub:
-
-1. Copy the `.github/workflows/documentation.yml` workflow to your Unity project:
-
-    ```diff
-      .
-    + ├── .github
-    + |   └── workflows
-    + |       └── documentation.yml
-      ├── Assets
-      ├── Documentation
-      ├── Package
-      ├── ProjectSettings
-      └── README.md
-    ```
-
-2. Next push on `main` branch will build and deploy your documentation to `https://<USERNAME>.github.io/<REPOSITORY>/`!
-
-If you're using GitLab, use the provided
-[`.gitlab-ci.yml`](https://github.com/NormandErwan/DocFxForUnity/blob/main/.gitlab-ci.yml).
-Generated website is pushed to a `public/` directory. See the
-[GitLab Pages documentation](https://docs.gitlab.com/ee/user/project/pages/getting_started_part_four.html) for more
-details.
-
-## Troubleshooting / FAQ
-
-- DocFX outputs: `Warning:[ExtractMetadata]No project detected for extracting metadata.`
-
-    Solution: On Unity, click [Asset > Open C# Project](https://docs.microsoft.com/fr-fr/visualstudio/cross-platform/media/vstu_open-csharp-project.png?view=vs-2019) to generate the required `.csproj`.
-
-- DocFX outputs: `Warning:[ExtractMetadata]No metadata is generated for Assembly-CSharp,Assembly-CSharp-Editor.`
-
-    Solution: Make sure your included your namespace in `Documentation/filterConfig.yml`:
-
-    ```yaml
-    - include:
-      uidRegex: ^Your\.Namespace1
-      type: Namespace
-    ```
-
-- If you want to reference a specific version of Unity, change this line on your `docfx.json`:
-
-  ```json
-  "xref": [ "https://normanderwan.github.io/UnityXrefMaps/<version>/xrefmap.yml" ],
-  ```
-
-  where `<version>` is a Unity version in the form of `YYYY.x` (*e.g.* 2017.4, 2018.4, 2019.3).
-
-## Disclaimer
-
-This repository is not sponsored by or affiliated with Unity Technologies or its affiliates.
-“Unity” is a trademark or registered trademark of Unity Technologies or its affiliates in the U.S. and elsewhere.
+	- Exit level button: Return to the level generation screen
+	
+Use the arrow or WASD keys to move the character.
