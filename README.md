@@ -2,7 +2,7 @@
 
 This is a procedural generator for producing 2D isometric perspective levels to be used in game projects.
 
-| Click here for WebGL Online Version |
+| Click here for WebGL Online Version (Password: 'survery') |
 |:----------------------------------:|
 | [![PreviewScreenshot](https://user-images.githubusercontent.com/37081579/168493637-656c601f-67c3-4898-a99f-e7e2f9d12891.png)](https://camke.itch.io/2d-isometric-procedural-generation) |
 
@@ -24,13 +24,13 @@ This is a procedural generator for producing 2D isometric perspective levels to 
 
 #### Terrain
 
-    - Terrain Size: Specify the size of the terrain in terms of maximum tile count. This value will be rounded to a square value for generating the map. Randomly shaped levels tile count will vary.
-    - Terrain Type: Choose the type of terrain to be generated. This will change the tiles used in the level.
-    - Terrain Height: Choose whether to specify the exact height of the terrain or a range of height the terrain should be between.
-    - Terrain Height: Choose whether to specify the exact height of the terrain or a range of height the terrain should be between.
-        - Exact Height: Specify the exact height the terrain should be.
-        - Height Range: Specify the minimum and maximum height the terrain should be between.
-    - Terrain Shape: Choose the shape of the terrain. Terrain size will vary for randomly shaped levels. Higher terrain sizes are more likely to produce larger levels.
+    * Terrain Size: Specify the size of the terrain in terms of maximum tile count. This value will be rounded to a square value for generating the map. Randomly shaped levels tile count will vary.
+    * Terrain Type: Choose the type of terrain to be generated. This will change the tiles used in the level.
+    * Terrain Height: Choose whether to specify the exact height of the terrain or a range of height the terrain should be between.
+    * Terrain Height: Choose whether to specify the exact height of the terrain or a range of height the terrain should be between.
+        * Exact Height: Specify the exact height the terrain should be.
+        * Height Range: Specify the minimum and maximum height the terrain should be between.
+    * Terrain Shape: Choose the shape of the terrain. Terrain size will vary for randomly shaped levels. Higher terrain sizes are more likely to produce larger levels.
 
 #### Water Bodies
 
