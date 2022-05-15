@@ -9,7 +9,7 @@ Welcome text here and overview.
 
 | Click here for WebGL Online Version |
 |:----------------------------------:|
-| [![DocFxForUnity documentation manual](./resources/PreviewScreenshot.png?raw=true "Title")(./Documentation/resources/PreviewScreenshot.png?raw=true "Title")](https://camke.itch.io/2d-isometric-procedural-generation) |
+| [![PreviewScreenshot](https://user-images.githubusercontent.com/37081579/168493637-656c601f-67c3-4898-a99f-e7e2f9d12891.png)](https://camke.itch.io/2d-isometric-procedural-generation) |
 
 ## Level Generation Screen
 
