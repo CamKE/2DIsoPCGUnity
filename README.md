@@ -2,7 +2,7 @@
 
 This is a procedural generator for producing 2D isometric perspective levels to be used in game projects.
 
-| Click here for WebGL Online Version (Password: 'survery') |
+| Click here for WebGL Online Version (Password: 'survey') |
 |:----------------------------------:|
 | [![PreviewScreenshot](https://user-images.githubusercontent.com/37081579/168493637-656c601f-67c3-4898-a99f-e7e2f9d12891.png)](https://camke.itch.io/2d-isometric-procedural-generation) |
 
