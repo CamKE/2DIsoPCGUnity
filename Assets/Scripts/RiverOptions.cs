@@ -42,7 +42,7 @@ public class RiverOptions : Options
     }
 
     /// <summary>
-    /// Update the user interface options with the settings used.
+    /// Update the user interface options with the settings used for river generation.
     /// </summary>
     /// <param name="settings">The settings used for river generation.</param>
     public void updateFields(RiverSettings settings)

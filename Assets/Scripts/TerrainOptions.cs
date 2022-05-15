@@ -65,7 +65,7 @@ public class TerrainOptions : Options
     }
 
     /// <summary>
-    /// Update the user interface options with the settings used.
+    /// Update the user interface options with the settings used for terrain generation
     /// </summary>
     /// <param name="settings">The settings used for terrain generation.</param>
     public void updateFields(TerrainSettings settings)

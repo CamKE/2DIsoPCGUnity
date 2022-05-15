@@ -42,9 +42,9 @@ public class LakeOptions : Options
     }
 
     /// <summary>
-    /// Update the ui elements/fields based on the settings used. Used after random generation.
+    /// Update the user interface options with the settings used for lake generation.
     /// </summary>
-    /// <param name="settings">The settings used.</param>
+    /// <param name="settings">The settings used for lake generation.</param>
     public void updateFields(LakeSettings settings)
     {
         // update the lake generation toggle
