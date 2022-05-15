@@ -2,6 +2,9 @@
 
 Explain what the project is here. Use the example below to apply correct formatting.
 
+!(./resources/PreviewScreenshot.png?raw=true "Title")
+!(./Documentation/resources/PreviewScreenshot.png?raw=true "Title")
+
 Welcome text here and overview.
 
 | Click here for WebGL Online Version |
