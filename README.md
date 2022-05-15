@@ -2,29 +2,15 @@
 
 Explain what the project is here. Use the example below to apply correct formatting.
 
-# DocFX for Unity
-![Alt textt](./resources/ExampleManual.png?raw=true "Title")
-![Alt textt](./Documentation/resources/ExampleManual.png?raw=true "Title")
+Welcome text here and overview.
 
-
-> [DocFX](https://dotnet.github.io/docfx/index.html) usage example for Unity projects
-
-[DocFX](https://dotnet.github.io/docfx/) tool generates a clean documentation that looks like the
-[Unity documentation](https://docs.unity3d.com/Manual/index.html) with a manual (written in Markdown) and a scripting
-API (from the C# scripts of the project).
-
-This repository contains a simple Unity example project which documentation is automatically generated and deployed
-online: <https://normanderwan.github.io/DocFxForUnity/>. It references both C# API and Unity API.
-
-| DocFxForUnity documentation manual |
+| Click here for WebGL Online Version |
 |:----------------------------------:|
-| [![DocFxForUnity documentation manual](https://normanderwan.github.io/DocFxForUnity/resources/ExampleManual.png)](https://normanderwan.github.io/DocFxForUnity/manual/coniunctis.html) |
+| [![DocFxForUnity documentation manual](./resources/PreviewScreenshot.png?raw=true "Title")(./Documentation/resources/PreviewScreenshot.png?raw=true "Title")](https://camke.itch.io/2d-isometric-procedural-generation) |
 
-| DocFxForUnity documentation scripting API |
-|:----------------------------------:|
-| [![DocFxForUnity documentation scripting API](https://normanderwan.github.io/DocFxForUnity/resources/ExampleScriptingApi.png)](https://normanderwan.github.io/DocFxForUnity/api/DocFxForUnity.Player.html) |
+## Level Generation Screen
 
-## Setup your documentation
+### Controls
 
 1. [Install DocFX](https://dotnet.github.io/docfx/tutorial/docfx_getting_started.html#2-use-docfx-as-a-command-line-tool).
 2. Copy the `Documentation/` folder to your Unity project:
