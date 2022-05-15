@@ -3,8 +3,7 @@
 Explain what the project is here. Use the example below to apply correct formatting.
 
 # DocFX for Unity
-
-![Alt text](./../Documentation/resources/ExampleManual.png?raw=true "Title")
+![Alt textt](./../Documentation/resources/ExampleManual.png?raw=true "Title")
 
 
 > [DocFX](https://dotnet.github.io/docfx/index.html) usage example for Unity projects
