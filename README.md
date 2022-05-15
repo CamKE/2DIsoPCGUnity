@@ -4,6 +4,8 @@ Explain what the project is here. Use the example below to apply correct formatt
 
 # DocFX for Unity
 
+![Alt text](./../Documentation/resources/ExampleManual.png?raw=true "Title")
+
 > [DocFX](https://dotnet.github.io/docfx/index.html) usage example for Unity projects
 
 [DocFX](https://dotnet.github.io/docfx/) tool generates a clean documentation that looks like the
