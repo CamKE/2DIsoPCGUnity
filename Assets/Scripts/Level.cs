@@ -141,7 +141,7 @@ public class Level : MonoBehaviour
         // populate the map with terrain cells 
         terrainGenerator.populateCells(map);
         // set the the outer bounds to create the map boundary
-        terrainGenerator.setOuterBounds(map, ref positions[(int)TilemapNames.TerrainOuterBounds2], ref tiles[(int)TilemapNames.TerrainOuterBounds2], ref positions[(int)TilemapNames.TerrainOuterBounds1], ref tiles[(int)TilemapNames.TerrainOuterBounds1]);
+        terrainGenerator.setOuterBounds(map, positions[(int)TilemapNames.TerrainOuterBounds2], tiles[(int)TilemapNames.TerrainOuterBounds2], positions[(int)TilemapNames.TerrainOuterBounds1], tiles[(int)TilemapNames.TerrainOuterBounds1]);
 
         // if lake generation is enabled
         if (lakeSettings.lGenerationEnabled)

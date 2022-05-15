@@ -209,92 +209,126 @@ public class PathGenerator
     /// <summary>
     /// Based on the a* algorithm. Used to find a path between a pair of cells.
     /// </summary>
-    /// <param name="map"></param>
-    /// <param name="startCell"></param>
-    /// <param name="endCell"></param>
-    /// <param name="status"></param>
-    /// <param name="intersectionsEnabled"></param>
-    /// <returns></returns>
+    /// <param name="map">The map to find the path on.</param>
+    /// <param name="startCell">The start of the path.</param>
+    /// <param name="endCell">The end goal of the path.</param>
+    /// <param name="status">Defines the type of path to be generated.</param>
+    /// <param name="intersectionsEnabled">Whether or not intersections are enabled for the path.</param>
+    /// <returns>Whether or not the path was generated.</returns>
     protected bool findAStarPath(Map map, Cell startCell, Cell endCell, Cell.CellStatus status, bool intersectionsEnabled)
     {
+        // make the start and end cells traversable
+        // need to be done as the cells are boundary cells
+        // which are not traversable by default
+        startCell.isTraversable = true;
+        endCell.isTraversable = true;
+        // create a heap with size of the maps area. this is the maximum amount of cells
+        // that could possibly be in the open list
         Heap<Cell> openList = new Heap<Cell>(map.area);
+        // create the closed list as a hashset to ensure no duplicate cells.
         HashSet<Cell> closedList = new HashSet<Cell>();
-        Cell currentNode;
+        // variable for the current cell
+        Cell currentCell;
   
+        // add the start cell to the open list
         openList.Add(startCell);
 
+        // as long as the open list is not empty
         while (openList.Count > 0)
         {
-            currentNode = openList.RemoveFirst();
+            // get the first cell is the open list heap (sorted by lowest cost)
+            currentCell = openList.RemoveFirst();
+            // add the cell to the closed list as we are now visiting it
+            closedList.Add(currentCell);
 
-            closedList.Add(currentNode);
-
-            if (currentNode == endCell)
+            // if we have found a path to the end cell
+            if (currentCell == endCell)
             {
-                currentNode = endCell;
+                // trace path back to start
 
-                while (currentNode != startCell)
+                // while we have not reached the start cell
+                while (currentCell != startCell)
                 {
-                    // change the level cells map
+                    // update the cells on the map to the status and intersection enabled flag
+                    map.updateCellStatus(currentCell, status, intersectionsEnabled);
 
-                    map.updateCellStatus(currentNode, status, intersectionsEnabled);
-
-                    currentNode = currentNode.parent;
+                    // move onto the preceding cell
+                    currentCell = currentCell.parent;
                 }
-                // change the level cells map
+                // were at the start cell now, update it
+                map.updateCellStatus(currentCell, status, intersectionsEnabled);
 
-                map.updateCellStatus(currentNode, status, intersectionsEnabled);
-
+                // we found a path and update the corresponding cells, success
                 return true;
             }
 
-            foreach (Cell neighbourNode in map.getNeighbours(currentNode))
+            // for each of neighbours of the current cell
+            foreach (Cell neighbour in map.getNeighbours(currentCell))
             {
-
+                // if the path status is river
                 if (status == Cell.CellStatus.RiverCell)
                 {
-                    if (!neighbourNode.isTraversable || closedList.Contains(neighbourNode) || !intersectionsEnabled && neighbourNode.isWaterBound)
+                    // if the neighbour is not traversable or the neighbour is in the closed list, or intersections are disabled
+                    // and the cell is a water bound
+                    if (!neighbour.isTraversable || closedList.Contains(neighbour) || !intersectionsEnabled && neighbour.isWaterBound)
                     {
+                            // skip this iteration, continue to the next
                             continue;
                     }
-                } else
+                } 
+                else
+                // otherwise
                 {
-                    if ((!neighbourNode.isTraversable && neighbourNode.status != Cell.CellStatus.RiverCell) || closedList.Contains(neighbourNode))
+                    // if the neighbour is not traversable and the status is not a river cell or the neighbour is in the closed llist
+                    if ((!neighbour.isTraversable && neighbour.status != Cell.CellStatus.RiverCell) || closedList.Contains(neighbour))
                     {
-                            continue;
+                        // skip this iteration, continue to the next
+                        continue;
                     }
                 }
 
-                int newNeighbourGCost = currentNode.gCost + GetDistance(currentNode, neighbourNode);
-
-                if (newNeighbourGCost < neighbourNode.gCost || !openList.Contains(neighbourNode))
+                // wokout the neighbours new g csost
+                int newNeighbourGCost = currentCell.gCost + GetDistance(currentCell, neighbour);
+                // if the new g cost is less than old g cost or the cell is not already in the openlist
+                if (newNeighbourGCost < neighbour.gCost || !openList.Contains(neighbour))
                 {
+                    // set the neighbours g cost to the new value
+                    neighbour.gCost = newNeighbourGCost;
 
-                    neighbourNode.gCost = newNeighbourGCost;
+                    // calculate the cells h cost
+                    neighbour.hCost = GetDistance(neighbour, endCell);
 
-                    neighbourNode.hCost = GetDistance(neighbourNode, endCell);
+                    // set the parent of the neighbour to be the current cell being evaluated
+                    neighbour.parent = currentCell;
 
-                    neighbourNode.parent = currentNode;
-
-                    if (!openList.Contains(neighbourNode))
+                    // if the cell is not already in the open list
+                    if (!openList.Contains(neighbour))
                     {
-                        openList.Add(neighbourNode);
+                        // add the neighbour to the open list
+                        openList.Add(neighbour);
                     }
                 }
             }
         }
+        // could not find a path, make the boundary cells false again
+        startCell.isTraversable = false;
+        endCell.isTraversable = false;
         return false;
     }
 
-    private int GetDistance(Cell startNode, Cell endNode)
+    // get the distance between two cells
+    private int GetDistance(Cell startCell, Cell endCell)
     {
-        int xDistance = Mathf.Abs(startNode.position.x - endNode.position.x);
-        int yDistance = Mathf.Abs(startNode.position.y - endNode.position.y);
+        // get the absolute difference between the start and end x and y positions
+        int xDistance = Mathf.Abs(startCell.position.x - endCell.position.x);
+        int yDistance = Mathf.Abs(startCell.position.y - endCell.position.y);
 
+        // cost to travel across a cell
         int travelCost;
 
-        switch(endNode.status)
+        switch(endCell.status)
         {
+            // higher cost to travel across a river or walkpath cell
             case Cell.CellStatus.RiverCell:
             case Cell.CellStatus.WalkpathCell:
                 travelCost = 15;
@@ -304,6 +338,51 @@ public class PathGenerator
                 break;
         }
 
+        // calculate the distance
         return travelCost * (yDistance + xDistance);
+    }
+
+    protected int createPaths(Map map, int maxCount, bool intersectionsEnabled, Cell.CellStatus type)
+    {
+        // create the new cellpair heap
+        Heap<CellPair> cellPairs = new Heap<CellPair>(maxCount);
+
+        // find cell pairs up to the max river count
+        int count;
+        for (count = 0; count < maxCount; count++)
+        {
+            // get a pair of reachable cells
+            CellPair pair = getReachableCells(map, cellPairs, intersectionsEnabled);
+
+            // if we could not get a reachable pair
+            if (pair == null)
+            {
+                // stop searching for cell pairs
+                break;
+            }
+
+            // add the pair found to the list of pairs
+            cellPairs.Add(pair);
+        }
+
+        // while there are cellpairs in the heap
+        while (cellPairs.Count > 0)
+        {
+            // we find paths for shortest distance cells first to avoid longer distance
+            //  pairs preventing paths being found for shorter distance pairs when intersections are
+            // disabled
+
+            // remove the first pair of cells according to shortest distance between pair
+            CellPair cellPair = cellPairs.RemoveFirst();
+
+            // path is not found between the cell pair
+            if (!findAStarPath(map, cellPair.startCell, cellPair.endCell, type, intersectionsEnabled))
+            {
+                // reduce the count
+                count--;
+            }
+        }
+
+        return count;
     }
 }

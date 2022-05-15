@@ -14,6 +14,7 @@ public class PopupManager : MonoBehaviour
     [SerializeField]
     private Text popupBody;
 
+    // the content rect in the scroll view
     [SerializeField]
     private RectTransform popupContent;
 
@@ -28,7 +29,8 @@ public class PopupManager : MonoBehaviour
             popupHeading.text = messageHeading;
             // set the popup body to be the given body
             popupBody.text = messageBody;
-
+            // set the content rect height to be the ideal height specified from the body text
+            // vertical scroll will be updated based on the content rect height
             popupContent.sizeDelta = new Vector2(0, popupBody.preferredHeight);
 
         // active the popup

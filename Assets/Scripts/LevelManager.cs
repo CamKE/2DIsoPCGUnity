@@ -112,13 +112,6 @@ public class LevelManager : MonoBehaviour
     {
         // set the player's active status to the given value
         player.SetActive(value);
-        
-        // if we are disabling the player controller
-        if (!value)
-        {
-            // clear the action
-            playerController.clearDoMovement();
-        }
     }
 
     /// <summary>

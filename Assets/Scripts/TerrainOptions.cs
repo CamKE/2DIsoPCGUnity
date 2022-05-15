@@ -1,15 +1,24 @@
 using System;
 using System.Linq;
 
+/// <summary>
+/// Used to manage user interface elements for the terrain generator.
+/// </summary>
 [Serializable]
 public class TerrainOptions : Options
 {
+    // names of terrain sliders and inputs
     private enum TerrainSliderInputName { TerrainSize, TerrainExactHeight, TerrainRangeHeightMin, TerrainRangeHeightMax }
 
+    // names of terrain dropdowns
     private enum TerrainDropdownName { TerrainType, TerrainShape }
 
+    // names of terrain toggles and options
     private enum TerrainToggleOptionName { TerrainExactHeight, TerrainRangeHeight }
 
+    /// <summary>
+    /// Setup the user interface elements for the terrain options.
+    /// </summary>
     public void setupUIElements()
     {
         // setup sliders
@@ -31,12 +40,16 @@ public class TerrainOptions : Options
         {
             setupToggleWithOption(toggles[i], toggleOptions[i]);
         }
-
     }
 
+    /// <summary>
+    /// Create the terrain settings from the terrain options.
+    /// </summary>
+    /// <returns>The terrain setttings.</returns>
     public TerrainSettings createUserSettingsFromOptions()
     {
-        // variables set here as this method is always called after submission of the options
+        // retieve the options and creating the settings from it
+
         terrainType = (TerrainGenerator.TerrainType)dropdowns[((int)TerrainDropdownName.TerrainType)].value;
         bool heightRangeEnabled = toggles[(int)TerrainToggleOptionName.TerrainRangeHeight].isOn;
 
@@ -51,28 +64,44 @@ public class TerrainOptions : Options
         return new TerrainSettings(terrainType, heightRangeEnabled, tSize, tShape, tMinHeight, tMaxHeight, tExactHeight);
     }
 
+    /// <summary>
+    /// Update the user interface options with the settings used.
+    /// </summary>
+    /// <param name="settings">The settings used for terrain generation.</param>
     public void updateFields(TerrainSettings settings)
     {
+        // update the terrain size
         updateTerrainSizeField(settings.tSize);
-        dropdowns[((int)TerrainDropdownName.TerrainType)].value = (int)settings.tType;
 
+        // update the terrain type dropdown
+        dropdowns[((int)TerrainDropdownName.TerrainType)].value = (int)settings.tType;
+        // update the terrain shape dropdown
+        dropdowns[((int)TerrainDropdownName.TerrainShape)].value = (int)settings.tShape;
+
+        // if height range option is on
         if (settings.heightRangeEnabled)
         {
+            // update the toggle
             toggles[(int)TerrainToggleOptionName.TerrainRangeHeight].isOn = true;
 
+            // set the min and max sliders
             sliders[((int)TerrainSliderInputName.TerrainRangeHeightMin)].value = settings.tMinHeight;
             sliders[((int)TerrainSliderInputName.TerrainRangeHeightMax)].value = settings.tMaxHeight;
         }
         else
         {
+            // update the exact height toggle
             toggles[(int)TerrainToggleOptionName.TerrainExactHeight].isOn = true;
 
+            // set the exact height slider
             sliders[((int)TerrainSliderInputName.TerrainExactHeight)].value = settings.tExactHeight;
         }
-
-       dropdowns[((int)TerrainDropdownName.TerrainShape)].value = (int)settings.tShape;
     }
 
+    /// <summary>
+    /// Update the terrain size slider in the user interface with the setting used.
+    /// </summary>
+    /// <param name="size">The actual size of the level generated.</param>
     public void updateTerrainSizeField(int size)
     {
         sliders[((int)TerrainSliderInputName.TerrainSize)].value = size;

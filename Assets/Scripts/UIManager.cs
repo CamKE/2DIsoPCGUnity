@@ -3,7 +3,6 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-// this class can be heavily refactored to group serialised fields and loop setup
 /// <summary>
 /// This class is responsible for managing all operations to do with the user interface.
 /// </summary>
@@ -31,22 +30,31 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private PopupManager popupManager;
 
+    // the terrain generation options
     [SerializeField]
     private TerrainOptions terrainOptions;
 
+    // the river generation options
     [SerializeField]
     private RiverOptions riverOptions;
 
+    // the lake generation options
     [SerializeField]
     private LakeOptions lakeOptions;
 
+    // the walkpath generation options
     [SerializeField]
     private WalkpathPathOptions walkpathPathOptions;
 
+    // the buttons on the user interface which interact
+    // with elements which require a level to exist to be
+    // used
     [SerializeField]
     private List<Button> levelInteractionButtons;
 
-    string levelGenInfo;
+    // the level generation information to be displayed in the popup
+    private string levelGenInfo;
+
     // start is called before the first frame update when the script is enabled
     private void Start()
     {
@@ -57,6 +65,7 @@ public class UIManager : MonoBehaviour
         lakeOptions.setupUIElements();
         walkpathPathOptions.setupUIElements();
 
+        // set all the level interaction buttons to false
         foreach (Button button in levelInteractionButtons)
         {
             button.interactable = false;
@@ -65,7 +74,8 @@ public class UIManager : MonoBehaviour
 
 
     /// <summary>
-    /// Tell the level camera to recenter around the level.
+    /// Calls the level camera controller to be recentered around the level.
+    /// Called when the recenter button is pressed.
     /// </summary>
     public void recenterCamera()
     {
@@ -74,7 +84,8 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Tell the level camera to zoom into the level.
+    /// Calls the level camera controller to zoom into the level. Called when
+    /// the zoom in button is pressed.
     /// </summary>
     public void zoomIn()
     {
@@ -83,7 +94,8 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Tell the level camera to zoom out of the level.
+    /// Calls the level camera controller to zoom out of the level. Called
+    /// when the zoom out button is pressed.
     /// </summary>
     public void zoomOut()
     {
@@ -92,20 +104,25 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Tell the level manager to generate the level.
+    /// Creates and validates the settings before calling the level manager to generate the level.
+    /// Called when the generate level button is pressed.
     /// </summary>
     public void generateLevel()
     {
-        levelGenInfo = null;
-
+        // create the terrain settings from the users options
         TerrainSettings terrainSettings =  terrainOptions.createUserSettingsFromOptions();
 
+        // check if the height range option is on and is invalid (minimum height greater
+        // than or equal to the maximum height
         if (terrainSettings.heightRangeIsOnAndInvalid())
         {
+            // invalid settings, show popup
             popupManager.showPopup("Invalid Terrain Height Range", "Terrain height minimum value cannot be greater than or equal to the maximum value.");
+            // end method execution
             return;
         }
 
+        // create the other settings from the users options
         RiverSettings riverSettings = riverOptions.createUserSettingsFromOptions();
         LakeSettings lakeSettings = lakeOptions.createUserSettingsFromOptions();
         WalkpathSettings walkpathSettings = walkpathPathOptions.createUserSettingsFromOptions();
@@ -113,68 +130,74 @@ public class UIManager : MonoBehaviour
         // generate the level
         levelManager.generate(terrainSettings, riverSettings, lakeSettings, walkpathSettings);
 
+        // update the terrain size in the ui with the setting used.
         terrainOptions.updateTerrainSizeField(terrainSettings.tSize);
 
-        foreach (Button button in levelInteractionButtons)
-        {
-            button.interactable = true;
-        }
-
-        if (terrainSettings.heightRangeEnabled)
-        {
-            levelInteractionButtons.First().interactable = false;
-        }
-
-        foreach (string generationStep in levelManager.getGenerationInfo())
-        {
-            levelGenInfo += generationStep + "\n";
-        }
+        updateButtonsandInfo(terrainSettings.heightRangeEnabled);
     }
 
     /// <summary>
-    /// Tell the level manager to generate the level with randomised settings.
+    /// Creates randomised settings before calling the level manager to generate the level with 
+    /// the randomised settings. Called when the randomise level button is pressed.
     /// </summary>
     public void generateRandomLevel()
     {
-        levelGenInfo = null;
-
+        // create the randomised settings
         TerrainSettings terrainSettings = new TerrainSettings();
         RiverSettings riverSettings = new RiverSettings(terrainSettings.tType);
         LakeSettings lakeSettings = new LakeSettings(terrainSettings.tType);
         WalkpathSettings walkpathSettings = new WalkpathSettings(terrainSettings.tType);
 
-        // generate the level
+        // generate the level with the settings
         levelManager.generate(terrainSettings, riverSettings, lakeSettings, walkpathSettings);
 
+        // update the user interface fields to reflect the settings used
         terrainOptions.updateFields(terrainSettings);
         riverOptions.updateFields(riverSettings);
         lakeOptions.updateFields(lakeSettings);
         walkpathPathOptions.updateFields(walkpathSettings);
 
+        // update the ui
+        updateButtonsandInfo(terrainSettings.heightRangeEnabled);
+    }
+
+    // updates the ui buttons and sets the level generation information
+    private void updateButtonsandInfo(bool heightRangeEnabled)
+    {
+        // enable the level interaction buttons
         foreach (Button button in levelInteractionButtons)
         {
             button.interactable = true;
         }
 
-        if (terrainSettings.heightRangeEnabled)
-        {
-            levelInteractionButtons.First().interactable = false;
-        }
+        // disable the demo level button for range height levels
+        // (collision on range height levels needs work)      
+        levelInteractionButtons.First().interactable = !heightRangeEnabled;
 
-        foreach (string generationStep in levelManager.getGenerationInfo())
-        {
-            levelGenInfo += generationStep + "\n";
-        }
+        // set the level generation information
+        setLevelGenInfo();
     }
 
-    // make panel expand to scrollable if text is too long
+    // set the level generation information
+    private void setLevelGenInfo()
+    {
+        // concatenate the generation steps with newline as seperator
+        levelGenInfo = string.Join("\n", levelManager.getGenerationInfo());
+        levelGenInfo += "\n";
+    }
+
+    /// <summary>
+    /// Show the level generation information. Called when the level info
+    /// button is pressed.
+    /// </summary>
     public void showLevelInfo()
     {
         popupManager.showPopup("Level Generation Information", levelGenInfo);
     }
 
     /// <summary>
-    /// Switch to the demo mode for the level generated.
+    /// Switch to the demo mode for the level generated. Called when the demo
+    /// level button is pressed.
     /// </summary>
     public void demoLevel()
     {
@@ -191,6 +214,7 @@ public class UIManager : MonoBehaviour
 
     /// <summary>
     /// Returns the user back to the level generation user interface from the demo user interface.
+    /// Called when the exit level button is pressed.
     /// </summary>
     public void exitLevel()
     {
@@ -206,7 +230,7 @@ public class UIManager : MonoBehaviour
     }
     
     /// <summary>
-    /// Closes an opened popup. Used by the close button on the popup panel
+    /// Closes an opened popup. Used by the close button on the popup panel.
     /// </summary>
     public void closePopup()
     {

@@ -53,7 +53,7 @@ public class LakeGenerator
 
     /// <summary>
     /// The constructor for the LakeGenerator. Sets all the tiles according to their types, and set the
-    /// reference to the level generation info
+    /// reference to the level generation info.
     /// </summary>
     /// <param name="atlas">A SpriteAtlas, holding all the sprites for the project.</param>
     /// <param name="generationInfo">A reference to the level generation information for the level.</param>
@@ -63,33 +63,37 @@ public class LakeGenerator
         lakeTilesByType = new Dictionary<TerrainGenerator.TerrainType, Tile>();
 
         // create the water tile
-        Tile waterTile = ScriptableObject.CreateInstance<Tile>();
-        waterTile.sprite = atlas.GetSprite(waterTileName);
-        waterTile.colliderType = Tile.ColliderType.Grid;
+        Tile waterTile = setupTile(atlas, waterTileName);
 
         // add the water tile as the tile for the following level types:
         lakeTilesByType.Add(TerrainGenerator.TerrainType.Greenery, waterTile);
-        lakeTilesByType.Add(TerrainGenerator.TerrainType.Dessert, waterTile);
+        lakeTilesByType.Add(TerrainGenerator.TerrainType.Desert, waterTile);
         lakeTilesByType.Add(TerrainGenerator.TerrainType.Skin, waterTile);
 
         // create the lava tile and add it to the lava level type
-        lakeTilesByType.Add(TerrainGenerator.TerrainType.Lava, ScriptableObject.CreateInstance<Tile>());
-        lakeTilesByType[TerrainGenerator.TerrainType.Lava].sprite = atlas.GetSprite(lavaTileName);
-        lakeTilesByType[TerrainGenerator.TerrainType.Lava].colliderType = Tile.ColliderType.Grid;
+        lakeTilesByType.Add(TerrainGenerator.TerrainType.Lava, setupTile(atlas, lavaTileName));
 
         // create the ice tile and add it to the ice level type
-        lakeTilesByType.Add(TerrainGenerator.TerrainType.Snow, ScriptableObject.CreateInstance<Tile>());
-        lakeTilesByType[TerrainGenerator.TerrainType.Snow].sprite = atlas.GetSprite(iceTileName);
-        lakeTilesByType[TerrainGenerator.TerrainType.Snow].colliderType = Tile.ColliderType.Grid;
+        lakeTilesByType.Add(TerrainGenerator.TerrainType.Snow, setupTile(atlas, iceTileName));
 
         // set the reference to the level gen info
         this.generationInfo = generationInfo;
     }
 
+    // retrieve a tile from the atlas and set its collider type
+    private Tile setupTile(SpriteAtlas atlas, string tilename)
+    {
+        Tile tile = ScriptableObject.CreateInstance<Tile>();
+        tile.sprite = atlas.GetSprite(tilename);
+        tile.colliderType = Tile.ColliderType.Grid;
+
+        return tile;
+    }
+
     /// <summary>
-    /// Set the reference to the lake settings
+    /// Set the reference to the lake settings.
     /// </summary>
-    /// <param name="lakeSettings"></param>
+    /// <param name="lakeSettings">The lake settings to set a reference to.</param>
     public void setLakeSettings(LakeSettings lakeSettings)
     {
         this.lakeSettings = lakeSettings;
@@ -109,7 +113,7 @@ public class LakeGenerator
         // calculate the maximum lake size based on the multiplier, the number of terrain cells in the level, and the max lake size setting
         lakeMaxSize = (int)Math.Ceiling(map.terrainCellCount * (sizeMultiplier * ((int)lakeSettings.lMaxSize + 1)));
         // add the generation step to the info list
-        generationInfo.Add(lakeMaxSize + " max lake size calculated based on terrain size and" + lakeSettings.lMaxSize + " lake size setting");
+        generationInfo.Add(lakeMaxSize + " max lake size calculated based on terrain size and " + lakeSettings.lMaxSize + " lake size setting");
 
         // max lake size must not be below minimum size
         lakeMaxSize = lakeMaxSize < lakeMinSize ? lakeMinSize : lakeMaxSize;
