@@ -37,10 +37,10 @@ public class PathGenerator
         List<Vector2Int> boundaryCellListClone = null;
         // the number of searches done
         int searchCount = 0;
-
+        int searchLimit = map.terrainCellCount;
         // limit search count to an abritrary value to prevent infinite searching for non-existent valid cell pair.
         // not an optimal solution but works well. Need to revisit
-        while (!pairFound && searchCount < 1000)
+        while (!pairFound && searchCount < searchLimit)
         {
             // make a clone of the boundary cell list
             boundaryCellListClone = new List<Vector2Int>(boundaryCellList);

@@ -324,7 +324,7 @@ public class Level : MonoBehaviour
 
         // get the bounds of the terrain
         BoundsInt terrainBounds = tilemaps[(int)TilemapNames.Terrain].cellBounds;
-
+        
         // find the local position (relative to the grid) of the cell on the grid at the x most tile value and the 
         // y most tile value
         Vector3 mapLocalDimension = grid.CellToLocal(new Vector3Int(terrainBounds.xMax, terrainBounds.yMax, 0));
