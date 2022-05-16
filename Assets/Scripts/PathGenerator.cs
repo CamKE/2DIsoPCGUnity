@@ -7,9 +7,6 @@ using UnityEngine;
 /// </summary>
 public class PathGenerator
 {
-    // status which is exempt from traversable checks
-    protected Cell.CellStatus statusToCheck;
-
     /// <summary>
     /// Gets a pair of start and end cells for which a path can be generated.
     /// </summary>
