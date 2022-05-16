@@ -145,7 +145,7 @@ public class PathGenerator
 
     }
 
-    // Credit/Author: https://www.geeksforgeeks.org/orientation-3-ordered-points/
+    // Credit/Author: https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/
     // for details of below formula.
     // The main function that returns true if line segment 'p1q1'
     // and 'p2q2' intersect.
@@ -178,7 +178,7 @@ public class PathGenerator
         return false; // Doesn't fall in any of the above cases
     }
 
-    // Credit/Author: https://www.geeksforgeeks.org/orientation-3-ordered-points/
+    // Credit/Author: https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/
     // Given three collinear points p, q, r, the function checks if
     // point q lies on line segment 'pr'
     private static Boolean onSegment(Vector3Int p, Vector3Int q, Vector3Int r)
@@ -190,7 +190,7 @@ public class PathGenerator
         return false;
     }
 
-    // Credit/Author: https://www.geeksforgeeks.org/orientation-3-ordered-points/
+    // Credit/Author: https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/
     // To find orientation of ordered triplet (p, q, r).
     // The function returns following values
     // 0 --> p, q and r are collinear
